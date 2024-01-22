@@ -1,8 +1,10 @@
 import observerManager from "./ObserverManager";
+import History from "../History/HistoryManager";
 
 class AppManager{
     /**************************************************************/
     constructor() {
+        this.history = new History();
         this.state = {
             "font": null,
             "style": null
@@ -16,13 +18,17 @@ class AppManager{
     }
     /**************************************************************/
     setStyle(s){
-        this.state.style = s; 
-        observerManager.notify(["style"]);
+       // if(s !== this.state.style){
+            this.state.style = s; 
+            observerManager.notify(["style"]);
+       // }
     }
     /**************************************************************/
     setFont(f){
-        this.state.font = f; 
-        observerManager.notify(["font"]);
+       // if(f !== this.state.font){
+            this.state.font = f; 
+            observerManager.notify(["font"]);
+        //}
     }
     /**************************************************************/
     getStyle(){

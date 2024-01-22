@@ -3,20 +3,14 @@ import { appManager, observerManager } from "../../../models/AppManager/managers
 import utils from '../../../utils/utils.js';
 import constants from '../../../utils/constants.js';
 import { DataGrid } from '@mui/x-data-grid';
-import Box from '@mui/material/Box';
-import Grid from '@mui/material/Grid'; // Grid version 1
-import Paper from '@mui/material/Paper';
-import Title from "../Title/Title.js";
-import { processFontName,processStyleName } from './utils.js';
 import { useParams } from "react-router-dom";
 import "./CharacterSet.scss";
 
 /***************************************************************/
 const CharacterSet = (input) => {
-    console.log("Character set input");
-    console.log(input);
     const ref = useRef(null);
     const [observerId, setObserverId] = useState(null);
+    const [fontLookup, setFontLookup] = useState(null);
     const [characters, setCharacters] = useState(null);
     const [fontName, setFontName] = useState(input.fontName);
     const [style, setStyle] = useState(input.characterSet)
@@ -48,6 +42,7 @@ const CharacterSet = (input) => {
                         chs.push(data.characters[v]);
                     });
                     setCharacters(chs);
+                    setFontLookup(data.characters);
                 }
             })
         );       

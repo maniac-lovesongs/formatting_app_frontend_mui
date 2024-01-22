@@ -49,6 +49,7 @@ const Fonts = (input) => {
             res.json().then((data) => {
                 setFont(data.font);
                 const charSet = data.font.styles.includes("normal")? "normal" : data.font.styles[0];
+                setCharacterSet(characterSet);
                 appManager.setFont(data.font.name);
                 appManager.setStyle(charSet);
             })
