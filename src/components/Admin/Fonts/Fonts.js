@@ -38,7 +38,7 @@ const Fonts = (input) => {
             headerName: "View",
             width: 400,
             renderCell: (params) => {
-                const name = params.row.name.toLowerCase().split(" ").join("_");
+               /* const name = params.row.name.toLowerCase().split(" ").join("_");
                 const lastIndex = params.row.styles.length - 1; 
                 const styles = params.row.styles.map((s,i) => {
                     const temp =  s.toLowerCase().split(" ").join("_");
@@ -51,7 +51,8 @@ const Fonts = (input) => {
                     <span>
                         {styles}
                     </span>
-                );
+                );*/
+                return <a href={params.id}>View</a>
             },
         }
       ];

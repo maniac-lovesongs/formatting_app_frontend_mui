@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { observerManager } from "../../../models/AppManager/managers.js";
+import { appManager, observerManager } from "../../../models/AppManager/managers.js";
 import utils from '../../../utils/utils.js';
 import constants from '../../../utils/constants.js';
 import { DataGrid } from '@mui/x-data-grid';
@@ -12,11 +12,14 @@ import { useParams } from "react-router-dom";
 import "./CharacterSet.scss";
 
 /***************************************************************/
-const SingleFont = (input) => {
+const CharacterSet = (input) => {
+    console.log("Character set input");
+    console.log(input);
     const ref = useRef(null);
     const [observerId, setObserverId] = useState(null);
-    const [characters, setCharacters] = useState([]);
-    const {fontName, style} = useParams();
+    const [characters, setCharacters] = useState(null);
+    const [fontName, setFontName] = useState(input.fontName);
+    const [style, setStyle] = useState(input.characterSet)
 
   /***************************************************************/
     const columns = [
@@ -40,11 +43,12 @@ const SingleFont = (input) => {
         fetch(utils.make_backend(link)).then((res) =>
             res.json().then((data) => {
                 const chs = [];
-                Object.keys(data.characters).forEach((v,i) => {
-                    chs.push(data.characters[v]);
-                });
-                console.log(chs);
-                setCharacters(chs);
+                if(data.characters){
+                    Object.keys(data.characters).forEach((v,i) => {
+                        chs.push(data.characters[v]);
+                    });
+                    setCharacters(chs);
+                }
             })
         );       
     }
@@ -53,11 +57,20 @@ const SingleFont = (input) => {
         // register a listener 
         if (observerId === null) {
             const id = observerManager.registerListener((dataChanged) => {
-                //console.log("Something interesting happened to the app, and as a listener I need to update ");
+                if(dataChanged === "style"){
+                    const tempStyle = appManager.getStyle();
+                    getCharacterSet(tempStyle,fontName);
+                    setStyle(tempStyle);
+                }
+
+                if(dataChanged === "font"){
+                    const tempFont = appManager.getFont();
+                    setFontName(tempFont);
+                }
             });
             setObserverId(id);
         }
-
+        if(characters === null) getCharacterSet(style,fontName);
         // once the component unmounts, remove the listener
         return () => {
             observerManager.unregisterListener(observerId);
@@ -66,26 +79,9 @@ const SingleFont = (input) => {
 
     }, []);
     /***************************************************************/
-    useEffect(() => {
-      getCharacterSet(style,fontName);
-    }, []);
-    /***************************************************************/
     return (
-        <Box
-        sx={{
-          display: 'flex',
-          width: "100vw",
-          flexWrap: 'wrap'
-        }}
-      >
-        <Paper 
-        sx={{width: "100%", padding: "1em"}}
-        elevation={1}>
-            <Title className="fonts-title">{processFontName(fontName)}</Title>
-            <h3>{processStyleName(style)}</h3>
-            <Grid container className="fonts-display" spacing={2}>
-                <Grid item container>
-                <DataGrid
+            <React.Fragment>
+                {characters && <DataGrid
                         rows={characters}
                         columns={columns}
                         initialState={{
@@ -98,13 +94,10 @@ const SingleFont = (input) => {
                         pageSizeOptions={[constants.NUM_PER_PAGE]}
                         checkboxSelection
                         disableRowSelectionOnClick
-                    />
-                </Grid>
-            </Grid>
-        </Paper>
-      </Box>
+                    />}
+            </React.Fragment>
     );
 }
 
-export default SingleFont;
+export default CharacterSet;
 /**************************************************************/

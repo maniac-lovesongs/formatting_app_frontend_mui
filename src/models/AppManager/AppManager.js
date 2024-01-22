@@ -32,6 +32,14 @@ class AppManager{
     getFont(){
         return this.state.font;
     }
+    /**************************************************************/
+    getUriFriendlyStyle(){
+        return this.state.style.split(" ").join("_");
+    }
+    /**************************************************************/
+    getUriFriendlyFont(){
+        return this.state.font.toLowerCase().split(" ").join("_");
+    }
 }
 
 const appManager = new AppManager();

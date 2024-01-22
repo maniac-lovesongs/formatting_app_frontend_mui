@@ -4,6 +4,7 @@ import Dashboard from "./Dashboard/Dashboard.js";
 import Main from "./Main/Main.js";
 import Fonts from "./Fonts/Fonts.js";
 import CharacterSet from './CharacterSet/CharacterSet.js';
+import Font from "./Font/Font.js";
 import "./Admin.scss";
 
 /***************************************************************/
@@ -33,6 +34,8 @@ const Admin = (input) => {
             return <Main />
         else if(input.content === "admin.fonts.all")
             return <Fonts />
+        else if(input.content === "admin.fonts.id")
+            return <Font/>
         else if(input.content === "admin.fonts.chars")
             return <CharacterSet/>
         return null;
