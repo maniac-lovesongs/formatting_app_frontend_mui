@@ -10,9 +10,17 @@ const appRoutes = [
         component: AppContainer
     },
     {
+        path: "/admin/dashboard",
+        props: {
+            "content": "admin.main",
+            "parent": "admin"
+        },
+        component: AppContainer
+    },
+    {
         path: "/admin/fonts/view/all",
         props: {
-            "content": "admin.fonts",
+            "content": "admin.fonts.all",
             "parent": "admin"
         },
         component: AppContainer
@@ -20,7 +28,7 @@ const appRoutes = [
     {
         path: "/admin/fonts/view/:id",
         props: {
-            "content": "admin.font",
+            "content": "admin.font.single",
             "parent": "admin"
         },
         component: AppContainer
