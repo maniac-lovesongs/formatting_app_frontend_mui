@@ -2,6 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { appManager, observerManager } from "../../models/AppManager/managers.js";
 import Dashboard from "./Dashboard/Dashboard.js";
 import Main from "./Main/Main.js";
+import Fonts from "./Fonts/Fonts.js";
+import CharacterSet from './CharacterSet/CharacterSet.js';
 import "./Admin.scss";
 
 /***************************************************************/
@@ -29,6 +31,10 @@ const Admin = (input) => {
     const contentFactory = () => {
         if(input.content === "admin.main")
             return <Main />
+        else if(input.content === "admin.fonts.all")
+            return <Fonts />
+        else if(input.content === "admin.fonts.chars")
+            return <CharacterSet/>
         return null;
     }
     /***************************************************************/

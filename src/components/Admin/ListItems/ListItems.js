@@ -41,19 +41,25 @@ export const MainListItems = (input) => {
     setOpen(temp);
   };
   /***************************************************************/
-  const makeList = (list, arrow=false) => {
+  const makeList = (list) => {
     return list.map((item,i) => {
       const IconComponent = item.icon; 
+      let listItemButtonProps = {};
+      if(item.href){
+        listItemButtonProps["component"] = "a";
+        listItemButtonProps["href"] = item.href; 
+      };
+
       return(
         <React.Fragment>
-          <ListItemButton onClick={(e) => {
+          <ListItemButton {...listItemButtonProps} onClick={(e) => {
             handleClick(i);
           }}>
             <ListItemIcon>
               <IconComponent/>
             </ListItemIcon>
             <ListItemText primary={item.text}/>
-            {arrow && <ListItemIcon>
+            {item.sublist && <ListItemIcon>
               {open[i] ? <ExpandLess /> : <ExpandMore />}
             </ListItemIcon>}
           </ListItemButton>
@@ -69,7 +75,7 @@ export const MainListItems = (input) => {
   /***************************************************************/
   return (
     <List>
-      {makeList(listItems,true)}
+      {makeList(listItems)}
     </List>
   );
   /***************************************************************/

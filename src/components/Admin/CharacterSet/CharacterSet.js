@@ -7,56 +7,47 @@ import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid'; // Grid version 1
 import Paper from '@mui/material/Paper';
 import Title from "../Title/Title.js";
-import "./Fonts.scss";
+import { processFontName,processStyleName } from './utils.js';
+import { useParams } from "react-router-dom";
+import "./CharacterSet.scss";
 
 /***************************************************************/
-const Fonts = (input) => {
+const SingleFont = (input) => {
     const ref = useRef(null);
     const [observerId, setObserverId] = useState(null);
-    const [fonts, setFonts] = useState([]);
+    const [characters, setCharacters] = useState([]);
+    const {fontName, style} = useParams();
 
+  /***************************************************************/
     const columns = [
         { field: 'id', headerName: 'ID', width: 90 },
         {
-          field: 'name',
-          headerName: 'Name',
+          field: 'value',
+          headerName: 'Value',
           width: 150,
-          editable: true,
-        },
-        {
-          field: 'styles',
-          headerName: 'Styles',
-          width: 300,
           editable: false,
-          renderCell: (params) => {
-            console.log(params);
-            return <span>{params.row.styles.join(", ")}</span>;
-          }
         },
         {
-            field: "view",
-            headerName: "View",
-            width: 400,
-            renderCell: (params) => {
-                const name = params.row.name.toLowerCase().split(" ").join("_");
-                const lastIndex = params.row.styles.length - 1; 
-                const styles = params.row.styles.map((s,i) => {
-                    const temp =  s.toLowerCase().split(" ").join("_");
-                    if(i !== lastIndex)
-                        return <span><a href={name + "/style/" + temp}>{s}</a>, </span>
-                    else 
-                        return <span><a href={name + "/style/" + temp}>{s}</a></span>
-                });
-                return (
-                    <span>
-                        {styles}
-                    </span>
-                );
-            },
-        }
+          field: 'symbol',
+          headerName: 'Symbol',
+          width: 150,
+          editable: true
+        },
       ];
-      
-    
+   /***************************************************************/
+   const getCharacterSet = async (s,f) => {
+        const link = "/api/fonts/character_sets/font/" + f + "/style/" + s; 
+        fetch(utils.make_backend(link)).then((res) =>
+            res.json().then((data) => {
+                const chs = [];
+                Object.keys(data.characters).forEach((v,i) => {
+                    chs.push(data.characters[v]);
+                });
+                console.log(chs);
+                setCharacters(chs);
+            })
+        );       
+    }
     /***************************************************************/
     useEffect(() => {
         // register a listener 
@@ -76,13 +67,7 @@ const Fonts = (input) => {
     }, []);
     /***************************************************************/
     useEffect(() => {
-        // Using fetch to fetch the api from 
-        // flask server it will be redirected to proxy
-        fetch(utils.make_backend("/api/fonts/all")).then((res) =>
-            res.json().then((data) => {
-                setFonts(data.fonts);
-            })
-        );
+      getCharacterSet(style,fontName);
     }, []);
     /***************************************************************/
     return (
@@ -96,12 +81,12 @@ const Fonts = (input) => {
         <Paper 
         sx={{width: "100%", padding: "1em"}}
         elevation={1}>
-            <Title className="fonts-title">Fonts</Title>
-            <h3>View All</h3>
+            <Title className="fonts-title">{processFontName(fontName)}</Title>
+            <h3>{processStyleName(style)}</h3>
             <Grid container className="fonts-display" spacing={2}>
                 <Grid item container>
-                    <DataGrid
-                        rows={fonts}
+                <DataGrid
+                        rows={characters}
                         columns={columns}
                         initialState={{
                         pagination: {
@@ -121,5 +106,5 @@ const Fonts = (input) => {
     );
 }
 
-export default Fonts;
+export default SingleFont;
 /**************************************************************/

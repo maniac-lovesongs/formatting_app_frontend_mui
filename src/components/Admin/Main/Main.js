@@ -4,6 +4,7 @@ import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid'; // Grid version 1
 import utils from "../../../utils/utils.js";
 import Paper from '@mui/material/Paper';
+import Title from "../Title/Title.js";
 import "./Main.scss";
   
 /***************************************************************/
@@ -44,7 +45,7 @@ const Main = (input) => {
     const makeCounts = (counts) => {
         return Object.keys(counts).map((countNames) => {
             return (<Grid item container>
-                <Grid item xs={6}>Number of {countNames}</Grid>
+                <Grid className="name" item xs={6}>Number of {countNames}</Grid>
                 <Grid item xs={6}>{counts[countNames]}</Grid>
             </Grid>)
         });
@@ -62,6 +63,7 @@ const Main = (input) => {
         className='admin-main'
         sx={{width: "100%", padding: "1em"}}
         elevation={1}>
+            <Title className="main-title">Main</Title>
             <Grid className="main" container spacing={2}>
                 {counts && makeCounts(counts)}
             </Grid>
