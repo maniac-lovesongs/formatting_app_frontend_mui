@@ -60,9 +60,6 @@ class AppManager{
             const st = styles[i];
             this.state.availableStyles[st] = c.availableStyles.includes(st);
         }
-        console.log("In AppManager");
-        console.log(this.currentData);
-        console.log(this.state);
 
         const changed = ["currenData"];
         if (this.string.cursor[0] !== this.string.cursor[1]){
@@ -147,7 +144,6 @@ class AppManager{
         const instaChar =
         this.string.insertLineBreak(pos);
             
-        //this.addToHistory("inserted character");
         historyManager.snapshot("inserted line break", this.snapshot());
         observerManager.notify(["string", "history", "string.cursor"]);
         return instaChar;       
@@ -158,7 +154,6 @@ class AppManager{
             this.string.insertSingleCharacter(this.getFont(),
                 this.getStyle(),ch, pos, this.currentData);
 
-        //this.addToHistory("inserted character");
         historyManager.snapshot("inserted character", this.snapshot());
         observerManager.notify(["string", "history", "string.cursor"]);
         return instaChar;
@@ -167,14 +162,12 @@ class AppManager{
     insertFromPaste(str) {
         this.string.paste(str,false, this.currentData);
         this.selectionMade = this.string.cursor[0] !== this.string.cursor[1]; 
-        //this.addToHistory("paste");
         historyManager.snapshot("paste", this.snapshot());
         observerManager.notify(["string", "history", "string.cursor"]);
     }
     /**************************************************************/
     deleteCharacter(pos) {
         const instaChar = this.string.deleteCharacter(pos);
-        //this.addToHistory("character deleted");
         historyManager.snapshot("character deleted", this.snapshot());
         observerManager.notify(["string", "history", "string.cursor"]);
         return instaChar;
@@ -183,7 +176,6 @@ class AppManager{
     deleteSelection() {
         this.string.deleteSelection();
         this.selectionMade = false;
-        //this.addToHistory("selection deleted");
         historyManager.snapshot("selection deleted", this.snapshot());
         observerManager.notify(["string", "history", "string.cursor"]);
     }
@@ -191,7 +183,6 @@ class AppManager{
     deleteAll() {
         this.string.deleteAll();
         this.selectionMade = this.string.cursor[0] !== this.string.cursor[1]; 
-        //this.addToHistory("delete all");
         historyManager.snapshot("delete all", this.snapshot());
         observerManager.notify(["string", "history"]);
     }
@@ -247,12 +238,6 @@ class AppManager{
         this.state.bold = bold;
         this.state.italic = italic;
 
-        /*if (this.string.cursor[0] !== this.string.cursor[1]) 
-            this.string.editSelection(this.state.font,
-                this.state.style);*/
-        
-
-        //this.addToHistory("style changed");
         historyManager.snapshot("style changed", this.snapshot());
         observerManager.notify(["state","history"]);
     }
@@ -262,12 +247,6 @@ class AppManager{
         this.state.style = f === "Serif" ? "bold" : "normal";
         this.state.availableStyles = this.getAvailableStyles();
 
-        /*if (this.string.cursor[0] !== this.string.cursor[1]) 
-            this.string.editSelection(this.state.font,
-                this.state.style);
-        
-
-        //this.addToHistory("font change");*/
         historyManager.snapshot("font change", this.snapshot());
         observerManager.notify(["state", "history"]);
     }    
@@ -304,14 +283,6 @@ class AppManager{
             string: this.string.snapshot(),
             state: {...this.state}
         }
-    }
-    /**************************************************************
-    addToHistory(action) {
-        const snapshot = this.snapshot();
-        this.history.addAction({
-            action: action,
-            snapshot: { ...snapshot }
-        });
     }
     /**************************************************************/
     canUndo(){
