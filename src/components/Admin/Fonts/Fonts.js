@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { observerManager } from "../../../models/AppManager/managers.js";
 import utils from '../../../utils/utils.js';
 import constants from '../../../utils/constants.js';
+import { apiCall } from "../../../utils/apiFunctions.js";
 import { DataGrid } from '@mui/x-data-grid';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid'; // Grid version 1
@@ -13,7 +14,7 @@ import "./Fonts.scss";
 const Fonts = (input) => {
     const ref = useRef(null);
     const [observerId, setObserverId] = useState(null);
-    const [fonts, setFonts] = useState([]);
+    const [fonts, setFonts] = useState(null);
 
     const columns = [
         { field: 'id', headerName: 'ID', width: 90 },
@@ -38,20 +39,6 @@ const Fonts = (input) => {
             headerName: "View",
             width: 400,
             renderCell: (params) => {
-               /* const name = params.row.name.toLowerCase().split(" ").join("_");
-                const lastIndex = params.row.styles.length - 1; 
-                const styles = params.row.styles.map((s,i) => {
-                    const temp =  s.toLowerCase().split(" ").join("_");
-                    if(i !== lastIndex)
-                        return <span><a href={name + "/style/" + temp}>{s}</a>, </span>
-                    else 
-                        return <span><a href={name + "/style/" + temp}>{s}</a></span>
-                });
-                return (
-                    <span>
-                        {styles}
-                    </span>
-                );*/
                 return <a href={params.id}>View</a>
             },
         }
@@ -68,22 +55,18 @@ const Fonts = (input) => {
             setObserverId(id);
         }
 
+        if (fonts === null) {
+            const uri = "/api/fonts/all";
+            apiCall(uri, {}, (args, d) => {
+                setFonts(d.fonts);
+            });
+        }
         // once the component unmounts, remove the listener
         return () => {
             observerManager.unregisterListener(observerId);
             setObserverId(null);
         };
 
-    }, []);
-    /***************************************************************/
-    useEffect(() => {
-        // Using fetch to fetch the api from 
-        // flask server it will be redirected to proxy
-        fetch(utils.make_backend("/api/fonts/all")).then((res) =>
-            res.json().then((data) => {
-                setFonts(data.fonts);
-            })
-        );
     }, []);
     /***************************************************************/
     return (
@@ -101,20 +84,20 @@ const Fonts = (input) => {
             <h3>View All</h3>
             <Grid container className="fonts-display" spacing={2}>
                 <Grid item container>
-                    <DataGrid
-                        rows={fonts}
-                        columns={columns}
-                        initialState={{
-                        pagination: {
-                            paginationModel: {
-                                pageSize: constants.NUM_PER_PAGE,
+                        {fonts && <DataGrid
+                            rows={fonts}
+                            columns={columns}
+                            initialState={{
+                                pagination: {
+                                    paginationModel: {
+                                        pageSize: constants.NUM_PER_PAGE,
+                                    },
                                 },
-                            },
-                        }}
-                        pageSizeOptions={[constants.NUM_PER_PAGE]}
-                        checkboxSelection
-                        disableRowSelectionOnClick
-                    />
+                            }}
+                            pageSizeOptions={[constants.NUM_PER_PAGE]}
+                            checkboxSelection
+                            disableRowSelectionOnClick
+                        />}
                 </Grid>
             </Grid>
         </Paper>

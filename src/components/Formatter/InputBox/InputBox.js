@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { appManager, observerManager } from "../../models/AppManager/managers.js";
+import {appManager, observerManager} from "../../../models/AppManager/managers.js";
 import "./InputBox.scss";
 /***************************************************************/
 const InputBox = (input) => {
@@ -7,7 +7,6 @@ const InputBox = (input) => {
     const [inputString, setInputString] = useState([]);
     const [observerId, setObserverId] = useState(null);
     const [selection, setSelection] = useState([null, null]);
-    const [clipboard, setClipboard] = useState(null);
 
     /***************************************************************/
     useEffect(() => {
@@ -17,11 +16,11 @@ const InputBox = (input) => {
         if (observerId === null) {
             const id = observerManager.registerListener((dataChanged) => {
                 if (dataChanged === "string") {
-                    setInputString([...appManager.getString()]);
-                    setSelection([...appManager.getCursor()]);
+                    setInputString([...appManager.string.getString()]);
+                    setSelection([...appManager.string.getCursor()]);
                 }
                 else if (dataChanged === "string.cursor") {
-                    setSelection([...appManager.getCursor()]);
+                    setSelection([...appManager.string.getCursor()]);
                 }                        
 
             });
@@ -41,25 +40,25 @@ const InputBox = (input) => {
         if (e.target.selectionStart === e.target.selectionEnd) {
             let cursor = e.target.selectionStart;
             if (e.target.selectionStart !== inputString.length) {
-                const cursor = appManager.getValidPos(e.target.selectionStart);
+                const cursor = appManager.string.getValidPos(e.target.selectionStart);
                 //appManager.setCursor(cursor, cursor);
             } 
-            appManager.setCursor(cursor,cursor);
+            appManager.string.setCursor(cursor,cursor);
         }
         else {
             // if the user is making a selection, and the end of the 
             // selection is the end of the string itself, then all we
             // need to do is find the beginning of the selection
             if (e.target.selectionEnd === inputString.length) {
-                const start = appManager.getValidPos(e.target.selectionStart);
-                appManager.setCursor(start, e.target.selectionEnd);
+                const start = appManager.string.getValidPos(e.target.selectionStart);
+                appManager.string.setCursor(start, e.target.selectionEnd);
             }
             else {
                 // find the end 
-                const end = appManager.getValidPos(e.target.selectionEnd, "forward");
+                const end = appManager.string.getValidPos(e.target.selectionEnd, "forward");
                 // find the beginning
-                const start = appManager.getValidPos(e.target.selectionStart);
-                appManager.setCursor(start, end);
+                const start = appManager.string.getValidPos(e.target.selectionStart);
+                appManager.string.setCursor(start, end);
             }
         }
     }
@@ -114,24 +113,24 @@ const InputBox = (input) => {
     const handleKeyDown = (e) => {
         if (e.code === "ArrowLeft") {
             if (e.target.selectionStart > 0) {
-                let cursor = appManager.getValidPos(e.target.selectionStart - 1);
+                let cursor = appManager.string.getValidPos(e.target.selectionStart - 1);
                 if (cursor === e.target.selectionStart)
                     cursor -= 1;
 
-                appManager.setCursor(cursor, cursor);
+                appManager.string.setCursor(cursor, cursor);
             }
 
             e.preventDefault();
         }
         else if (e.code === "ArrowRight") {
             if (e.target.selectionStart < inputString.length) {
-                let cursor = appManager.getValidPos(e.target.selectionStart + 1, "forward");
-                appManager.setCursor(cursor, cursor);
+                let cursor = appManager.string.getValidPos(e.target.selectionStart + 1, "forward");
+                appManager.string.setCursor(cursor, cursor);
             }
             e.preventDefault();            
         }
         else if (e.ctrlKey && e.nativeEvent.key === "c") {
-            const substringToCopy = appManager.getSubstring(selection);
+            const substringToCopy = appManager.string.getSubstring(selection);
             appManager.setClipboard(substringToCopy);
            // setClipboard(substringToCopy);
             e.preventDefault();

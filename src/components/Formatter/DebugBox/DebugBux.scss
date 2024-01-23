@@ -1,0 +1,24 @@
+.name{
+    font-weight: 600;
+    padding-right: 1em; 
+    text-align: left;
+    width: 100%; 
+}
+.debug-box{
+    position: absolute;
+    top: 10px;
+    right: 10px; 
+    width: 300px;
+    background-color: rgb(245, 242, 212);
+    box-shadow: 2px 2px 2px 0px rgba(0, 0, 0, 0.75);
+    ul{
+        width: 100%; 
+        margin: 0; 
+        padding: 0.5em;
+        li{
+            text-align: left;
+            list-style: none;
+            padding: 0.25em;
+        }
+    }
+}

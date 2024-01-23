@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import {Button, ButtonGroup, Grid, Paper} from '@mui/material';
-import {FontDownloadIcon, FormatBoldIcon, FormatItalicIcon, ContentPasteIcon, DeleteIcon} from "@mui/icons-material";
+import {FontDownloadIcon, FormatBold, FormatItalic, ContentPasteIcon, DeleteIcon} from "@mui/icons-material";
 import {appManager, observerManager} from "../../../models/AppManager/managers.js";
 import "./FooterBar.scss";
 
@@ -25,13 +25,6 @@ const FooterBar = (input) => {
                 if (dataChanged === "state") {
                     determineActiveButtons();
                     determineButtonsInUse();
-                }
-                if (dataChanged === "panels") {
-                    setFontPickerOpen(appManager.getPanel("font picker"));
-                }
-                if (dataChanged === "clipboard") {
-                    const temp = appManager.getClipboard();
-                    setClipboard(temp);
                 }
             });
             setObserverId(id);
@@ -78,11 +71,6 @@ const FooterBar = (input) => {
         }
     }
     /***************************************************************/
-    const handleOpenFontPicker = (e) => {
-        appManager.setPanelOpen("font picker");
-        e.stopPropagation();
-    }
-    /***************************************************************/
     const handleMakeBold = (e) => {
         if (!disableBold) 
             // if we can make this font bolds
@@ -91,15 +79,6 @@ const FooterBar = (input) => {
         e.stopPropagation();
 
     }
-    /***************************************************************/
-    const handlePaste = () => {
-        const temp = appManager.getClipboard();
-        appManager.insertFromPaste(temp);
-    }
-    /***************************************************************/
-    const handleDelete = () => {
-        appManager.deleteAll();
-    };
     /***************************************************************/
     const handleMakeItalic = (e) => {
         if (!disableItalic)
@@ -120,38 +99,19 @@ const FooterBar = (input) => {
                     height: "100%"
                 }} elevation={2}>
                     <ButtonGroup>
-                    <Button
-                        onClick={handleOpenFontPicker}>
-                            <FontDownloadIcon/>
-                        </Button>
-                    <Button
-                        variant={usingBold? "contained" : "outlined"}
-                        onClick={handleMakeBold}
-                        disabled={disableBold}>
-                            <FormatBoldIcon/>
+                        <Button
+                            variant={usingBold? "contained" : "outlined"}
+                            onClick={handleMakeBold}
+                            disabled={disableBold}>
+                            <FormatBold/>
                         </Button>
                     <Button
                         variant={usingItalic? "contained" : "outlined"}
                         onClick={handleMakeItalic}
                         disabled={disableItalic}>
-                            <FormatItalicIcon />
-                    </Button>
-                    <Button
-                        onClick={handleDelete}>
-                        <DeleteIcon />
-                    </Button>
-                    <Button
-                        variant={clipboard === null ? "outlined" : "contained"}
-                        disabled={clipboard === null}
-                        onClick={handlePaste}
-                    >
-                        <ContentPasteIcon/>
+                            <FormatItalic />
                     </Button>
                 </ButtonGroup>
-                <FontPicker
-                    open={fontPickerOpen}
-                    setOpen={setFontPickerOpen}
-                />
             </Paper>
         </Grid>
     );

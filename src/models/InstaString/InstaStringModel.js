@@ -1,4 +1,5 @@
 import InstaCharacterModel from "../InstaCharacter/InstaCharacterModel.js";
+import { observerManager } from "../AppManager/managers.js";
 
 /***************************************************************************/
 class InstaStringModel {
@@ -31,7 +32,7 @@ class InstaStringModel {
         this.cursor[1] = this.cursor[0] + temp.length;
     }
     /****************************************************************************/
-    paste(str, selection = false) {
+    paste(str, selection = false, currentData = {}) {
         let temp = [];
         for (let i = 0; i < str.length; i++){
             if (str[i] !== '') {
@@ -50,6 +51,45 @@ class InstaStringModel {
         this.cursor[1] = this.cursor[0] + temp.length; 
     }
     /****************************************************************************/
+    getValidPos(pos, direction = "backwards") {
+        if (direction === "backwards") {
+            const [length, i] = this.findBeg(pos);
+            return i;
+        }
+        else {
+            const i = this.findEnd(pos);
+            return i;
+        }
+    }
+    /****************************************************************************/
+    getCursor() {
+        return this.cursor;
+    }
+    /****************************************************************************/
+    setCursor(start, end) {
+        this.cursor = [start, end];
+        const subarray = this.string.slice(start, end);
+        this.substring = subarray;
+        observerManager.notify(["string",
+            "string.cursor",
+            "selectionMade",
+            "string.substring"]);
+    }
+    /****************************************************************************/
+    getSelectionMade() {
+        return this.cursor[0] !== this.cursor[1];
+    }
+    /****************************************************************************/
+      getString(){
+        return this.string; 
+    }
+    /****************************************************************************/
+    getSubstring(cursor = null) {
+        if (cursor === null)
+            return this.string.substring;
+        return this.string.slice(cursor[0], cursor[1]);
+    }
+    /****************************************************************************/
     getSelectionLength() {
         let remove = 0; 
         if (this.cursor[0] !== this.cursor[1])
@@ -62,8 +102,8 @@ class InstaStringModel {
         return this.insertSingleCharacter('Sans Serif', 'normal','\n',pos)
     }
     /****************************************************************************/
-    insertSingleCharacter(font, style, ch, pos) {
-        const [instaChar, leaves] = this.createCharacter(font, style, ch, pos);
+    insertSingleCharacter(font, style, ch, pos, currentData) {
+        const [instaChar, leaves] = this.createCharacter(font, style, ch, pos, currentData);
         const remove = this.getSelectionLength();
         const newCursorPos = pos + instaChar.length;
         this.cursor = [newCursorPos, newCursorPos];
@@ -73,12 +113,13 @@ class InstaStringModel {
         return instaChar;
     }
     /***************************************************************************/
-    createCharacter(font, style, ch, pos) {
+    createCharacter(font, style,ch, pos, currentData) {
         const instaChar = new InstaCharacterModel(this.ch_id,
             font,
             ch,
             style,
-            pos);
+            pos,
+            currentData);
 
         let leaves = [];
         for (let i = 0; i < instaChar.length; i++) {
@@ -126,12 +167,6 @@ class InstaStringModel {
                 
         length = this.string[i].length; 
         return [length,i];
-    }
-    /***************************************************************************/
-    setCursor(start, end) {
-        this.cursor = [start, end];
-        const subarray = this.string.slice(start, end);
-        this.substring = subarray;
     }
     /***************************************************************************/
     deleteAll() {

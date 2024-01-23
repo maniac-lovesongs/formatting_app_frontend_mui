@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { observerManager } from "../../models/AppManager/managers.js";
 import Admin from '../Admin/Admin.js';
+import Formatter from '../Formatter/Formatter.js';
 import "./AppContainer.scss";
 
 /***************************************************************/
@@ -29,6 +30,8 @@ const AppContainer = (input) => {
         if(input.parent === "admin"){
             return <Admin content={input.content}/>
         }
+        else if(input.parent === null)
+            return <Formatter/>
         return null; 
     }
     /***************************************************************/

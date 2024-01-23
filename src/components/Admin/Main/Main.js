@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { appManager, observerManager } from "../../../models/AppManager/managers.js";
+import { apiCall } from '../../../utils/apiFunctions.js';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid'; // Grid version 1
 import utils from "../../../utils/utils.js";
@@ -23,23 +24,19 @@ const Main = (input) => {
             setObserverId(id);
         }
 
+        if (counts === null) {
+            const uri = "/api/all";
+            apiCall(uri, {}, (args, d) => {
+                setCounts(d);
+            });
+        }
+
         // once the component unmounts, remove the listener
         return () => {
             observerManager.unregisterListener(observerId);
             setObserverId(null);
         };
 
-    }, []);
-    /***************************************************************/
-    useEffect(() => {
-        // Using fetch to fetch the api from 
-        // flask server it will be redirected to proxy
-        const link = utils.make_backend("/api/all");
-        fetch(link).then((res) =>
-            res.json().then((data) => {
-                setCounts(data);
-            })
-        );
     }, []);
     /***************************************************************/
     const makeCounts = (counts) => {
