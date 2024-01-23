@@ -191,14 +191,14 @@ class AppManager{
     /* Setters                                                    */
     /**************************************************************/
     setSelectedText(t) {
-        this.state.current.selectedText = t; 
+        this.state.selectedText = t; 
         observerManager.notify("state.current.selectedText");
     }
-    /**************************************************************
+    /**************************************************************/
     setStyle(b, i, clicked) {
         let s = "normal";
-        let bold = this.state.current.bold;
-        let italic = this.state.current.italic; 
+        let bold = this.state.bold;
+        let italic = this.state.italic; 
 
         const availableStyles = this.getAvailableStyles();
         if (b && !i && availableStyles["bold"]) {
@@ -235,30 +235,32 @@ class AppManager{
             italic = i; 
         }
 
-        this.state.current.style = s; 
-        this.state.current.bold = bold;
-        this.state.current.italic = italic;
+        this.state.style = s; 
+        this.state.bold = bold;
+        this.state.italic = italic;
 
         if (this.string.cursor[0] !== this.string.cursor[1]) 
-            this.string.editSelection(this.state.current.font,
-                this.state.current.style);
+            this.string.editSelection(this.state.font,
+                this.state.style);
         
 
-        this.addToHistory("style changed");
+        //this.addToHistory("style changed");
+        historyManager.snapshot("style changed", this.snapshot());
         observerManager.notify(["state", "string", "history"]);
     }
     /**************************************************************/
     setFont(f) {
-        this.state.current.font = f; 
-        this.state.current.style = f === "Serif" ? "bold" : "normal";
-        this.state.current.availableStyles = fontManager.getAvailableStyles(f);
+        this.state.font = f; 
+        this.state.style = f === "Serif" ? "bold" : "normal";
+        this.state.availableStyles = this.getAvailableStyles();
 
         if (this.string.cursor[0] !== this.string.cursor[1]) 
-            this.string.editSelection(this.state.current.font,
-                this.state.current.style);
+            this.string.editSelection(this.state.font,
+                this.state.style);
         
 
-        this.addToHistory("font change");
+        //this.addToHistory("font change");
+        historyManager.snapshot("font change", this.snapshot());
         observerManager.notify(["state", "string", "history"]);
     }    
     /**************************************************************/
