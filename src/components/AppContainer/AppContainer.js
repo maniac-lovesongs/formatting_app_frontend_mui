@@ -2,6 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { observerManager } from "../../models/AppManager/managers.js";
 import Admin from '../Admin/Admin.js';
 import Formatter from '../Formatter/Formatter.js';
+import SignUp from "../Auth/SignUp/SignUp.js";
+import SignIn from "../Auth/SignIn/SignIn.js";
 import "./AppContainer.scss";
 
 /***************************************************************/
@@ -30,8 +32,15 @@ const AppContainer = (input) => {
         if(input.parent === "admin"){
             return <Admin content={input.content}/>
         }
-        else if(input.parent === null)
+        else if(input.parent === null){
             return <Formatter/>
+        }
+        else if(input.content === "auth.signup"){
+            return <SignUp />
+        }
+        else if(input.content === "auth.signin"){
+            return <SignIn/>
+        }
         return null; 
     }
     /***************************************************************/

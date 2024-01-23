@@ -44,8 +44,8 @@ class AppManager{
     }
     /**************************************************************/
     setStyleBasic(s){
-            this.state.style = s; 
-            observerManager.notify(["style"]);
+        this.state.style = s; 
+        observerManager.notify(["style"]);
     }
     /**************************************************************/
     setCurrentData(c){
@@ -63,12 +63,22 @@ class AppManager{
         console.log("In AppManager");
         console.log(this.currentData);
         console.log(this.state);
-        observerManager.notify(["currentData"]);
+
+        if (this.string.cursor[0] !== this.string.cursor[1]){
+            console.log("A selection was made!");
+            console.log(this.string.cursor);
+            console.log(c);
+            this.string.editSelection(this.state.font,
+                this.state.style, c);
+        }
+
+        observerManager.notify(["currentData","string"]);
     }
     /**************************************************************/
     setFontBasic(f){
-            this.state.font = f; 
-            observerManager.notify(["font"]);
+        this.state.font = f; 
+        
+        observerManager.notify(["font"]);
     }
 
     /**************************************************************/

@@ -40,6 +40,22 @@ const appRoutes = [
             "parent": "admin"
         },
         component: AppContainer
+    },
+    {
+        path: "/auth/signin",
+        props: {
+            "content": "auth.signin",
+            "parent": "auth"
+        },
+        component: AppContainer
+    },
+    {
+        path: "/auth/signup",
+        props: {
+            "content": "auth.signup",
+            "parent": "auth"
+        },
+        component: AppContainer
     }
     /* ADD MORE ROUTES HERE */
 ];

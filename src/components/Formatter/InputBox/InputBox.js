@@ -70,7 +70,7 @@ const InputBox = (input) => {
     }, [selection]);
     /***************************************************************/
     const handleInput = (e) => {
-       console.log(e);
+       //console.log(e);
         if (e.nativeEvent.inputType === "insertText" ) {
             appManager.insertSingleCharacter(e.nativeEvent.data, e.target.selectionStart - 1);
         }

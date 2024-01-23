@@ -11,7 +11,7 @@ class InstaStringModel {
         this.cursor = [0, 0];
     }
     /***************************************************************************/
-    editSelection(font, style) {
+    editSelection(font, style, currentData = {}) {
         // first remove the selection from the string temporarily 
         const removedSel = this.string.splice(this.cursor[0], this.cursor[1] - this.cursor[0]);
 
@@ -21,7 +21,8 @@ class InstaStringModel {
                 const [instaChar, leaves] = this.createCharacter(font,
                     style,
                     removedSel[i].value,
-                    this.cursor[0] + i);
+                    this.cursor[0] + i,
+                    currentData);
                 
                 temp.splice(temp.length, 0, ...leaves);
             }
