@@ -249,14 +249,14 @@ class AppManager{
         this.state.bold = bold;
         this.state.italic = italic;
 
-        if (this.string.cursor[0] !== this.string.cursor[1]) 
+        /*if (this.string.cursor[0] !== this.string.cursor[1]) 
             this.string.editSelection(this.state.font,
-                this.state.style);
+                this.state.style);*/
         
 
         //this.addToHistory("style changed");
         historyManager.snapshot("style changed", this.snapshot());
-        observerManager.notify(["state", "string", "history"]);
+        observerManager.notify(["state", "style", "history"]);
     }
     /**************************************************************/
     setFont(f) {
@@ -264,14 +264,14 @@ class AppManager{
         this.state.style = f === "Serif" ? "bold" : "normal";
         this.state.availableStyles = this.getAvailableStyles();
 
-        if (this.string.cursor[0] !== this.string.cursor[1]) 
+        /*if (this.string.cursor[0] !== this.string.cursor[1]) 
             this.string.editSelection(this.state.font,
                 this.state.style);
         
 
-        //this.addToHistory("font change");
+        //this.addToHistory("font change");*/
         historyManager.snapshot("font change", this.snapshot());
-        observerManager.notify(["state", "string", "history"]);
+        observerManager.notify(["state", "font", "history"]);
     }    
     /**************************************************************/
     setCursor(start, end) {
