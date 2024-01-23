@@ -9,6 +9,14 @@ class History{
         this.undoStack.push(state);
     }
     /*******************************************************/
+    snapshot(action, snapshot){
+        //const temp = snapshotter();
+        this.addAction({
+            action: action, 
+            snapshot: snapshot
+        });
+    }
+    /*******************************************************/
     addAction(state) {
         this.undoStack.push(state);
         this.redoStack = []; // empty redo stack
@@ -55,5 +63,5 @@ class History{
     }
     /*******************************************************/
 }
-
-export default History; 
+const historyManager = new History();
+export {History, historyManager};

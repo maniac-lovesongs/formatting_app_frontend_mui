@@ -1,8 +1,7 @@
 import observerManager from "./ObserverManager";
 import {History, historyManager} from "../History/HistoryManager";
-import InstaStringModel from "../InstaString/InstaStringModel";
 
-class AppManager{
+class StringManager{
     /**************************************************************/
     constructor() {
         this.history = new History();
@@ -43,7 +42,7 @@ class AppManager{
         });
     }
     /**************************************************************/
-    setStyleBasic(s){
+    setStyle(s){
             this.state.style = s; 
             observerManager.notify(["style"]);
     }
@@ -66,7 +65,7 @@ class AppManager{
         observerManager.notify(["currentData"]);
     }
     /**************************************************************/
-    setFontBasic(f){
+    setFont(f){
             this.state.font = f; 
             observerManager.notify(["font"]);
     }
@@ -247,7 +246,7 @@ class AppManager{
         this.addToHistory("style changed");
         observerManager.notify(["state", "string", "history"]);
     }
-    /**************************************************************/
+    /**************************************************************
     setFont(f) {
         this.state.current.font = f; 
         this.state.current.style = f === "Serif" ? "bold" : "normal";
@@ -286,41 +285,7 @@ class AppManager{
         observerManager.notify(["clipboard"]);
     }
 
-    /**************************************************************/
-    /* History                                                    */
-    /**************************************************************/
-    snapshot() {
-        return {
-            string: this.string.snapshot(),
-            state: {...this.state}
-        }
-    }
-    /**************************************************************
-    addToHistory(action) {
-        const snapshot = this.snapshot();
-        this.history.addAction({
-            action: action,
-            snapshot: { ...snapshot }
-        });
-    }
-    /**************************************************************/
-    doRedo() {
-        const snapshot = this.history.redo().snapshot;
-        this.string.setFromSnapshot(snapshot.string);
-        this.state.setFromSnapshot(snapshot.state);
-
-        observerManager.notify(["state", "history", "string"]);
-    }
-    /**************************************************************/
-    doUndo() {
-        const snapshot = this.history.undo().snapshot;
-        this.string.setFromSnapshot(snapshot.string);
-        this.state.setFromSnapshot(snapshot.state);
-
-        observerManager.notify(["state", "history", "string"]);
-    }
-    
 }
 
-const appManager = new AppManager();
-export default appManager;
+const stringManager = new StringManager();
+export {StringManager, stringManager};

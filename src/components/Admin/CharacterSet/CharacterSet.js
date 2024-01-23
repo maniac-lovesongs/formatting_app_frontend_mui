@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { appManager, observerManager } from "../../../models/AppManager/managers.js";
-import utils from '../../../utils/utils.js';
 import { apiCall } from '../../../utils/apiFunctions.js';
 import constants from '../../../utils/constants.js';
 import { DataGrid } from '@mui/x-data-grid';

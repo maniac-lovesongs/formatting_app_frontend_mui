@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { appManager, observerManager } from "../../../models/AppManager/managers.js";
-import utils from '../../../utils/utils.js';
 import { apiCall } from "../../../utils/apiFunctions.js";
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid'; // Grid version 1
@@ -35,14 +34,12 @@ const Fonts = (input) => {
             setObserverId(id);
         }
         const uri = "/api/fonts/by_id/" + id; 
-        apiCall(uri,
-            {},
-            (args, d) => {
+        apiCall(uri,{}, (args, d) => {
             setFont(d.font);
             const charSet = d.font.styles.includes("normal") ? "normal" : d.font.styles[0];
             setCharacterSet(charSet);
-            appManager.setFont(d.font.name);
-            appManager.setStyle(charSet);
+            appManager.setFontBasic(d.font.name);
+            appManager.setStyleBasic(charSet);
         });
 
         // once the component unmounts, remove the listener
@@ -73,7 +70,7 @@ const Fonts = (input) => {
                                 value={characterSet}
                                 label="Styles"
                                 onChange={(e) => {
-                                    appManager.setStyle(e.target.value);
+                                    appManager.setStyleBasic(e.target.value);
                                 }}
                             >
                                 {font.styles && font.styles.map((s) => {
