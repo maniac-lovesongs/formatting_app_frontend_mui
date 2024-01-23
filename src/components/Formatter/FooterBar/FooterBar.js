@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import {Button, ButtonGroup, Grid, Paper} from '@mui/material';
-import {FontDownloadIcon, FormatBold, FormatItalic, ContentPasteIcon, DeleteIcon} from "@mui/icons-material";
+import {FontDownload, FormatBold, FormatItalic, ContentPaste, Delete} from "@mui/icons-material";
 import {appManager, observerManager} from "../../../models/AppManager/managers.js";
 import "./FooterBar.scss";
 
@@ -99,10 +99,14 @@ const FooterBar = (input) => {
                     height: "100%"
                 }} elevation={2}>
                     <ButtonGroup>
-                        <Button
-                            variant={usingBold? "contained" : "outlined"}
-                            onClick={handleMakeBold}
-                            disabled={disableBold}>
+                    <Button
+                        onClick={(e) => {return null}}>
+                            <FontDownload/>
+                        </Button>
+                    <Button
+                        variant={usingBold? "contained" : "outlined"}
+                        onClick={handleMakeBold}
+                        disabled={disableBold}>
                             <FormatBold/>
                         </Button>
                     <Button
@@ -110,6 +114,17 @@ const FooterBar = (input) => {
                         onClick={handleMakeItalic}
                         disabled={disableItalic}>
                             <FormatItalic />
+                    </Button>
+                    <Button
+                        onClick={(e) => {return null}}>
+                        <Delete/>
+                    </Button>
+                    <Button
+                        variant={clipboard === null ? "outlined" : "contained"}
+                        disabled={clipboard === null}
+                        onClick={(e) => {return null}}
+                    >
+                        <ContentPaste/>
                     </Button>
                 </ButtonGroup>
             </Paper>

@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { apiCall} from '../../utils/apiFunctions.js';
-import {Grid, Box} from "@mui/material";
+import {Grid, Box, Paper} from "@mui/material";
+import InputBox from "./InputBox/InputBox.js";
+import HeaderBar from './HeaderBar/HeaderBar.js';
 import FooterBar from "./FooterBar/FooterBar.js";
 import {appManager, observerManager} from "../../models/AppManager/managers.js";
 
@@ -55,7 +57,22 @@ const Formatter = (input) => {
                 alignItems="stretch"
                 height="100vh"
                 spacing={0}>
-                    <FooterBar/>
+                <HeaderBar/>
+                <Grid
+                    sx={{"textAlign": "left"}}
+                    item
+                    xs={10}>
+                    <Paper
+                        elevation={2}
+                        sx={{
+                            "height": "93%",
+                            "padding": "0.5em",
+                            "margin": "1em"
+                        }}>
+                        <InputBox />
+                    </Paper>
+                </Grid>
+                <FooterBar/>
            </Grid>
         </Box>
     );

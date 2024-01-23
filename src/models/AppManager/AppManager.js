@@ -72,7 +72,7 @@ class AppManager{
                 this.state.style, c);
         }
 
-        observerManager.notify(["currentData","string"]);
+        observerManager.notify(["currentData","state","string"]);
     }
     /**************************************************************/
     setFontBasic(f){
@@ -256,7 +256,7 @@ class AppManager{
 
         //this.addToHistory("style changed");
         historyManager.snapshot("style changed", this.snapshot());
-        observerManager.notify(["state", "style", "history"]);
+        observerManager.notify(["style", "history"]);
     }
     /**************************************************************/
     setFont(f) {
@@ -271,7 +271,7 @@ class AppManager{
 
         //this.addToHistory("font change");*/
         historyManager.snapshot("font change", this.snapshot());
-        observerManager.notify(["state", "font", "history"]);
+        observerManager.notify(["font", "history"]);
     }    
     /**************************************************************/
     setCursor(start, end) {

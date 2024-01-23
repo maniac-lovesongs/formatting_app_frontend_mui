@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { ButtonGroup, Button,Grid,Paper } from '@mui/material';
-import {RedoIcon, UndoIcon, ContentCopyIcon, ShareIcon} from '@mui/icons-material';
+import {Redo, Undo, ContentCopy, Share} from '@mui/icons-material';
 import {appManager, observerManager} from "../../../models/AppManager/managers.js";
 import "./HeaderBar.scss";
 
@@ -65,18 +65,18 @@ const HeaderBar = (input) => {
                     <Button
                         onClick={handleUndo}
                         disabled={undo}>
-                            <UndoIcon/>
+                            <Undo/>
                         </Button>
                     <Button
                         onClick={handleRedo}
                         disabled={redo}>
-                            <RedoIcon/>
+                            <Redo/>
                         </Button>
                         <Button>
-                            <ContentCopyIcon/>
+                            <ContentCopy/>
                         </Button>
                         <Button>
-                            <ShareIcon/>
+                            <Share/>
                         </Button>
                     </ButtonGroup>
                 </Paper>
