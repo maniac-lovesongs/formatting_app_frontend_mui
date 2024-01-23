@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { ButtonGroup, Button,Grid,Paper } from '@mui/material';
 import {Redo, Undo, ContentCopy, Share} from '@mui/icons-material';
+import {apiCall} from "../../../utils/apiFunctions.js";
 import {appManager, observerManager} from "../../../models/AppManager/managers.js";
 import "./HeaderBar.scss";
 
@@ -34,8 +35,8 @@ const HeaderBar = (input) => {
     }, []);
     /***************************************************************/
     const determineActiveButtons = () => {
-        const canUndo = appManager.history.canUndo();
-        const canRedo = appManager.history.canRedo();
+        const canUndo = appManager.canUndo();
+        const canRedo = appManager.canRedo();
         setUndo(!canUndo);
         setRedo(!canRedo);
     }

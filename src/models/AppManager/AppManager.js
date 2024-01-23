@@ -64,20 +64,18 @@ class AppManager{
         console.log(this.currentData);
         console.log(this.state);
 
+        const changed = ["currenData"];
         if (this.string.cursor[0] !== this.string.cursor[1]){
-            console.log("A selection was made!");
-            console.log(this.string.cursor);
-            console.log(c);
+            changed.push("string");
             this.string.editSelection(this.state.font,
                 this.state.style, c);
         }
 
-        observerManager.notify(["currentData","state","string"]);
+        observerManager.notify(changed);
     }
     /**************************************************************/
     setFontBasic(f){
         this.state.font = f; 
-        
         observerManager.notify(["font"]);
     }
 
@@ -256,7 +254,7 @@ class AppManager{
 
         //this.addToHistory("style changed");
         historyManager.snapshot("style changed", this.snapshot());
-        observerManager.notify(["style", "history"]);
+        observerManager.notify(["state","history"]);
     }
     /**************************************************************/
     setFont(f) {
@@ -271,7 +269,7 @@ class AppManager{
 
         //this.addToHistory("font change");*/
         historyManager.snapshot("font change", this.snapshot());
-        observerManager.notify(["font", "history"]);
+        observerManager.notify(["state", "history"]);
     }    
     /**************************************************************/
     setCursor(start, end) {
@@ -316,20 +314,37 @@ class AppManager{
         });
     }
     /**************************************************************/
+    canUndo(){
+        return historyManager.canUndo();
+    }
+    /**************************************************************/
+    canRedo(){
+        return historyManager.canRedo();
+    }
+    /**************************************************************/
     doRedo() {
-        const snapshot = this.history.redo().snapshot;
+        const changed = ["history", "string"];
+        const snapshot = historyManager.redo().snapshot;
         this.string.setFromSnapshot(snapshot.string);
-        this.state.setFromSnapshot(snapshot.state);
 
-        observerManager.notify(["state", "history", "string"]);
+        if(this.state.font !== snapshot.state.font || this.state.style !== snapshot.state.style)
+            changed.push("state");
+
+        this.state = {...snapshot.state};
+
+        observerManager.notify(changed);
     }
     /**************************************************************/
     doUndo() {
-        const snapshot = this.history.undo().snapshot;
+        const changed = ["history", "string"];
+        const snapshot = historyManager.undo().snapshot;
         this.string.setFromSnapshot(snapshot.string);
-        this.state.setFromSnapshot(snapshot.state);
+        if(this.state.font !== snapshot.state.font || this.state.style !== snapshot.state.style)
+            changed.push("state");
 
-        observerManager.notify(["state", "history", "string"]);
+        this.state = {...snapshot.state};
+
+        observerManager.notify(changed);
     }
     
 }
