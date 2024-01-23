@@ -80,7 +80,7 @@ const InputBox = (input) => {
         else if (e.nativeEvent.inputType === "deleteContentBackward") {
             // 1. First branch deletes a single character
             // 2. Second branch deletes a selection (which can be more than one character)
-            if (!appManager.getSelectionMade()) {
+            if (!appManager.string.getSelectionMade()) {
                 if (e.target.selectionStart >= 0) appManager.deleteCharacter(e.target.selectionStart);
             }
             else {
