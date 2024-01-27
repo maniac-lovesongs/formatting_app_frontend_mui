@@ -1,12 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { appManager, observerManager } from "../../../models/AppManager/managers.js";
+import { appManager } from "../../../models/AppManager/managers.js";
 import { apiCall } from '../../../utils/apiFunctions.js';
 import constants from '../../../utils/constants.js';
-import {
-    DataGrid,
-  } from '@mui/x-data-grid';
+import {DataGrid} from '@mui/x-data-grid';
 import editableDataGridRowsWrapper from '../../../utils/editableDataGridRowsWrapper.js';
-import { useParams } from "react-router-dom";
+import withObserver from '../../../utils/withObserver.js';
 import "./CharacterSet.scss";
 
 /***************************************************************/
@@ -37,7 +35,7 @@ const CharacterSetInner = (input) => {
             "rowModesModel": rowModesModel, 
             "rows": characters, 
             "setRows": setCharacters, 
-            "setRowsModel": setRowModesModel})
+            "setRowModesModel": setRowModesModel})
       ];
    /***************************************************************/
    const getCharacterSetHelper = async (s,f) => {
@@ -54,63 +52,21 @@ const CharacterSetInner = (input) => {
        });
 
     }
-    /***************************************************************
-    const handleRowModesModelChange = (newRowModesModel) => {
-        setRowModesModel(newRowModesModel);
-      };    const handleRowEditStop = (params, event) => {
-        if (params.reason === GridRowEditStopReasons.rowFocusOut) {
-          event.defaultMuiPrevented = true;
-        }
-      };
-      const handleEditClick = (id) => () => {
-        setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.Edit } });
-      };
-    
-      const handleSaveClick = (id) => () => {
-        setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.View } });
-      };
-    
-      const handleDeleteClick = (id) => () => {
-        const rows = [...characters];
-        setCharacters(rows.filter((row) => row.id !== id));
-      };
-      const handleCancelClick = (id) => () => {
-        setRowModesModel({
-          ...rowModesModel,
-          [id]: { mode: GridRowModes.View, ignoreModifications: true },
-        });
-        const rows = [...characters];
-        const editedRow = rows.find((row) => row.id === id);
-        if (editedRow.isNew) {
-          setCharacters(rows.filter((row) => row.id !== id));
-        }
-      };
-      const processRowUpdate = (newRow) => {
-        const updatedRow = { ...newRow, isNew: false };
-        const rows = [...characters];
-        setCharacters(rows.map((row) => (row.id === newRow.id ? updatedRow : row)));
-        return updatedRow;
-      };
     /***************************************************************/
     useEffect(() => {
         // register a listener 
-        if (observerId === null) {
-            const id = observerManager.registerListener((dataChanged) => {
-                if(dataChanged === "style"){
-                    const tempStyle = appManager.getStyle();
-                    getCharacterSetHelper(tempStyle,fontName);
-                    setStyle(tempStyle);
-                }
-            });
-            setObserverId(id);
-        }
-        if (characters === null) getCharacterSetHelper(style,fontName);
-        // once the component unmounts, remove the listener
-        return () => {
-            observerManager.unregisterListener(observerId);
-            setObserverId(null);
+        if (characters === null)
+            getCharacterSetHelper(style,fontName);            
+        
+        const handleDataChange = (dataChanged) => {
+            if(dataChanged === "style"){
+                const tempStyle = appManager.getStyle();
+                getCharacterSetHelper(tempStyle,fontName);
+                setStyle(tempStyle);                
+            }
         };
 
+        return withObserver(handleDataChange, observerId, setObserverId);  
     }, []);
     /***************************************************************/
     return (
@@ -133,7 +89,5 @@ const CharacterSetInner = (input) => {
     );
 }
 const CharacterSet = editableDataGridRowsWrapper(CharacterSetInner);
-
-console.log(CharacterSet);
 export default CharacterSet;
 /**************************************************************/

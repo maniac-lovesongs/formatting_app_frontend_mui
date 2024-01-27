@@ -1,12 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { observerManager } from "../../../models/AppManager/managers.js";
-import utils from '../../../utils/utils.js';
 import constants from '../../../utils/constants.js';
 import editableDataGridRowsWrapper from '../../../utils/editableDataGridRowsWrapper.js';
+import withObserver from '../../../utils/withObserver.js';
 import { apiCall } from "../../../utils/apiFunctions.js";
-import {
-    DataGrid,
-  } from '@mui/x-data-grid';
+import {DataGrid } from '@mui/x-data-grid';
 import {Box, Grid, Paper} from "@mui/material";
 import Title from "../Title/Title.js";
 import "./Fonts.scss";
@@ -52,25 +49,18 @@ const FontsInner = (input) => {
 /***************************************************************/    
 useEffect(() => {
         // register a listener 
-        if (observerId === null) {
-            const id = observerManager.registerListener((dataChanged) => {
-                //console.log("Something interesting happened to the app, and as a listener I need to update ");
-            });
-            setObserverId(id);
-        }
-
         if (fonts === null) {
             const uri = "/api/fonts/all";
             apiCall(uri, {}, (args, d) => {
                 setFonts(d.fonts);
             });
         }
-        // once the component unmounts, remove the listener
-        return () => {
-            observerManager.unregisterListener(observerId);
-            setObserverId(null);
-        };
 
+        const handleDataChange = (dataChanged) => {
+            console.log("dummy");
+        }
+
+        return withObserver(handleDataChange, observerId, setObserverId);
     }, []);
     /***************************************************************/
     return (

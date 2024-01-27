@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { appManager, observerManager } from "../../../models/AppManager/managers.js";
 import { apiCall } from "../../../utils/apiFunctions.js";
+import withObserver from '../../../utils/withObserver.js';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid'; // Grid version 1
 import Paper from '@mui/material/Paper';
@@ -22,17 +23,6 @@ const Fonts = (input) => {
     
     /***************************************************************/
     useEffect(() => {
-        // register a listener 
-        if (observerId === null) {
-            const id = observerManager.registerListener((dataChanged) => {
-                //console.log("Something interesting happened to the app, and as a listener I need to update ");
-                if(dataChanged === "style"){
-                    const tempStyle = appManager.getStyle();
-                    setCharacterSet(tempStyle);
-                }
-            });
-            setObserverId(id);
-        }
         const uri = "/api/fonts/by_id/" + id; 
         apiCall(uri,{}, (args, d) => {
             setFont(d.font);
@@ -42,11 +32,14 @@ const Fonts = (input) => {
             appManager.setStyleBasic(charSet);
         });
 
-        // once the component unmounts, remove the listener
-        return () => {
-            observerManager.unregisterListener(observerId);
-            setObserverId(null);
-        };
+        const handleDataChange = (dataChanged) => {
+            if(dataChanged === "style"){
+                const tempStyle = appManager.getStyle();
+                setCharacterSet(tempStyle);
+            }
+        }
+
+        return withObserver(handleDataChange, observerId, setObserverId);
 
     }, []);
     /***************************************************************/
@@ -80,7 +73,7 @@ const Fonts = (input) => {
                     </Grid>
                 </Grid>
                 <Grid item container>
-                    {font.name && characterSet && <CharacterSet characerSet={characterSet} fontName={font.name} />}
+                    {font.name && characterSet && <CharacterSet characterSet={characterSet} fontName={font.name} />}
                 </Grid>
                 <Grid item container>
                     <Grid item xs={12}>Test Input Box</Grid>

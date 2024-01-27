@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-import {appManager, observerManager} from "../../../models/AppManager/managers.js";
+import withObserver from '../../../utils/withObserver.js';
+import {appManager} from "../../../models/AppManager/managers.js";
 import "./InputBox.scss";
 /***************************************************************/
 const InputBox = (input) => {
@@ -11,28 +12,17 @@ const InputBox = (input) => {
     /***************************************************************/
     useEffect(() => {
         setInputString(appManager.getString());
-
-        // register a listener 
-        if (observerId === null) {
-            const id = observerManager.registerListener((dataChanged) => {
-                if (dataChanged === "string") {
-                    setInputString([...appManager.string.getString()]);
-                    setSelection([...appManager.string.getCursor()]);
-                }
-                else if (dataChanged === "string.cursor") {
-                    setSelection([...appManager.string.getCursor()]);
-                }                        
-
-            });
-            setObserverId(id);
-        }
-
-        // once the component unmounts, remove the listener
-        return () => {
-            observerManager.unregisterListener(observerId);
-            setObserverId(null);
+        const handleDataChange = (dataChanged) => {
+            if (dataChanged === "string") {
+                setInputString([...appManager.string.getString()]);
+                setSelection([...appManager.string.getCursor()]);
+            }
+            else if (dataChanged === "string.cursor") {
+                setSelection([...appManager.string.getCursor()]);
+            }                      
         };
 
+        return withObserver(handleDataChange,observerId,setObserverId);
     }, []);
     /***************************************************************/
     const handleMouseUp = (e) => {

@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { apiCall} from '../../utils/apiFunctions.js';
+import withObserver from "../../utils/withObserver.js";
 import {Grid, Box, Paper} from "@mui/material";
 import InputBox from "./InputBox/InputBox.js";
 import HeaderBar from './HeaderBar/HeaderBar.js';
@@ -14,16 +15,6 @@ const Formatter = (input) => {
     
     /***************************************************************/
     useEffect(() => {
-        // register a listener 
-        if (observerId === null) {
-            const id = observerManager.registerListener((dataChanged) => {
-                if(dataChanged === "currentData"){
-                    setFontLookup(appManager.getCurrentData());
-                }
-            });
-            setObserverId(id);
-        }
-
         if (fontLookup === null) {
             const s = appManager.getUriFriendlyStyle();
             const f = appManager.getUriFriendlyFont();
@@ -35,13 +26,13 @@ const Formatter = (input) => {
             });
         }
 
-
-        // once the component unmounts, remove the listener
-        return () => {
-            observerManager.unregisterListener(observerId);
-            setObserverId(null);
+        const handleDataChange = (dataChanged) => {
+            if(dataChanged === "currentData"){
+                setFontLookup(appManager.getCurrentData());
+            }
         };
 
+        return withObserver(handleDataChange,observerId,setObserverId);
     }, []);    
     /***************************************************************/
     return (

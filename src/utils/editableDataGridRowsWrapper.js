@@ -12,7 +12,7 @@ const editableDataGridRowsWrapper = (WrappedComponent) => {
     /***************************************************************/
     const EditableDisplayGrid = (input) => {
         const makeActionsColumn = (d) => {
-          console.log(d);
+          //console.log(d);
             const actionsColumn = {
                 field: 'actions',
                 type: 'actions',
@@ -20,8 +20,6 @@ const editableDataGridRowsWrapper = (WrappedComponent) => {
                 width: 100,
                 cellClassName: 'actions',
                 getActions: ({id}) => {
-                  console.log("In getActions, and the id is: ");
-                  console.log(id);
                   const isInEditMode = d.rowModesModel[id]?.mode === GridRowModes.Edit;
           
                   if (isInEditMode) {
@@ -38,7 +36,7 @@ const editableDataGridRowsWrapper = (WrappedComponent) => {
                         icon={<Cancel />}
                         label="Cancel"
                         className="textPrimary"
-                        onClick={d.handleCancelClick(id, d.rowModesModel, d.rows, d.setRows, d.setRowModesMode)}
+                        onClick={d.handleCancelClick(id, d.rowModesModel, d.rows, d.setRows, d.setRowModesModel)}
                         color="inherit"
                       />,
                     ];

@@ -2,7 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { ButtonGroup, Button,Grid,Paper } from '@mui/material';
 import {Redo, Undo, ContentCopy, Share} from '@mui/icons-material';
 import {apiCall} from "../../../utils/apiFunctions.js";
-import {appManager, observerManager} from "../../../models/AppManager/managers.js";
+import withObserver from '../../../utils/withObserver.js';
+import {appManager} from "../../../models/AppManager/managers.js";
 import "./HeaderBar.scss";
 
 /***************************************************************/
@@ -15,23 +16,13 @@ const HeaderBar = (input) => {
     /***************************************************************/
     useEffect(() => {
         determineActiveButtons();
-
-        // register a listener 
-        if (observerId === null) {
-            const id = observerManager.registerListener((dataChanged) => {
-                if (dataChanged === "history") {
-                    determineActiveButtons();
-                }
-            });
-            setObserverId(id);
+        const handleDataChange = (dataChanged) => {
+            if (dataChanged === "history") {
+                determineActiveButtons();
+            }        
         }
 
-        // once the component unmounts, remove the listener
-        return () => {
-            observerManager.unregisterListener(observerId);
-            setObserverId(null);
-        };
-
+        return withObserver(handleDataChange, observerId, setObserverId);
     }, []);
     /***************************************************************/
     const handleCopyClick = async () => {
