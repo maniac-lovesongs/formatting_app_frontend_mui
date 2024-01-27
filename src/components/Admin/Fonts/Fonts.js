@@ -2,21 +2,17 @@ import React, { useState, useEffect, useRef } from 'react';
 import { observerManager } from "../../../models/AppManager/managers.js";
 import utils from '../../../utils/utils.js';
 import constants from '../../../utils/constants.js';
+import editableDataGridRowsWrapper from '../../../utils/editableDataGridRowsWrapper.js';
 import { apiCall } from "../../../utils/apiFunctions.js";
 import {
-    GridRowModes,
     DataGrid,
-    GridToolbarContainer,
-    GridActionsCellItem,
-    GridRowEditStopReasons,
   } from '@mui/x-data-grid';
-import {Edit, Delete, Save, Cancel } from '@mui/icons-material';
 import {Box, Grid, Paper} from "@mui/material";
 import Title from "../Title/Title.js";
 import "./Fonts.scss";
 
 /***************************************************************/
-const Fonts = (input) => {
+const FontsInner = (input) => {
     const ref = useRef(null);
     const [observerId, setObserverId] = useState(null);
     const [fonts, setFonts] = useState(null);
@@ -36,7 +32,6 @@ const Fonts = (input) => {
           width: 300,
           editable: false,
           renderCell: (params) => {
-            console.log(params);
             return <span>{params.row.styles.join(", ")}</span>;
           }
         },
@@ -48,97 +43,12 @@ const Fonts = (input) => {
                 return <a href={params.id}>View</a>
             },
         },
-        {
-            field: 'actions',
-            type: 'actions',
-            headerName: 'Actions',
-            width: 100,
-            cellClassName: 'actions',
-            getActions: ({ id }) => {
-              const isInEditMode = rowModesModel[id]?.mode === GridRowModes.Edit;
-      
-              if (isInEditMode) {
-                return [
-                  <GridActionsCellItem
-                    icon={<Save />}
-                    label="Save"
-                    sx={{
-                      color: 'primary.main',
-                    }}
-                    onClick={handleSaveClick(id)}
-                  />,
-                  <GridActionsCellItem
-                    icon={<Cancel />}
-                    label="Cancel"
-                    className="textPrimary"
-                    onClick={handleCancelClick(id)}
-                    color="inherit"
-                  />,
-                ];
-              }
-      
-              return [
-                <GridActionsCellItem
-                  icon={<Edit />}
-                  label="Edit"
-                  className="textPrimary"
-                  onClick={handleEditClick(id)}
-                  color="inherit"
-                />,
-                <GridActionsCellItem
-                  icon={<Delete />}
-                  label="Delete"
-                  onClick={handleDeleteClick(id)}
-                  color="inherit"
-                />,
-              ];
-            },
-          },
+        input.makeActionsColumn({...input.inputFunctions, 
+            "rowModesModel": rowModesModel, 
+            "rows": fonts, 
+            "setRows": setFonts, 
+            "setRowsModel": setRowModesModel})
       ];
-      
-    
-  /***************************************************************/
-  const handleRowModesModelChange = (newRowModesModel) => {
-    setRowModesModel(newRowModesModel);
-  };
-/***************************************************************/
-const handleRowEditStop = (params, event) => {
-    if (params.reason === GridRowEditStopReasons.rowFocusOut) {
-      event.defaultMuiPrevented = true;
-    }
-  };
-/***************************************************************/
-  const handleEditClick = (id) => () => {
-    setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.Edit } });
-  };
-/***************************************************************/
-  const handleSaveClick = (id) => () => {
-    setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.View } });
-  };
-/***************************************************************/
-  const handleDeleteClick = (id) => () => {
-    const rows = [...fonts];
-    setFonts(rows.filter((row) => row.id !== id));
-  };
-/***************************************************************/
-  const handleCancelClick = (id) => () => {
-    setRowModesModel({
-      ...rowModesModel,
-      [id]: { mode: GridRowModes.View, ignoreModifications: true },
-    });
-    const rows = [...fonts];
-    const editedRow = rows.find((row) => row.id === id);
-    if (editedRow.isNew) {
-      setFonts(rows.filter((row) => row.id !== id));
-    }
-  };
-/***************************************************************/
-  const processRowUpdate = (newRow) => {
-    const updatedRow = { ...newRow, isNew: false };
-    const rows = [...fonts];
-    setFonts(rows.map((row) => (row.id === newRow.id ? updatedRow : row)));
-    return updatedRow;
-  };
 /***************************************************************/    
 useEffect(() => {
         // register a listener 
@@ -199,5 +109,6 @@ useEffect(() => {
     );
 }
 
+const Fonts = editableDataGridRowsWrapper(FontsInner);
 export default Fonts;
 /**************************************************************/
