@@ -20,6 +20,7 @@ const Fonts = (input) => {
     const ref = useRef(null);
     const [observerId, setObserverId] = useState(null);
     const [fonts, setFonts] = useState(null);
+    const [rowModesModel, setRowModesModel] = useState({});
 
     const columns = [
         { field: 'id', headerName: 'ID', width: 90 },
@@ -46,12 +47,100 @@ const Fonts = (input) => {
             renderCell: (params) => {
                 return <a href={params.id}>View</a>
             },
-        }
+        },
+        {
+            field: 'actions',
+            type: 'actions',
+            headerName: 'Actions',
+            width: 100,
+            cellClassName: 'actions',
+            getActions: ({ id }) => {
+              const isInEditMode = rowModesModel[id]?.mode === GridRowModes.Edit;
+      
+              if (isInEditMode) {
+                return [
+                  <GridActionsCellItem
+                    icon={<Save />}
+                    label="Save"
+                    sx={{
+                      color: 'primary.main',
+                    }}
+                    onClick={handleSaveClick(id)}
+                  />,
+                  <GridActionsCellItem
+                    icon={<Cancel />}
+                    label="Cancel"
+                    className="textPrimary"
+                    onClick={handleCancelClick(id)}
+                    color="inherit"
+                  />,
+                ];
+              }
+      
+              return [
+                <GridActionsCellItem
+                  icon={<Edit />}
+                  label="Edit"
+                  className="textPrimary"
+                  onClick={handleEditClick(id)}
+                  color="inherit"
+                />,
+                <GridActionsCellItem
+                  icon={<Delete />}
+                  label="Delete"
+                  onClick={handleDeleteClick(id)}
+                  color="inherit"
+                />,
+              ];
+            },
+          },
       ];
       
     
-    /***************************************************************/
-    useEffect(() => {
+  /***************************************************************/
+  const handleRowModesModelChange = (newRowModesModel) => {
+    setRowModesModel(newRowModesModel);
+  };
+/***************************************************************/
+const handleRowEditStop = (params, event) => {
+    if (params.reason === GridRowEditStopReasons.rowFocusOut) {
+      event.defaultMuiPrevented = true;
+    }
+  };
+/***************************************************************/
+  const handleEditClick = (id) => () => {
+    setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.Edit } });
+  };
+/***************************************************************/
+  const handleSaveClick = (id) => () => {
+    setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.View } });
+  };
+/***************************************************************/
+  const handleDeleteClick = (id) => () => {
+    const rows = [...fonts];
+    setFonts(rows.filter((row) => row.id !== id));
+  };
+/***************************************************************/
+  const handleCancelClick = (id) => () => {
+    setRowModesModel({
+      ...rowModesModel,
+      [id]: { mode: GridRowModes.View, ignoreModifications: true },
+    });
+    const rows = [...fonts];
+    const editedRow = rows.find((row) => row.id === id);
+    if (editedRow.isNew) {
+      setFonts(rows.filter((row) => row.id !== id));
+    }
+  };
+/***************************************************************/
+  const processRowUpdate = (newRow) => {
+    const updatedRow = { ...newRow, isNew: false };
+    const rows = [...fonts];
+    setFonts(rows.map((row) => (row.id === newRow.id ? updatedRow : row)));
+    return updatedRow;
+  };
+/***************************************************************/    
+useEffect(() => {
         // register a listener 
         if (observerId === null) {
             const id = observerManager.registerListener((dataChanged) => {
