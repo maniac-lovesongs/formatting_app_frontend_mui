@@ -18,7 +18,8 @@ class InstaStringModel {
         let temp = [];
         for (let i = 0; i < removedSel.length; i++){
             if (removedSel[i] !== '') {
-                const [instaChar, leaves] = this.createCharacter(font,
+                const [instaChar, leaves] = this.createCharacter(
+                    font,
                     style,
                     removedSel[i].value,
                     this.cursor[0] + i,

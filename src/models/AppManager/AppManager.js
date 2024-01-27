@@ -4,9 +4,7 @@ import InstaStringModel from "../InstaString/InstaStringModel";
 
 class AppManager{
     /**************************************************************/
-    constructor() {
-        this.history = new History();
-        
+    constructor() {        
         this.string = new InstaStringModel();
         this.defaults = {
             "font": "Sans Serif",
@@ -31,7 +29,6 @@ class AppManager{
         this.clipboard = null; 
 
         // take a snapshot of the initial state
-        //this.addToHistory("init");
         historyManager.snapshot("init", this.snapshot());
     }
     /**************************************************************/

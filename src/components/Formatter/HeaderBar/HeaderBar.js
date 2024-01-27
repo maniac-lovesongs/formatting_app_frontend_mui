@@ -34,11 +34,33 @@ const HeaderBar = (input) => {
 
     }, []);
     /***************************************************************/
+    const handleCopyClick = async () => {
+        try {
+            await navigator.clipboard.writeText(makeString(appManager.string.getString()));
+            appManager.setClipboard(appManager.string.getString());
+            alert("Copied to clipboard!");
+        } catch (err) {
+            console.error(
+                "Unable to copy to clipboard.",
+                err
+            );
+            alert("Copy to clipboard failed.");
+        }
+    };
+    /***************************************************************/
     const determineActiveButtons = () => {
         const canUndo = appManager.canUndo();
         const canRedo = appManager.canRedo();
         setUndo(!canUndo);
         setRedo(!canRedo);
+    }
+
+    /***************************************************************/
+    const makeString = (str) => {
+        console.log(str);
+        return str.map((v) => {
+            return v.symbol;
+        }).join('');
     }
     /***************************************************************/
     const handleUndo = (e) => {
@@ -73,7 +95,7 @@ const HeaderBar = (input) => {
                         disabled={redo}>
                             <Redo/>
                         </Button>
-                        <Button>
+                        <Button onClick={handleCopyClick}>
                             <ContentCopy/>
                         </Button>
                         <Button>

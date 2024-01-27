@@ -3,10 +3,15 @@ import { observerManager } from "../../../models/AppManager/managers.js";
 import utils from '../../../utils/utils.js';
 import constants from '../../../utils/constants.js';
 import { apiCall } from "../../../utils/apiFunctions.js";
-import { DataGrid } from '@mui/x-data-grid';
-import Box from '@mui/material/Box';
-import Grid from '@mui/material/Grid'; // Grid version 1
-import Paper from '@mui/material/Paper';
+import {
+    GridRowModes,
+    DataGrid,
+    GridToolbarContainer,
+    GridActionsCellItem,
+    GridRowEditStopReasons,
+  } from '@mui/x-data-grid';
+import {Edit, Delete, Save, Cancel } from '@mui/icons-material';
+import {Box, Grid, Paper} from "@mui/material";
 import Title from "../Title/Title.js";
 import "./Fonts.scss";
 

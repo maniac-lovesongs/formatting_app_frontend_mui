@@ -40,6 +40,9 @@ const FooterBar = (input) => {
                     determineActiveButtons();
                     determineButtonsInUse();   
                 }
+                else if(dataChanged === "clipboard"){
+                    setClipboard(appManager.getClipboard());
+                }
             });
             setObserverId(id);
         }
@@ -101,6 +104,15 @@ const FooterBar = (input) => {
         e.stopPropagation();
     }
     /***************************************************************/
+    const handlePaste = () => {
+        const temp = appManager.getClipboard();
+        appManager.insertFromPaste(temp);
+    }
+    /***************************************************************/
+    const handleDelete = () => {
+        appManager.deleteAll();
+    };
+    /***************************************************************/
     return(
         <Grid
             item
@@ -130,7 +142,7 @@ const FooterBar = (input) => {
                             <FormatItalic />
                     </Button>
                     <Button
-                        onClick={(e) => {return null}}>
+                        onClick={handleDelete}>
                         <Delete/>
                     </Button>
                     <Button
