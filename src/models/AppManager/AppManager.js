@@ -14,7 +14,7 @@ class AppManager{
             "italic": false, 
             "availableStyles": {"bold": true, "italic": true, "normal": true, "bold italic": true}
         };
-
+        this.current_user = null; 
         this.state = {};
         this.initState();
 
@@ -30,6 +30,11 @@ class AppManager{
 
         // take a snapshot of the initial state
         historyManager.snapshot("init", this.snapshot());
+    }
+    /**************************************************************/
+    setCurrentUser(u){
+        this.current_user = u;
+        observerManager.notify(["current_user"]);
     }
     /**************************************************************/
     initState() {
@@ -75,6 +80,10 @@ class AppManager{
 
     /**************************************************************/
     /* Getters                                                    */
+    /**************************************************************/
+    getCurrentUser(){
+        return this.current_user;
+    }
     /**************************************************************/
     getSelectedText() {
         return this.state.selectedText;
