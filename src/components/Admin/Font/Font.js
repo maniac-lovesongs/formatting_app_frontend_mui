@@ -2,10 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { appManager, observerManager } from "../../../models/AppManager/managers.js";
 import { apiCall } from "../../../utils/apiFunctions.js";
 import {withObserver, useObserver} from '../../../utils/withObserver.js';
-import Box from '@mui/material/Box';
-import Grid from '@mui/material/Grid'; // Grid version 1
-import Paper from '@mui/material/Paper';
-import MenuItem from '@mui/material/MenuItem';
+import { Button, ButtonGroup, MenuItem, Paper, Grid, Box } from '@mui/material';
 import Select from '@mui/material/Select';
 import Title from "../Title/Title.js";
 import InputBox from '../../Formatter/InputBox/InputBox.js';
@@ -43,6 +40,23 @@ const Fonts = (input) => {
 
     }, []);
     /***************************************************************/
+    const handleSelectChange = (e) => {
+        //appManager.setStyleBasic(e.target.value)
+        setCharacterSet(e.target.value);        
+    }
+    /***************************************************************/
+    const handleViewButtonClick = (e) => {
+        appManager.setStyleBasic(characterSet);
+    }
+    /***************************************************************/
+    const makeSelectMenuItems = (font) => {      
+      const menuItems = font.styles.map((s) => {
+        return <MenuItem value={s}>{s}</MenuItem>
+      });
+
+      return menuItems; 
+    }
+    /***************************************************************/
     return (
         <Box
         sx={{
@@ -59,17 +73,25 @@ const Fonts = (input) => {
                 <Grid item container>
                     <Grid item xs={6}>Styles</Grid>
                     <Grid item xs={6}> 
-                            {characterSet && <Select
-                                value={characterSet}
-                                label="Styles"
-                                onChange={(e) => {
-                                    appManager.setStyleBasic(e.target.value);
-                                }}
-                            >
-                                {font.styles && font.styles.map((s) => {
-                                    return <MenuItem value={s}>{s}</MenuItem>
-                                })}
-                            </Select>}
+                            {characterSet && 
+                            <React.Fragment>
+                                <Select
+                                    value={characterSet}
+                                    label="Styles"
+                                    onChange={handleSelectChange}
+                                >
+                                    {font.styles && makeSelectMenuItems(font)}
+                                </Select>
+                                <div className="style-select-buttons">
+                                    <ButtonGroup variant="contained" aria-label="outlined primary button group">
+                                        <Button onClick={handleViewButtonClick}>View</Button>
+                                        <Button>Delete</Button>
+                                    </ButtonGroup>
+                                </div>
+
+                            </React.Fragment>
+
+                            }
                     </Grid>
                 </Grid>
                 <Grid item container>
