@@ -3,19 +3,22 @@ import { appManager } from "../../../models/AppManager/managers.js";
 import { apiCall } from '../../../utils/apiFunctions.js';
 import constants from '../../../utils/constants.js';
 import {DataGrid} from '@mui/x-data-grid';
-import editableDataGridRowsWrapper from '../../../utils/editableDataGridRowsWrapper.js';
-import withObserver from '../../../utils/withObserver.js';
+import {withEditableDataGridRows} from '../../../utils/editableDataGridRowsWrapper.js';
+import {withObserver, useObserver} from '../../../utils/withObserver.js';
 import "./CharacterSet.scss";
 
 /***************************************************************/
 const CharacterSetInner = (input) => {
     const ref = useRef(null);
-    const [observerId, setObserverId] = useState(null);
     const [characters, setCharacters] = useState(null);
     const [fontName, setFontName] = useState(input.fontName);
     const [style, setStyle] = useState(input.characterSet)
     const [rowModesModel, setRowModesModel] = useState({});
-
+    const [observerId, setObserverId] = useState(null);
+    const [actionsColumn] = withEditableDataGridRows({"rowModesModel": rowModesModel, 
+    "rows": characters, 
+    "setRows": setCharacters, 
+    "setRowsModel": setRowModesModel});
   /***************************************************************/
     const columns = [
         { field: 'id', headerName: 'ID', width: 90 },
@@ -31,11 +34,7 @@ const CharacterSetInner = (input) => {
           width: 150,
           editable: true
         },
-        input.makeActionsColumn({...input.inputFunctions, 
-            "rowModesModel": rowModesModel, 
-            "rows": characters, 
-            "setRows": setCharacters, 
-            "setRowModesModel": setRowModesModel})
+        actionsColumn
       ];
    /***************************************************************/
    const getCharacterSetHelper = async (s,f) => {
@@ -88,6 +87,6 @@ const CharacterSetInner = (input) => {
             </React.Fragment>
     );
 }
-const CharacterSet = editableDataGridRowsWrapper(CharacterSetInner);
+const CharacterSet = CharacterSetInner;
 export default CharacterSet;
 /**************************************************************/

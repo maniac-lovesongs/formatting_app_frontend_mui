@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import withObserver from '../../../utils/withObserver.js';
+import {withObserver, useObserver} from '../../../utils/withObserver.js';
 import {appManager} from "../../../models/AppManager/managers.js";
 import "./InputBox.scss";
 /***************************************************************/

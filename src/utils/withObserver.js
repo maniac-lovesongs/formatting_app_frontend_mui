@@ -13,4 +13,21 @@ const withObserver = (callback, observerId, setObserverId) => {
     };   
 }
 
-export default withObserver;
+const useObserver = ({callback}) => {
+    const [observerId,setObserverId] = useState(null);
+    useEffect(() => {
+        // register a listener 
+        if(observerId === null){
+            const id = observerManager.registerListener(callback);
+            setObserverId(id);
+        }
+    
+        return () => {
+            observerManager.unregisterListener(observerId);
+            setObserverId(null);
+        };   
+    }, []);
+    return [observerId, setObserverId]
+};
+
+export {withObserver, useObserver};

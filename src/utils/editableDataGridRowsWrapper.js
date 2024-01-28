@@ -1,69 +1,60 @@
 import React, { useState, useEffect, useRef } from 'react';
 import {
     GridRowModes,
-    DataGrid,
-    GridToolbarContainer,
     GridActionsCellItem,
     GridRowEditStopReasons,
   } from '@mui/x-data-grid';
 import {Edit, Delete, Save, Cancel } from '@mui/icons-material';
-const editableDataGridRowsWrapper = (WrappedComponent) => {
 
-    /***************************************************************/
-    const EditableDisplayGrid = (input) => {
-        const makeActionsColumn = (d) => {
-          //console.log(d);
-            const actionsColumn = {
-                field: 'actions',
-                type: 'actions',
-                headerName: 'Actions',
-                width: 100,
-                cellClassName: 'actions',
-                getActions: ({id}) => {
-                  const isInEditMode = d.rowModesModel[id]?.mode === GridRowModes.Edit;
-          
-                  if (isInEditMode) {
-                    return [
-                      <GridActionsCellItem
-                        icon={<Save />}
-                        label="Save"
-                        sx={{
-                          color: 'primary.main',
-                        }}
-                        onClick={d.handleSaveClick(id, d.rowModesModel, d.setRowModesModel)}
-                      />,
-                      <GridActionsCellItem
-                        icon={<Cancel />}
-                        label="Cancel"
-                        className="textPrimary"
-                        onClick={d.handleCancelClick(id, d.rowModesModel, d.rows, d.setRows, d.setRowModesModel)}
-                        color="inherit"
-                      />,
-                    ];
-                  }
-          
-                  return [
-                    <GridActionsCellItem
-                      icon={<Edit />}
-                      label="Edit"
-                      className="textPrimary"
-                      onClick={d.handleEditClick(id, d.rowModesModel, d.setRowModesModel)}
-                      color="inherit"
-                    />,
-                    <GridActionsCellItem
-                      icon={<Delete />}
-                      label="Delete"
-                      onClick={d.handleDeleteClick(id, d.rows, d.setRows)}
-                      color="inherit"
-                    />,
-                  ];
-                },
-            };
-
-            return actionsColumn; 
-        };
-        /***************************************************************/
-        const handleRowModesModelChange = (newRowModesModel, setRowModesModel) => {
+const withEditableDataGridRows = (d) => {
+      const actionsColumn = {
+          field: 'actions',
+          type: 'actions',
+          headerName: 'Actions',
+          width: 100,
+          cellClassName: 'actions',
+          getActions: ({id}) => {
+            const isInEditMode = d.rowModesModel[id]?.mode === GridRowModes.Edit;
+    
+            if (isInEditMode) {
+              return [
+                <GridActionsCellItem
+                  icon={<Save />}
+                  label="Save"
+                  sx={{
+                    color: 'primary.main',
+                  }}
+                  onClick={handleSaveClick(id, d.rowModesModel, d.setRowModesModel)}
+                />,
+                <GridActionsCellItem
+                  icon={<Cancel />}
+                  label="Cancel"
+                  className="textPrimary"
+                  onClick={handleCancelClick(id, d.rowModesModel, d.rows, d.setRows, d.setRowModesModel)}
+                  color="inherit"
+                />,
+              ];
+            }
+    
+            return [
+              <GridActionsCellItem
+                icon={<Edit />}
+                label="Edit"
+                className="textPrimary"
+                onClick={handleEditClick(id, d.rowModesModel, d.setRowModesModel)}
+                color="inherit"
+              />,
+              <GridActionsCellItem
+                icon={<Delete />}
+                label="Delete"
+                onClick={handleDeleteClick(id, d.rows, d.setRows)}
+                color="inherit"
+              />,
+            ];
+          },
+      };
+          /***************************************************************/
+          const handleRowModesModelChange = (newRowModesModel, setRowModesModel) => {
             setRowModesModel(newRowModesModel);
         };
         /***************************************************************/
@@ -101,23 +92,7 @@ const editableDataGridRowsWrapper = (WrappedComponent) => {
             setRows(rows.map((row) => (row.id === newRow.id ? updatedRow : row)));
             return updatedRow;
         };
-        /***************************************************************/    
-        const inputFunctions = {
-            "handleRowModesModelChange": handleRowModesModelChange,
-            "handleRowEditStop": handleRowEditStop,
-            "handleEditClick": handleEditClick,
-            "handleSaveClick": handleSaveClick,
-            "handleDeleteClick": handleDeleteClick,
-            "handleCancelClick": handleCancelClick,
-            "processRowUpdate": processRowUpdate, 
-        };
-        /***************************************************************/
-        return (
-            <WrappedComponent {...input} inputFunctions={inputFunctions} makeActionsColumn={makeActionsColumn} />
-        );
-    }
+      return [actionsColumn]
+};
 
-    return EditableDisplayGrid;
-}
-
-export default editableDataGridRowsWrapper;
+export {withEditableDataGridRows};

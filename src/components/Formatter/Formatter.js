@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { apiCall} from '../../utils/apiFunctions.js';
-import withObserver from "../../utils/withObserver.js";
+import {withObserver, useObserver} from "../../utils/withObserver.js";
 import {Grid, Box, Paper} from "@mui/material";
 import InputBox from "./InputBox/InputBox.js";
 import HeaderBar from './HeaderBar/HeaderBar.js';

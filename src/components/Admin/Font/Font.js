@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { appManager, observerManager } from "../../../models/AppManager/managers.js";
 import { apiCall } from "../../../utils/apiFunctions.js";
-import withObserver from '../../../utils/withObserver.js';
+import {withObserver, useObserver} from '../../../utils/withObserver.js';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid'; // Grid version 1
 import Paper from '@mui/material/Paper';

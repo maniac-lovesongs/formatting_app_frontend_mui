@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import constants from '../../../utils/constants.js';
-import editableDataGridRowsWrapper from '../../../utils/editableDataGridRowsWrapper.js';
-import withObserver from '../../../utils/withObserver.js';
+import { withEditableDataGridRows} from '../../../utils/editableDataGridRowsWrapper.js';
+import {withObserver, useObserver} from '../../../utils/withObserver.js';
 import { apiCall } from "../../../utils/apiFunctions.js";
 import {DataGrid } from '@mui/x-data-grid';
 import {Box, Grid, Paper} from "@mui/material";
@@ -14,6 +14,10 @@ const FontsInner = (input) => {
     const [observerId, setObserverId] = useState(null);
     const [fonts, setFonts] = useState(null);
     const [rowModesModel, setRowModesModel] = useState({});
+    const [actionsColumn] = withEditableDataGridRows({"rowModesModel": rowModesModel, 
+    "rows": fonts, 
+    "setRows": setFonts, 
+    "setRowsModel": setRowModesModel});
 
     const columns = [
         { field: 'id', headerName: 'ID', width: 90 },
@@ -40,11 +44,7 @@ const FontsInner = (input) => {
                 return <a href={params.id}>View</a>
             },
         },
-        input.makeActionsColumn({...input.inputFunctions, 
-            "rowModesModel": rowModesModel, 
-            "rows": fonts, 
-            "setRows": setFonts, 
-            "setRowsModel": setRowModesModel})
+        actionsColumn
       ];
 /***************************************************************/    
 useEffect(() => {
@@ -55,12 +55,7 @@ useEffect(() => {
                 setFonts(d.fonts);
             });
         }
-
-        const handleDataChange = (dataChanged) => {
-            console.log("dummy");
-        }
-
-        return withObserver(handleDataChange, observerId, setObserverId);
+        return withObserver((dataChanged) => {}, observerId, setObserverId);
     }, []);
     /***************************************************************/
     return (
@@ -99,6 +94,6 @@ useEffect(() => {
     );
 }
 
-const Fonts = editableDataGridRowsWrapper(FontsInner);
+const Fonts = FontsInner;
 export default Fonts;
 /**************************************************************/

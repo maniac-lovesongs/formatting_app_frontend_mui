@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { ButtonGroup, Button,Grid,Paper } from '@mui/material';
 import {Redo, Undo, ContentCopy, Share} from '@mui/icons-material';
 import {apiCall} from "../../../utils/apiFunctions.js";
-import withObserver from '../../../utils/withObserver.js';
+import {withObserver, useObserver} from '../../../utils/withObserver.js';
 import {appManager} from "../../../models/AppManager/managers.js";
 import "./HeaderBar.scss";
 

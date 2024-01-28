@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import {Button, ButtonGroup, Grid, Paper} from '@mui/material';
 import {FontDownload, FormatBold, FormatItalic, ContentPaste, Delete} from "@mui/icons-material";
 import {apiCall} from "../../../utils/apiFunctions.js";
-import withObserver from '../../../utils/withObserver.js';
+import {withObserver, useObserver} from '../../../utils/withObserver.js';
 import {appManager } from "../../../models/AppManager/managers.js";
 import "./FooterBar.scss";
 
