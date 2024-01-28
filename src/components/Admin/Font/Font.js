@@ -12,7 +12,6 @@ import "./Font.scss";
 
 /***************************************************************/
 const Fonts = (input) => {
-    const ref = useRef(null);
     const [observerId, setObserverId] = useState(null);
     const [font, setFont] = useState([]);
     const [characterSet, setCharacterSet] = useState(null);
@@ -41,7 +40,6 @@ const Fonts = (input) => {
     }, []);
     /***************************************************************/
     const handleSelectChange = (e) => {
-        //appManager.setStyleBasic(e.target.value)
         setCharacterSet(e.target.value);        
     }
     /***************************************************************/
