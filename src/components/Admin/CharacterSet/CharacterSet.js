@@ -3,8 +3,8 @@ import { appManager } from "../../../models/AppManager/managers.js";
 import { apiCall } from '../../../utils/apiFunctions.js';
 import constants from '../../../utils/constants.js';
 import {DataGrid} from '@mui/x-data-grid';
-import {withEditableDataGridRows} from '../../../utils/editableDataGridRowsWrapper.js';
-import {withObserver, useObserver} from '../../../utils/withObserver.js';
+import {withEditableDataGridRows, useEditableDataGridRows} from '../../../utils/hooks/useEditableDataGridRows.js';
+import {withObserver, useObserver} from '../../../utils/hooks/useObserver.js';
 import "./CharacterSet.scss";
 
 /***************************************************************/
@@ -14,12 +14,20 @@ const CharacterSetInner = (input) => {
     const [fontName, setFontName] = useState(input.fontName);
     const [style, setStyle] = useState(input.characterSet)
     const [rowModesModel, setRowModesModel] = useState({});
-    const [observerId, setObserverId] = useState(null);
-    const [actionsColumn] = withEditableDataGridRows({"rowModesModel": rowModesModel, 
+    /***************************************************************/
+    const observerId = useObserver({"callback": (dataChanged) => {
+        if(dataChanged === "style"){
+            const tempStyle = appManager.getStyle();
+            getCharacterSetHelper(tempStyle,fontName);
+            setStyle(tempStyle);                
+        }
+    }});
+    /***************************************************************/
+    const actionsColumn = useEditableDataGridRows({"rowModesModel": rowModesModel, 
     "rows": characters, 
     "setRows": setCharacters, 
-    "setRowsModel": setRowModesModel});
-  /***************************************************************/
+    "setRowModesModel": setRowModesModel});
+    /***************************************************************/
     const columns = [
         { field: 'id', headerName: 'ID', width: 90 },
         {
@@ -56,16 +64,6 @@ const CharacterSetInner = (input) => {
         // register a listener 
         if (characters === null)
             getCharacterSetHelper(style,fontName);            
-        
-        const handleDataChange = (dataChanged) => {
-            if(dataChanged === "style"){
-                const tempStyle = appManager.getStyle();
-                getCharacterSetHelper(tempStyle,fontName);
-                setStyle(tempStyle);                
-            }
-        };
-
-        return withObserver(handleDataChange, observerId, setObserverId);  
     }, []);
     /***************************************************************/
     return (

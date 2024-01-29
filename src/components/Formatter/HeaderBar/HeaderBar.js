@@ -2,27 +2,25 @@ import React, { useState, useEffect, useRef } from 'react';
 import { ButtonGroup, Button,Grid,Paper } from '@mui/material';
 import {Redo, Undo, ContentCopy, Share} from '@mui/icons-material';
 import {apiCall} from "../../../utils/apiFunctions.js";
-import {withObserver, useObserver} from '../../../utils/withObserver.js';
+import {withObserver, useObserver} from '../../../utils/hooks/useObserver.js';
 import {appManager} from "../../../models/AppManager/managers.js";
 import "./HeaderBar.scss";
 
 /***************************************************************/
 const HeaderBar = (input) => {
     const ref = useRef(null);
-    const [observerId, setObserverId] = useState(null);
+    //const [observerId, setObserverId] = useState(null);
     const [undo, setUndo] = useState(true);
     const [redo, setRedo] = useState(true);
+    const observerId = useObserver({"callback": (dataChanged) => {
+        if (dataChanged === "history") {
+            determineActiveButtons();
+        }        
+    }});
 
     /***************************************************************/
     useEffect(() => {
         determineActiveButtons();
-        const handleDataChange = (dataChanged) => {
-            if (dataChanged === "history") {
-                determineActiveButtons();
-            }        
-        }
-
-        return withObserver(handleDataChange, observerId, setObserverId);
     }, []);
     /***************************************************************/
     const handleCopyClick = async () => {

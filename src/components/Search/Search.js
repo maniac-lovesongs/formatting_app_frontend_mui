@@ -1,28 +1,16 @@
 import React, { useState, useEffect, useRef } from 'react';
-import {observerManager} from "../../models/AppManager/managers.js";
+import { useObserver } from '../../utils/withObserver.js';
 import TextField from '@mui/material/TextField';
 import "./Search.scss";
 
 /***************************************************************/
 const Search = (input) => {
     const ref = useRef(null);
-    const [observerId, setObserverId] = useState(null);
+    /***************************************************************/
+    const observerId = useObserver({"callback": (dataChanged) => {}});
     /***************************************************************/
     useEffect(() => {
-        // register a listener 
-        if (observerId === null) {
-            const id = observerManager.registerListener((dataChanged) => {
-                //console.log("Something interesting happened to the app, and as a listener I need to update ");
-            });
-            setObserverId(id);
-        }
-
-        // once the component unmounts, remove the listener
-        return () => {
-            observerManager.unregisterListener(observerId);
-            setObserverId(null);
-        };
-
+        // register a listener
     }, []);    
     /***************************************************************/
     const handleChange = (e) => {

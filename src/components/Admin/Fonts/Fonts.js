@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import constants from '../../../utils/constants.js';
-import { withEditableDataGridRows} from '../../../utils/editableDataGridRowsWrapper.js';
-import {withObserver, useObserver} from '../../../utils/withObserver.js';
+import { useEditableDataGridRows } from '../../../utils/hooks/useEditableDataGridRows.js';
+import {useObserver} from '../../../utils/hooks/useObserver.js';
 import { apiCall } from "../../../utils/apiFunctions.js";
 import {DataGrid } from '@mui/x-data-grid';
 import {Box, Grid, Paper} from "@mui/material";
@@ -11,13 +11,13 @@ import "./Fonts.scss";
 /***************************************************************/
 const FontsInner = (input) => {
     const ref = useRef(null);
-    const [observerId, setObserverId] = useState(null);
     const [fonts, setFonts] = useState(null);
     const [rowModesModel, setRowModesModel] = useState({});
-    const [actionsColumn] = withEditableDataGridRows({"rowModesModel": rowModesModel, 
+    const actionsColumn = useEditableDataGridRows({"rowModesModel": rowModesModel, 
     "rows": fonts, 
     "setRows": setFonts, 
-    "setRowsModel": setRowModesModel});
+    "setRowModesModel": setRowModesModel});
+    const observerId = useObserver({"callback": (dataChanged) => {}});
 
     const columns = [
         { field: 'id', headerName: 'ID', width: 90 },
@@ -55,7 +55,6 @@ useEffect(() => {
                 setFonts(d.fonts);
             });
         }
-        return withObserver((dataChanged) => {}, observerId, setObserverId);
     }, []);
     /***************************************************************/
     return (

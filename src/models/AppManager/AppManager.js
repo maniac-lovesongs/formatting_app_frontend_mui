@@ -77,6 +77,10 @@ class AppManager{
         this.state.font = f; 
         observerManager.notify(["font"]);
     }
+    /**************************************************************/
+    userLoggedIn(){
+        return this.current_user !== null; 
+    }
 
     /**************************************************************/
     /* Getters                                                    */

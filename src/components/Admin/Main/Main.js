@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { appManager, observerManager } from "../../../models/AppManager/managers.js";
+import { useObserver } from '../../../utils/hooks/useObserver.js';
 import { apiCall } from '../../../utils/apiFunctions.js';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid'; // Grid version 1
@@ -11,31 +12,18 @@ import "./Main.scss";
 /***************************************************************/
 const Main = (input) => {
     const ref = useRef(null);
-    const [observerId, setObserverId] = useState(null);
+    //const [observerId, setObserverId] = useState(null);
+    const observerId = useObserver({"callback": (dataChanged) => {}});
     const [counts, setCounts] = useState(null);
 
     /***************************************************************/
     useEffect(() => {
-        // register a listener 
-        if (observerId === null) {
-            const id = observerManager.registerListener((dataChanged) => {
-                //console.log("Something interesting happened to the app, and as a listener I need to update ");
-            });
-            setObserverId(id);
-        }
-
         if (counts === null) {
             const uri = "/api/all";
             apiCall(uri, {}, (args, d) => {
                 setCounts(d);
             });
         }
-
-        // once the component unmounts, remove the listener
-        return () => {
-            observerManager.unregisterListener(observerId);
-            setObserverId(null);
-        };
 
     }, []);
     /***************************************************************/

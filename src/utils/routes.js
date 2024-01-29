@@ -13,7 +13,9 @@ const appRoutes = [
         path: "/admin/dashboard",
         props: {
             "content": "admin.main",
-            "parent": "admin"
+            "parent": "admin",
+            "protected": true,
+            "required_role": 1
         },
         component: AppContainer
     },
@@ -21,7 +23,9 @@ const appRoutes = [
         path: "/admin/fonts/view/all",
         props: {
             "content": "admin.fonts.all",
-            "parent": "admin"
+            "parent": "admin",
+            "protected": true,
+            "required_role": 1
         },
         component: AppContainer
     },
@@ -29,7 +33,9 @@ const appRoutes = [
         path: "/admin/fonts/view/:id",
         props: {
             "content": "admin.fonts.id",
-            "parent": "admin"
+            "parent": "admin",
+            "protected": true,
+            "required_role": 1
         },
         component: AppContainer
     },
@@ -37,7 +43,9 @@ const appRoutes = [
         path: "/admin/fonts/view/:fontNameParam/style/:styleParam",
         props: {
             "content": "admin.fonts.chars",
-            "parent": "admin"
+            "parent": "admin",
+            "protected": true,
+            "required_role": 1
         },
         component: AppContainer
     },

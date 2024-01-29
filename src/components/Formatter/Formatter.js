@@ -1,18 +1,22 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { apiCall} from '../../utils/apiFunctions.js';
-import {withObserver, useObserver} from "../../utils/withObserver.js";
+import {useObserver} from "../../utils/hooks/useObserver.js";
 import {Grid, Box, Paper} from "@mui/material";
 import InputBox from "./InputBox/InputBox.js";
 import HeaderBar from './HeaderBar/HeaderBar.js';
 import FooterBar from "./FooterBar/FooterBar.js";
-import {appManager, observerManager} from "../../models/AppManager/managers.js";
+import {appManager} from "../../models/AppManager/managers.js";
 
 /***************************************************************/
 const Formatter = (input) => {
     const ref = useRef(null);
-    const [observerId, setObserverId] = useState(null);
     const [fontLookup, setFontLookup] = useState(null);
-    
+    /***************************************************************/
+    const observerId = useObserver({"callback": (dataChanged) => {
+        if(dataChanged === "currentData"){
+            setFontLookup(appManager.getCurrentData());
+        }
+    }});
     /***************************************************************/
     useEffect(() => {
         if (fontLookup === null) {
@@ -25,14 +29,6 @@ const Formatter = (input) => {
                 }
             });
         }
-
-        const handleDataChange = (dataChanged) => {
-            if(dataChanged === "currentData"){
-                setFontLookup(appManager.getCurrentData());
-            }
-        };
-
-        return withObserver(handleDataChange,observerId,setObserverId);
     }, []);    
     /***************************************************************/
     return (

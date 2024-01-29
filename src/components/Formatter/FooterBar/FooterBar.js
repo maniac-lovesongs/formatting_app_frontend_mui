@@ -2,49 +2,46 @@ import React, { useState, useEffect } from 'react';
 import {Button, ButtonGroup, Grid, Paper} from '@mui/material';
 import {FontDownload, FormatBold, FormatItalic, ContentPaste, Delete} from "@mui/icons-material";
 import {apiCall} from "../../../utils/apiFunctions.js";
-import {withObserver, useObserver} from '../../../utils/withObserver.js';
+import {withObserver, useObserver} from '../../../utils/hooks/useObserver.js';
 import {appManager } from "../../../models/AppManager/managers.js";
 import "./FooterBar.scss";
 
 /***************************************************************/
 const FooterBar = (input) => {
-    const [observerId, setObserverId] = useState(null);
+    //const [observerId, setObserverId] = useState(null);
     const [fontPickerOpen, setFontPickerOpen] = useState(false);
     const [disableBold, setDisableBold] = useState(false);
     const [disableItalic, setDisableItalic] = useState(false);
     const [usingBold, setUsingBold] = useState(false);
     const [usingItalic, setUsingItalic] = useState(false);
     const [clipboard, setClipboard] = useState(null);
+    /***************************************************************/
+    const observerId = useObserver({"callback": (dataChanged) => {
+        if (dataChanged === "state") {
+            const s = appManager.getUriFriendlyStyle();
+            const f = appManager.getUriFriendlyFont();
+            const uri = "/api/fonts/character_sets/font/" + f + "/style/" + s;
+            apiCall(uri, {}, (args, d) => {
+                if (d && d.characters) {
+                    appManager.setCurrentData(d);
+                    determineActiveButtons();
+                    determineButtonsInUse();
+                }
+            });
 
+        }
+        else if(dataChanged === "currentData"){
+            determineActiveButtons();
+            determineButtonsInUse();   
+        }
+        else if(dataChanged === "clipboard"){
+            setClipboard(appManager.getClipboard());
+        }
+    }});
     /***************************************************************/
     useEffect(() => {
         determineActiveButtons();
         determineButtonsInUse();
-
-        const handleDataChange = (dataChanged) => {
-            if (dataChanged === "state") {
-                const s = appManager.getUriFriendlyStyle();
-                const f = appManager.getUriFriendlyFont();
-                const uri = "/api/fonts/character_sets/font/" + f + "/style/" + s;
-                apiCall(uri, {}, (args, d) => {
-                    if (d && d.characters) {
-                        appManager.setCurrentData(d);
-                        determineActiveButtons();
-                        determineButtonsInUse();
-                    }
-                });
-
-            }
-            else if(dataChanged === "currentData"){
-                determineActiveButtons();
-                determineButtonsInUse();   
-            }
-            else if(dataChanged === "clipboard"){
-                setClipboard(appManager.getClipboard());
-            }
-        };
-
-        return withObserver(handleDataChange, observerId, setObserverId);
     }, []);
     /***************************************************************/
     const determineActiveButtons = () => {

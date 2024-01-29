@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { appManager, observerManager } from "../../../models/AppManager/managers.js";
+import { appManager } from "../../../models/AppManager/managers.js";
 import { apiCall } from "../../../utils/apiFunctions.js";
-import {withObserver, useObserver} from '../../../utils/withObserver.js';
+import { useObserver} from '../../../utils/hooks/useObserver.js';
 import { Button, ButtonGroup, MenuItem, Paper, Grid, Box } from '@mui/material';
 import Select from '@mui/material/Select';
 import Title from "../Title/Title.js";
@@ -12,11 +12,16 @@ import "./Font.scss";
 
 /***************************************************************/
 const Fonts = (input) => {
-    const [observerId, setObserverId] = useState(null);
     const [font, setFont] = useState([]);
     const [characterSet, setCharacterSet] = useState(null);
     const {id} = useParams();
-    
+    const observerId = useObserver({"callback": (dataChanged) => {
+        if(dataChanged === "style"){
+            const tempStyle = appManager.getStyle();
+            setCharacterSet(tempStyle);
+        }
+    }});
+
     /***************************************************************/
     useEffect(() => {
         const uri = "/api/fonts/by_id/" + id; 
@@ -27,15 +32,6 @@ const Fonts = (input) => {
             appManager.setFontBasic(d.font.name);
             appManager.setStyleBasic(charSet);
         });
-
-        const handleDataChange = (dataChanged) => {
-            if(dataChanged === "style"){
-                const tempStyle = appManager.getStyle();
-                setCharacterSet(tempStyle);
-            }
-        }
-
-        return withObserver(handleDataChange, observerId, setObserverId);
 
     }, []);
     /***************************************************************/

@@ -26,4 +26,4 @@ const apiCallPost = async (uri, args, postData,callback) => {
       }));
 }
 
-export { apiCall, apiCallPost };
+export { apiCall, apiCallPost};

@@ -12,8 +12,7 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import {apiCall, apiCallPost} from "../../../utils/apiFunctions.js";
-import Cookies from 'universal-cookie';
+import {attemptLogin} from "../../../utils/withAuth.js";
 
 function Copyright(props) {
   return (
@@ -35,22 +34,7 @@ const defaultTheme = createTheme();
 export default function SignIn() {
   const handleSubmit = (event) => {
     event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    const uri = "/api/auth/login";
-    const postData = {
-      username: data.get('username'),
-      password: data.get('password')
-    };
-
-    apiCallPost(uri, {}, postData, (args, d) => {
-      if(d){
-        console.log(d)
-        const cookies = new Cookies();
-        d.cookies.forEach((c)=>{
-          cookies.set(c.key,c.value, {"expires": new Date(c.expiration*1000)})
-        })
-      }
-    });
+    attemptLogin(event);
   };
 
   return (
