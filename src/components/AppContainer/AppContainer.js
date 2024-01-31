@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useContext } from 'react';
+import React, { useState, useEffect, useRef  } from 'react';
 import { appManager } from "../../models/AppManager/managers.js";
 import Admin from '../Admin/Admin.js';
 import Formatter from '../Formatter/Formatter.js';
@@ -26,8 +26,6 @@ const AppContainer = (input) => {
     useEffect(() => {
         // register a listener 
         if (input.protected) {
-            console.log("The input is protected!!");
-            console.log(appManager.getCurrentUser());
             authHandlers.handleAuthentication(); 
         }
     }, []);
@@ -73,7 +71,7 @@ const AppContainer = (input) => {
     /***************************************************************/
     return (
     <div id="main-wrapper">
-        {contentFactory(isLoggedIn, currentUser)}
+        {displayContent(isLoggedIn, currentUser)}
     </div>
     );
 }
