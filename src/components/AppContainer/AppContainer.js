@@ -26,6 +26,8 @@ const AppContainer = (input) => {
     useEffect(() => {
         // register a listener 
         if (input.protected) {
+            console.log("The input is protected!!");
+            console.log(appManager.getCurrentUser());
             authHandlers.handleAuthentication(); 
         }
     }, []);
@@ -59,7 +61,7 @@ const AppContainer = (input) => {
         }
     }
     /***************************************************************/
-    const displayContent = (isLoggedIn, currentUser){
+    const displayContent = (isLoggedIn, currentUser) =>{
         if (input.protected) {
             // If the content is protected, wait 
             const content = isLoggedIn && contentFactory(isLoggedIn, currentUser);
@@ -71,7 +73,7 @@ const AppContainer = (input) => {
     /***************************************************************/
     return (
     <div id="main-wrapper">
-        {displayContent(isLoggedIn, currentUser)}
+        {contentFactory(isLoggedIn, currentUser)}
     </div>
     );
 }

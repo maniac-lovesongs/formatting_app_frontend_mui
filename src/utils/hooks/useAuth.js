@@ -15,23 +15,24 @@ const useAuth = (input) => {
             const token = Cookies.get("instastylr"); 
             const user = Cookies.get("instastylr_user");
             const sessionKey = sessionStorage.getItem("instastylr_logged_in");
-            if(sessionKey === "true"){
+
+            if(sessionKey){
+                const userData = JSON.parse(sessionKey);
+                appManager.setCurrentUser(userData);
                 return true;    
             }
             else if(token === undefined || user === undefined ){
-                appManager.setCurrentUser(null);
                 navigate(constants.SIGN_IN_ROUTE);
             }
             else if(token !== undefined && user !== undefined){
                 // Check to make sure this is valid on the server
                 const uri = "/api/auth/validateCookie";
-                const postData = {"username": user, "token": token};
+                const postData = { "username": user, "token": token };
+                
                 apiCallPost(uri, {}, postData, (args,d) => {
                     if(d && d.logged_in){
                         const tempUser = {...d.user};
                         const loggedInUser = appManager.getCurrentUser();
-                        if(loggedInUser === null || loggedInUser.username !== tempUser.username)
-                            appManager.setCurrentUser(tempUser);
                     }
                     else{
                         // if the token is invalid, then navigate to the login route
@@ -41,7 +42,6 @@ const useAuth = (input) => {
                             Cookies.remove("instastylr_user");
                             sessionStorage.removeItem("instastylr_logged_in");
                         }
-
                         navigate(constants.SIGN_IN_ROUTE);
                     }
                 });
@@ -69,15 +69,14 @@ const useAuth = (input) => {
                 d.cookies.forEach((cookie) => {
                     Cookies.set(cookie.key, cookie.value);
                 });
-                sessionStorage.setItem("instastylr_logged_in", "true");
+                sessionStorage.setItem("instastylr_logged_in", JSON.stringify(d.user));
                 appManager.setCurrentUser(d.user);
                 navigate(constants.DASHBOARD_ROUTE);
             }
         });
     }
     /**************************************************************/
-    const handleProtectedContent = (input, isLoggedIn, currentUser) => 
-    {
+    const handleProtectedContent = (input, isLoggedIn, currentUser) => {
         const validCases = {};
         validCases["notProtected"] = !input.protected;
         validCases["protectedGeneral"] = input.protected && isLoggedIn; 
