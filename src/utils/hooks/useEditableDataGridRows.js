@@ -68,9 +68,8 @@ const useEditableDataGridRows = (d) => {
         setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.Edit } });
   };
   /***************************************************************/
-  const handleSaveClick = (id, rowModesModel, setRowModesModel) => () => {
-    console.log("handle save clicked");
-        setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.View } });
+  const handleSaveClick = (id, rowModesModel, setRowModesModel, ) => () => {
+      setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.View } });
     };
     /***************************************************************/
     const handleDeleteClick = (id, rows, setRows) => () => {
@@ -88,12 +87,12 @@ const useEditableDataGridRows = (d) => {
         }
     };
     /***************************************************************/
-    const processRowUpdate = (newRow, rows, setRows) => {
-        const updatedRow = { ...newRow, isNew: false };
-        setRows(rows.map((row) => (row.id === newRow.id ? updatedRow : row)));
-        return updatedRow;
+    const editFunctions = {
+      handleRowEditStop: handleRowEditStop,
+      handleRowModesModelChange: handleRowModesModelChange,
     };
-  return actionsColumn;
+
+  return {actionsColumn, editFunctions};
 }
 
 export {useEditableDataGridRows};

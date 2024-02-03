@@ -1,13 +1,14 @@
-import React, { useState, useEffect, useRef, Children } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { appManager } from "../../models/AppManager/managers.js";
 import { apiCallPost } from '../apiFunctions.js';
 import constants from '../constants.js';
 import Cookies from 'js-cookie';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 /***************************************************************/
 const useAuth = (input) => {
     const navigate = useNavigate();
+    const location = useLocation();
 
     /***************************************************************/
     const handleAuthentication = (input) => {    
@@ -32,7 +33,7 @@ const useAuth = (input) => {
                 apiCallPost(uri, {}, postData, (args,d) => {
                     if(d && d.logged_in){
                         const tempUser = {...d.user};
-                        const loggedInUser = appManager.getCurrentUser();
+                        appManager.setCurrentUser(tempUser);
                     }
                     else{
                         // if the token is invalid, then navigate to the login route
@@ -67,7 +68,7 @@ const useAuth = (input) => {
         apiCallPost("/api/auth/login", {}, postData,(args,d) => {
             if(d && d.login){
                 d.cookies.forEach((cookie) => {
-                    Cookies.set(cookie.key, cookie.value);
+                    Cookies.set(cookie.key, cookie.value, { expires: cookie.expiration });
                 });
                 sessionStorage.setItem("instastylr_logged_in", JSON.stringify(d.user));
                 appManager.setCurrentUser(d.user);

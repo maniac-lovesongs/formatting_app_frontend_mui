@@ -3,8 +3,8 @@ import { appManager } from "../../../models/AppManager/managers.js";
 import { apiCall } from '../../../utils/apiFunctions.js';
 import constants from '../../../utils/constants.js';
 import {DataGrid} from '@mui/x-data-grid';
-import {withEditableDataGridRows, useEditableDataGridRows} from '../../../utils/hooks/useEditableDataGridRows.js';
-import {withObserver, useObserver} from '../../../utils/hooks/useObserver.js';
+import {useEditableDataGridRows} from '../../../utils/hooks/useEditableDataGridRows.js';
+import {useObserver} from '../../../utils/hooks/useObserver.js';
 import "./CharacterSet.scss";
 
 /***************************************************************/
@@ -23,13 +23,16 @@ const CharacterSetInner = (input) => {
         }
     }});
     /***************************************************************/
-    const actionsColumn = useEditableDataGridRows({"rowModesModel": rowModesModel, 
+    const {actionsColumn, editFunctions} = useEditableDataGridRows({"rowModesModel": rowModesModel, 
     "rows": characters, 
     "setRows": setCharacters, 
     "setRowModesModel": setRowModesModel});
     /***************************************************************/
     const columns = [
-        { field: 'id', headerName: 'ID', width: 90 },
+        { 
+            field: 'id', 
+            headerName: 'ID', 
+            width: 90 },
         {
           field: 'value',
           headerName: 'Value',
