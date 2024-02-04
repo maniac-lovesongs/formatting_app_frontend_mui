@@ -29,8 +29,17 @@ const CharacterSetInner = (input) => {
         }
     }});
     /***************************************************************/
-    const {actionsColumn, editFunctions} = useEditableDataGridRows({"rowModesModel": rowModesModel, 
-    "rows": characters});
+    const {actionsColumn, editFunctions} = useEditableDataGridRows({
+        "deleteConfirmationTitle": "Delete Character Pair",
+        "saveConfirmationTitle": "Save Character Pair",
+        "makeSaveConfirmationMessage": (params) => {
+            return `Would you like to save (${params.row.symbol}, ${params.row.value}) pair from the ${style} character set in ${fontName}?`
+        },
+        "makeDeleteConfirmationMessage": (params) => {
+            return `Would you like to delete (${params.row.symbol}, ${params.row.value}) pair from the ${style} character set in ${fontName}?`;
+        },
+        "rowModesModel": rowModesModel, 
+        "rows": characters});
     /***************************************************************/
     const columns = [
         { 

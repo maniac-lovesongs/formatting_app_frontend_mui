@@ -43,28 +43,42 @@ const useEditableDataGridRows = (d) => {
           return (<ConfirmationDialog 
           icon={<Delete/>}
           inner="Delete?"
+          title={d.deleteConfirmationTitle}
           label="Delete"
           color="inherit"
-          onClickHandler={(params,setOpen) => {
-            handleDeleteClick(params)();
+          onClickHandler={(event,setOpen) => {
+            handleDeleteClick(id,editableRows,setEditableRows)();
             setOpen(false);
           }}
           triggerComponent={GridActionsCellItem}>
-            <span>Delete this?</span>
+            <span>{d.makeDeleteConfirmationMessage(params)}</span>
           </ConfirmationDialog>  
           );
         };
 
+        const makeSave = () =>{
+          return (<ConfirmationDialog 
+          icon={<Save/>}
+          inner="Save?"
+          title={d.saveConfirmationTitle}
+          label="Save"
+          sx={{
+            color: 'primary.main',
+          }}
+          onClickHandler={(event,setOpen) => {
+            handleSaveClick(id, rowModesModel, handleRowModesModelChange)();
+            setOpen(false);
+          }}
+          triggerComponent={GridActionsCellItem}>
+            <span>{d.makeSaveConfirmationMessage(params)}</span>
+          </ConfirmationDialog>  
+          );
+        };
+
+
         if (isInEditMode) {
           return [
-            <GridActionsCellItem
-              icon={<Save />}
-              label="Save"
-              sx={{
-                color: 'primary.main',
-              }}
-              onClick={handleSaveClick(id, rowModesModel, handleRowModesModelChange)}
-            />,
+            makeSave(),
             <GridActionsCellItem
               icon={<Cancel />}
               label="Cancel"
@@ -108,7 +122,7 @@ const useEditableDataGridRows = (d) => {
       setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.View } });
     };
     /***************************************************************/
-    const handleDeleteClick = (params) => () => {
+    const handleDeleteClick = (id,rows,setRows) => () => {
        // console.log(params);
         //setRows(rows.filter((row) => row.id !== id));
     };

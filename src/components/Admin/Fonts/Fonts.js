@@ -15,7 +15,17 @@ const FontsInner = (input) => {
     const [fonts, setFonts] = useState(null);
     const [rowModesModel, setRowModesModel] = useState({});
     /***************************************************************/
-    const {actionsColumn, editFunctions} = useEditableDataGridRows({"rowModesModel": rowModesModel, "rows": fonts});
+    const {actionsColumn, editFunctions} = useEditableDataGridRows({
+      "deleteConfirmationTitle": "Delete Font",
+      "saveConfirmationTitle": "Save Font",
+      "makeSaveConfirmationMessage": (params) => {
+          return `Would you like to save font ${params.row.name}?`;
+      },
+      "makeDeleteConfirmationMessage": (params) => {
+          return `Would you like to delete font ${params.row.name}?`;
+      },
+      "rowModesModel": rowModesModel, 
+      "rows": fonts});
     /***************************************************************/
     const observerId = useObserver({"callback": (dataChanged) => {
       if(dataChanged === "temp.editableRows"){
