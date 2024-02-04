@@ -4,6 +4,7 @@ import { useObserver } from '../../../utils/hooks/useObserver.js';
 import { apiCall, apiCallPost } from "../../../utils/apiFunctions.js";
 import { Grid, Select, MenuItem, Button, ButtonGroup, Chip } from "@mui/material";
 import { Clear } from '@mui/icons-material';
+import CharacterSetCreator from './CharacterSetCreator.js';
 import Title from "../Title/Title.js";
 import "./CharacterSet.scss";
 
@@ -12,8 +13,7 @@ const CharacterSetAdder = (input) => {
     const ref = useRef(null);
     const [availableStyles, setAvailableStyles] = useState(null);
     const [selectedStyle, setSelectedStyle] = useState(null);
-    const [characterSetsBases, setCharacterSetsBases] = useState(null);
-    const [selectedBase, setSelectedBase] = useState(null);
+    const [usingStyle, setUsingStyle] = useState(null);
     const [addedStyles, setAddedStyles] = useState({
         "italic": null,
         "bold": null,
@@ -34,16 +34,6 @@ const CharacterSetAdder = (input) => {
                     setSelectedStyle(temp);
                 }
             });
-
-            const uri2 = "/api/fonts/character_sets/bases/all"
-            apiCall(uri2, {}, (args, d) => {
-                if (d) {
-                    console.log(d);
-                    setCharacterSetsBases(d.bases)
-                    setSelectedBase(d.bases[0]);
-                }
-            });
-
         }
     }, []);
     /***************************************************************/
@@ -88,29 +78,6 @@ const CharacterSetAdder = (input) => {
         }
     }
     /***************************************************************/
-    const handleSelectBase = (e) => {
-        const dataset = Object.keys(e.explicitOriginalTarget.dataset);
-        const temp = { "value": e.target.value };
-        dataset.forEach((k) => {
-            temp[k] = e.explicitOriginalTarget.dataset[k];
-        });
-        setSelectedBase(temp);
-    }
-    /***************************************************************/
-    const makeBases = () => {
-        return characterSetsBases.map((b) => {
-            return (<MenuItem
-                data-baseset={b.baseset}
-                data-id={b.id}
-                value={b.name}>
-                <Chip
-                    sx={{marginRight: "1em"}} 
-                    label={b.name}/>
-                <span className="base">{b.baseset}</span>
-            </MenuItem>)
-        });
-    }
-    /***************************************************************/
     const removeAddedStyle = (s) => {
         return (e) => {
             const tempAvailableStyles = [...availableStyles];
@@ -121,6 +88,10 @@ const CharacterSetAdder = (input) => {
             setAvailableStyles(tempAvailableStyles);
             setAddedStyles(tempAddedStyles);
             setSelectedStyle(tempAvailableStyles[0]);
+
+            if(usingStyle.name === s.name){
+                setUsingStyle(null);
+            }
         }
     }
     /***************************************************************/
@@ -133,7 +104,11 @@ const CharacterSetAdder = (input) => {
                     <ButtonGroup sx={{
                         marginRight: "0.5em"
                     }}>
-                        <Button>{s.name}</Button>
+                        <Button
+                            onClick={() => {
+                                setUsingStyle(s);
+                            }}
+                        >{s.name}</Button>
                         <Button
                             onClick={removeAddedStyle(s)}
                             data-d={s.id}
@@ -178,26 +153,7 @@ const CharacterSetAdder = (input) => {
                     {makeAddedStyles()}
                 </ButtonGroup>
             </Grid>    
-            <Grid item xs={1}>Base</Grid>
-            <Grid item xs={11}>
-            {selectedBase && <Select
-                    value={selectedBase.name}
-                    label="Bases"
-                    fullWidth
-                    sx={{
-                        marginBottom: "0.5em"
-                    }}
-                    onChange={handleSelectBase}
-                >
-                    {characterSetsBases && makeBases()}
-                </Select>}
-                <Button
-                        onClick={handleAddStyle}
-                        variant="contained"
-                        name="useBase">
-                        Use Base
-                    </Button>
-            </Grid>
+            {usingStyle && <CharacterSetCreator style={usingStyle}/>}
     </React.Fragment>
     );
 }
