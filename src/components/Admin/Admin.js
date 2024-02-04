@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { appManager, observerManager } from "../../models/AppManager/managers.js";
 import { useObserver } from '../../utils/hooks/useObserver.js';
 import Dashboard from "./Dashboard/Dashboard.js";
+import CreateNewFont from './Font/CreateNewFont.js';
 import Main from "./Main/Main.js";
 import Fonts from "./Fonts/Fonts.js";
 import CharacterSet from './CharacterSet/CharacterSet.js';
@@ -27,6 +28,8 @@ const Admin = (input) => {
             return <Font/>
         else if(input.content === "admin.fonts.chars")
             return <CharacterSet/>
+        else if(input.content === "admin.fonts.create")
+            return <CreateNewFont/>
         return null;
     }
     /***************************************************************/
