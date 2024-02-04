@@ -7,10 +7,10 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
-import "./DeleteDialog.scss";
+import "./ConfirmationDialog.scss";
 
 /***************************************************************/
-const DeleteDialog = (input) => {
+const ConfirmationDialog = (input) => {
     const ref = useRef(null);
     const [open, setOpen] = useState(false);
     const TriggerComponent = input.triggerComponent; 
@@ -24,14 +24,22 @@ const DeleteDialog = (input) => {
         setOpen(true);
     };
     /**************************************************************/
-    const handleClose = () => {
-        setOpen(false);
+    const handleClose = (choice) => {
+        if(choice === "yes"){
+            return (event) => {
+                console.log("YOU CHOSE YES");
+                input.onClickHandler(event, setOpen);
+            }
+        }
+        return () => {
+            setOpen(false);
+        }
     };
     /**************************************************************/
     return (
         <React.Fragment>
-            <TriggerComponent variant="outlined" onClick={handleClickOpen}>
-                Open alert dialog
+            <TriggerComponent {...input.props} {...input} onClick={handleClickOpen}>
+                {input.inner}
             </TriggerComponent>
             <Dialog
                 open={open}
@@ -40,18 +48,17 @@ const DeleteDialog = (input) => {
                 aria-describedby="alert-dialog-description"
             >
                 <DialogTitle id="alert-dialog-title">
-                    {"Would you like to delete?"}
+                    {input.title}
                 </DialogTitle>
                 <DialogContent>
                     <DialogContentText id="alert-dialog-description">
-                        Let Google help apps determine location. This means sending anonymous
-                        location data to Google, even when no apps are running.
+                        {input.children}
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handleClose}>Yes</Button>
-                    <Button onClick={handleClose} autoFocus>
-                        Agree
+                    <Button onClick={handleClose("no")}>No</Button>
+                    <Button onClick={handleClose("yes")} autoFocus>
+                        Yes
                     </Button>
                 </DialogActions>
             </Dialog>
@@ -59,5 +66,5 @@ const DeleteDialog = (input) => {
     );
 }
 
-export default DeleteDialog;
+export default ConfirmationDialog;
 /**************************************************************/

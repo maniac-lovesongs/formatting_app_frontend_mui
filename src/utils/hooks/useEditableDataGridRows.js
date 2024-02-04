@@ -4,17 +4,56 @@ import {
     GridActionsCellItem,
     GridRowEditStopReasons,
   } from '@mui/x-data-grid';
+import { useObserver } from './useObserver';
+import ConfirmationDialog from '../../components/ConfirmationDialog/ConfirmationDialog.js';
+import { appManager } from "../../models/AppManager/managers.js";
 import {Edit, Delete, Save, Cancel } from '@mui/icons-material';
 
 const useEditableDataGridRows = (d) => {
+    const [editableRows, setEditableRows] = useState(d.rows);
+    const [rowModesModel, setRowModesModel] = useState(d.rowModesModel);
+  /***************************************************************/
+    const observerId = useObserver({
+      "callback": (dataChanged) => {
+        if(dataChanged === "temp.editableRows"){
+          setEditableRows(appManager.getTemp().editableRows)
+        }
+        else if(dataChanged === "temp.rowModesModel"){
+          setRowModesModel(appManager.getTemp().rowModesModel);
+        }
+      }
+    });
+  /***************************************************************/
+    const handleEditableRowsChange = (value) => {
+      let temp = appManager.getTemp();
+      temp = temp === null? {"editableRows": value} : {...temp, "editableRows": value};
+      appManager.setTemp(temp, "temp.editableRows");
+    }
+  /***************************************************************/
     const actionsColumn = {
       field: 'actions',
       type: 'actions',
       headerName: 'Actions',
       width: 100,
       cellClassName: 'actions',
-      getActions: ({id}) => {
-        const isInEditMode = d.rowModesModel[id]?.mode === GridRowModes.Edit;
+      getActions: (params) => {
+        const id = params.id;
+        const isInEditMode = rowModesModel[id]?.mode === GridRowModes.Edit;
+        const makeDelete = () =>{
+          return (<ConfirmationDialog 
+          icon={<Delete/>}
+          inner="Delete?"
+          label="Delete"
+          color="inherit"
+          onClickHandler={(params,setOpen) => {
+            handleDeleteClick(params)();
+            setOpen(false);
+          }}
+          triggerComponent={GridActionsCellItem}>
+            <span>Delete this?</span>
+          </ConfirmationDialog>  
+          );
+        };
 
         if (isInEditMode) {
           return [
@@ -24,13 +63,13 @@ const useEditableDataGridRows = (d) => {
               sx={{
                 color: 'primary.main',
               }}
-              onClick={handleSaveClick(id, d.rowModesModel, d.setRowModesModel)}
+              onClick={handleSaveClick(id, rowModesModel, handleRowModesModelChange)}
             />,
             <GridActionsCellItem
               icon={<Cancel />}
               label="Cancel"
               className="textPrimary"
-              onClick={handleCancelClick(id, d.rowModesModel, d.rows, d.setRows, d.setRowModesModel)}
+              onClick={handleCancelClick(id, rowModesModel, editableRows, handleEditableRowsChange, handleRowModesModelChange)}
               color="inherit"
             />,
           ];
@@ -41,21 +80,18 @@ const useEditableDataGridRows = (d) => {
             icon={<Edit />}
             label="Edit"
             className="textPrimary"
-            onClick={handleEditClick(id, d.rowModesModel, d.setRowModesModel)}
+            onClick={handleEditClick(id, rowModesModel, handleRowModesModelChange)}
             color="inherit"
           />,
-          <GridActionsCellItem
-            icon={<Delete />}
-            label="Delete"
-            onClick={handleDeleteClick(id, d.rows, d.setRows)}
-            color="inherit"
-          />,
+          makeDelete()
         ];
       },
   };
       /***************************************************************/
-      const handleRowModesModelChange = (newRowModesModel, setRowModesModel) => {
-        setRowModesModel(newRowModesModel);
+      const handleRowModesModelChange = (newRowModesModel) => {
+        let temp = appManager.getTemp();
+        temp = temp === null? {"rowModesModel": newRowModesModel} : {...temp, "rowModesModel": newRowModesModel};
+        appManager.setTemp(temp, "temp.rowModesModel");
     };
     /***************************************************************/
     const handleRowEditStop = (params, event) => {
@@ -72,8 +108,9 @@ const useEditableDataGridRows = (d) => {
       setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.View } });
     };
     /***************************************************************/
-    const handleDeleteClick = (id, rows, setRows) => () => {
-        setRows(rows.filter((row) => row.id !== id));
+    const handleDeleteClick = (params) => () => {
+       // console.log(params);
+        //setRows(rows.filter((row) => row.id !== id));
     };
     /***************************************************************/
     const handleCancelClick = (id, rowModesModel,rows, setRows, setRowModesModel) => () => {

@@ -1,5 +1,5 @@
 import observerManager from "./ObserverManager";
-import {History, historyManager} from "../History/HistoryManager";
+import {historyManager} from "../History/HistoryManager";
 import InstaStringModel from "../InstaString/InstaStringModel";
 
 class AppManager{
@@ -15,6 +15,7 @@ class AppManager{
             "availableStyles": {"bold": true, "italic": true, "normal": true, "bold italic": true}
         };
         this.current_user = null; 
+        this.temp = null;
         this.state = {};
         this.initState();
 
@@ -81,9 +82,18 @@ class AppManager{
     userLoggedIn(){
         return this.current_user !== null; 
     }
+    /**************************************************************/
+    setTemp(t,changed){
+        this.temp = t; 
+        observerManager.notify([changed]);
 
+    }
     /**************************************************************/
     /* Getters                                                    */
+    /**************************************************************/
+    getTemp(){
+        return this.temp;
+    }
     /**************************************************************/
     getCurrentUser(){
         return this.current_user;

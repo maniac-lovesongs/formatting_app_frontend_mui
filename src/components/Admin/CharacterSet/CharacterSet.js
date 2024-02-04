@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { appManager } from "../../../models/AppManager/managers.js";
 import { apiCall } from '../../../utils/apiFunctions.js';
 import constants from '../../../utils/constants.js';
-import {DataGrid} from '@mui/x-data-grid';
+import {DataGrid, GridRowModes} from '@mui/x-data-grid';
 import {useEditableDataGridRows} from '../../../utils/hooks/useEditableDataGridRows.js';
 import {useObserver} from '../../../utils/hooks/useObserver.js';
 import "./CharacterSet.scss";
@@ -21,12 +21,16 @@ const CharacterSetInner = (input) => {
             getCharacterSetHelper(tempStyle,fontName);
             setStyle(tempStyle);                
         }
+        else if(dataChanged === "temp.editableRows"){
+            setCharacters(appManager.getTemp().editableRows);
+        }
+        else if(dataChanged === "temp.rowModesModel"){
+            setRowModesModel(appManager.getTemp().rowModesModel);
+        }
     }});
     /***************************************************************/
     const {actionsColumn, editFunctions} = useEditableDataGridRows({"rowModesModel": rowModesModel, 
-    "rows": characters, 
-    "setRows": setCharacters, 
-    "setRowModesModel": setRowModesModel});
+    "rows": characters});
     /***************************************************************/
     const columns = [
         { 
@@ -48,6 +52,12 @@ const CharacterSetInner = (input) => {
         actionsColumn
       ];
    /***************************************************************/
+   const handleCharactersChanged = (changedCharacters) => {
+    let temp = appManager.getTemp(); 
+    temp = temp === null? {"editableRows": changedCharacters} : {...temp, "editableRows": changedCharacters};
+    appManager.setTemp(temp, "temp.editableRows");
+  }
+  /*****************************************************************/
    const getCharacterSetHelper = async (s,f) => {
        const uri = "/api/fonts/character_sets/font/" + f + "/style/" + s;
        apiCall(uri, {}, (args, d) => {
@@ -56,7 +66,7 @@ const CharacterSetInner = (input) => {
                Object.keys(d.characters).forEach((v) => {
                    chs.push(d.characters[v]); 
                });
-               setCharacters(chs);
+               handleCharactersChanged(chs);
                appManager.setCurrentData(d);
           } 
        });
@@ -74,6 +84,24 @@ const CharacterSetInner = (input) => {
                 {characters && <DataGrid
                         rows={characters}
                         columns={columns}
+                        onRowModesModelChange={(temp) => {
+                            editFunctions.handleRowModesModelChange(temp);
+                          }}
+                          rowModesModel={rowModesModel}
+                          onProcessRowUpdateError={(error) => {
+                              console.log("The error made was");
+                              console.log(error);
+                          }}
+                          processRowUpdate={(newRow) => {
+                            const updatedRow = { ...newRow, isNew: false };
+                            const temp = characters.map((row) => (row.id === newRow.id ? updatedRow : row));
+                            handleCharactersChanged(temp);
+                            if (rowModesModel[updatedRow.id]?.mode !== GridRowModes.Edit) {
+                              //updateFonts(updatedRow);   
+                            }
+                            return updatedRow;                              
+                          }}
+                          onRowEditStop={editFunctions.handleRowEditStop}
                         initialState={{
                         pagination: {
                             paginationModel: {

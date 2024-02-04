@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { appManager } from "../../../models/AppManager/managers.js";
 import { apiCall } from "../../../utils/apiFunctions.js";
 import { useObserver} from '../../../utils/hooks/useObserver.js';
+import ConfirmationDialog from '../../ConfirmationDialog/ConfirmationDialog.js';
 import { Button, ButtonGroup, MenuItem, Paper, Grid, Box } from '@mui/material';
 import Select from '@mui/material/Select';
 import Title from "../Title/Title.js";
@@ -79,7 +80,20 @@ const Fonts = (input) => {
                                 <div className="style-select-buttons">
                                     <ButtonGroup variant="contained" aria-label="outlined primary button group">
                                         <Button onClick={handleViewButtonClick}>View</Button>
-                                        <Button>Delete</Button>
+                                        <ConfirmationDialog 
+                                            inner="Delete"
+                                            title="Delete?"
+                                            onClickHandler={(e,setOpen) => {
+                                                console.log(e);
+                                                setOpen(false);
+                                            }} 
+                                            props={{"variant": "contained"}}
+                                            triggerComponent={Button}>
+                                        <span>
+                                            You are about to delete all of the <i>{characterSet}</i> characters of the font <i>{font.name}</i>. Are you sure you 
+                                            want to do this?
+                                        </span>
+                                        </ConfirmationDialog>
                                     </ButtonGroup>
                                 </div>
 

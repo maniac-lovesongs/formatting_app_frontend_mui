@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import constants from '../../../utils/constants.js';
 import { useEditableDataGridRows } from '../../../utils/hooks/useEditableDataGridRows.js';
 import {useObserver} from '../../../utils/hooks/useObserver.js';
+import {appManager} from "../../../models/AppManager/managers.js";
 import { apiCall, apiCallPost } from "../../../utils/apiFunctions.js";
 import { DataGrid, GridRowModes } from '@mui/x-data-grid';
 import {Box, Grid, Paper} from "@mui/material";
@@ -13,15 +14,18 @@ const FontsInner = (input) => {
     const ref = useRef(null);
     const [fonts, setFonts] = useState(null);
     const [rowModesModel, setRowModesModel] = useState({});
-
-
-  /***************************************************************/
-    const {actionsColumn, editFunctions} = useEditableDataGridRows({"rowModesModel": rowModesModel, 
-    "rows": fonts, 
-    "setRows": setFonts, 
-    "setRowModesModel": setRowModesModel});
-  const observerId = useObserver({"callback": (dataChanged) => {}});
-
+    /***************************************************************/
+    const {actionsColumn, editFunctions} = useEditableDataGridRows({"rowModesModel": rowModesModel, "rows": fonts});
+    /***************************************************************/
+    const observerId = useObserver({"callback": (dataChanged) => {
+      if(dataChanged === "temp.editableRows"){
+        setFonts(appManager.getTemp().editableRows);
+      }
+      else if(dataChanged === "temp.rowModesModel"){
+        setRowModesModel(appManager.getTemp().rowModesModel);
+      }
+     }});
+     /***************************************************************/
     const columns = [
         { field: 'id', headerName: 'ID', width: 90 },
         {
@@ -56,16 +60,21 @@ const FontsInner = (input) => {
       console.log(d);
     });
   };
-/*****************************************************************/
-useEffect(() => {
-        // register a listener 
-        if (fonts === null) {
-            const uri = "/api/fonts/all";
-            apiCall(uri, {}, (args, d) => {
-                setFonts(d.fonts);
-            });
-        }
-    }, []);
+  /*****************************************************************/
+  const handleFontsChanged = (changedFonts) => {
+    let temp = appManager.getTemp(); 
+    temp = temp === null? {"editableRows": changedFonts} : {...temp, "editableRows": changedFonts};
+    appManager.setTemp(temp, "temp.editableRows");
+  }
+  /*****************************************************************/
+  useEffect(() => {
+          if (fonts === null) {
+              const uri = "/api/fonts/all";
+              apiCall(uri, {}, (args, d) => {
+                handleFontsChanged(d.fonts);
+              });
+          }
+      }, []);
     /***************************************************************/
     return (
         <Box
@@ -86,7 +95,7 @@ useEffect(() => {
                             rows={fonts}
                             columns={columns}
                             onRowModesModelChange={(temp) => {
-                              editFunctions.handleRowModesModelChange(temp, setRowModesModel);
+                              editFunctions.handleRowModesModelChange(temp);
                             }}
                             rowModesModel={rowModesModel}
                             onProcessRowUpdateError={(error) => {
@@ -96,7 +105,7 @@ useEffect(() => {
                             processRowUpdate={(newRow) => {
                               const updatedRow = { ...newRow, isNew: false };
                               const temp = fonts.map((row) => (row.id === newRow.id ? updatedRow : row));
-                              setFonts(temp);
+                              handleFontsChanged(temp);
                               if (rowModesModel[updatedRow.id]?.mode !== GridRowModes.Edit) {
                                 updateFonts(updatedRow);   
                               }

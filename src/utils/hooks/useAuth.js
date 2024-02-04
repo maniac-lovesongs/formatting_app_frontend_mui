@@ -9,13 +9,14 @@ import { useNavigate, useLocation } from 'react-router-dom';
 const useAuth = (input) => {
     const navigate = useNavigate();
     const location = useLocation();
-
+    const userKey = constants.APP_NAME + "_user";
+    const loggedInKey = constants.APP_NAME + "_logged_in";
     /***************************************************************/
     const handleAuthentication = (input) => {    
         if(!appManager.userLoggedIn()){
-            const token = Cookies.get("instastylr"); 
-            const user = Cookies.get("instastylr_user");
-            const sessionKey = sessionStorage.getItem("instastylr_logged_in");
+            const token = Cookies.get(constants.APP_NAME); 
+            const user = Cookies.get(userKey);
+            const sessionKey = sessionStorage.getItem(loggedInKey);
 
             if(sessionKey){
                 const userData = JSON.parse(sessionKey);
@@ -39,9 +40,9 @@ const useAuth = (input) => {
                         // if the token is invalid, then navigate to the login route
                         if(d && d.actions){
                             appManager.setCurrentUser(null);
-                            Cookies.remove("instastylr");
-                            Cookies.remove("instastylr_user");
-                            sessionStorage.removeItem("instastylr_logged_in");
+                            Cookies.remove(constants.APP_NAME);
+                            Cookies.remove(userKey);
+                            sessionStorage.removeItem(loggedInKey);
                         }
                         navigate(constants.SIGN_IN_ROUTE);
                     }
@@ -52,9 +53,9 @@ const useAuth = (input) => {
     /**************************************************************/
     const logout = () => {
         appManager.setCurrentUser(null);
-        Cookies.remove("instastylr");
-        Cookies.remove("instastylr_user");
-        sessionStorage.removeItem("instastylr_logged_in");
+        Cookies.remove(constants.APP_NAME);
+        Cookies.remove(userKey);
+        sessionStorage.removeItem(loggedInKey);
         navigate(constants.SIGN_IN_ROUTE);
     }
     /**************************************************************/
@@ -70,7 +71,7 @@ const useAuth = (input) => {
                 d.cookies.forEach((cookie) => {
                     Cookies.set(cookie.key, cookie.value, { expires: cookie.expiration });
                 });
-                sessionStorage.setItem("instastylr_logged_in", JSON.stringify(d.user));
+                sessionStorage.setItem(loggedInKey, JSON.stringify(d.user));
                 appManager.setCurrentUser(d.user);
                 navigate(constants.DASHBOARD_ROUTE);
             }
