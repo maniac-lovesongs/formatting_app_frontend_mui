@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import constants from '../../../utils/constants.js';
 import { useObserver } from '../../../utils/hooks/useObserver.js';
 import { apiCall, apiCallPost } from "../../../utils/apiFunctions.js";
-import { Grid, Select, MenuItem, Button, ButtonGroup } from "@mui/material";
+import { Grid, Select, MenuItem, Button, ButtonGroup, Chip } from "@mui/material";
 import { Clear } from '@mui/icons-material';
 import Title from "../Title/Title.js";
 import "./CharacterSet.scss";
@@ -12,6 +12,8 @@ const CharacterSetAdder = (input) => {
     const ref = useRef(null);
     const [availableStyles, setAvailableStyles] = useState(null);
     const [selectedStyle, setSelectedStyle] = useState(null);
+    const [characterSetsBases, setCharacterSetsBases] = useState(null);
+    const [selectedBase, setSelectedBase] = useState(null);
     const [addedStyles, setAddedStyles] = useState({
         "italic": null,
         "bold": null,
@@ -32,6 +34,16 @@ const CharacterSetAdder = (input) => {
                     setSelectedStyle(temp);
                 }
             });
+
+            const uri2 = "/api/fonts/character_sets/bases/all"
+            apiCall(uri2, {}, (args, d) => {
+                if (d) {
+                    console.log(d);
+                    setCharacterSetsBases(d.bases)
+                    setSelectedBase(d.bases[0]);
+                }
+            });
+
         }
     }, []);
     /***************************************************************/
@@ -76,6 +88,42 @@ const CharacterSetAdder = (input) => {
         }
     }
     /***************************************************************/
+    const handleSelectBase = (e) => {
+        const dataset = Object.keys(e.explicitOriginalTarget.dataset);
+        const temp = { "value": e.target.value };
+        dataset.forEach((k) => {
+            temp[k] = e.explicitOriginalTarget.dataset[k];
+        });
+        setSelectedBase(temp);
+    }
+    /***************************************************************/
+    const makeBases = () => {
+        return characterSetsBases.map((b) => {
+            return (<MenuItem
+                data-baseset={b.baseset}
+                data-id={b.id}
+                value={b.name}>
+                <Chip
+                    sx={{marginRight: "1em"}} 
+                    label={b.name}/>
+                <span className="base">{b.baseset}</span>
+            </MenuItem>)
+        });
+    }
+    /***************************************************************/
+    const removeAddedStyle = (s) => {
+        return (e) => {
+            const tempAvailableStyles = [...availableStyles];
+            tempAvailableStyles.push(s);
+            const tempAddedStyles = { ...addedStyles };
+            tempAddedStyles[s.name] = null; 
+    
+            setAvailableStyles(tempAvailableStyles);
+            setAddedStyles(tempAddedStyles);
+            setSelectedStyle(tempAvailableStyles[0]);
+        }
+    }
+    /***************************************************************/
     const makeAddedStyles = () => {
         const keys = Object.keys(addedStyles);
         return keys.map((k) => {
@@ -87,9 +135,7 @@ const CharacterSetAdder = (input) => {
                     }}>
                         <Button>{s.name}</Button>
                         <Button
-                            onClick={(e) => {
-                                console.log(e);
-                            }}
+                            onClick={removeAddedStyle(s)}
                             data-d={s.id}
                             data-name={s.name}><Clear /></Button>
                     </ButtonGroup>
@@ -102,10 +148,10 @@ const CharacterSetAdder = (input) => {
     /***************************************************************/
     return (
     <React.Fragment>
-            <Grid item xs={6}>Style</Grid>
-            <Grid item xs={6}>
+            <Grid item xs={1}>Style</Grid>
+            <Grid item xs={11}>
                 {selectedStyle && <Select
-                    value={selectedStyle.value}
+                    value={selectedStyle.name}
                     label="Styles"
                     fullWidth
                     sx={{
@@ -132,6 +178,26 @@ const CharacterSetAdder = (input) => {
                     {makeAddedStyles()}
                 </ButtonGroup>
             </Grid>    
+            <Grid item xs={1}>Base</Grid>
+            <Grid item xs={11}>
+            {selectedBase && <Select
+                    value={selectedBase.name}
+                    label="Bases"
+                    fullWidth
+                    sx={{
+                        marginBottom: "0.5em"
+                    }}
+                    onChange={handleSelectBase}
+                >
+                    {characterSetsBases && makeBases()}
+                </Select>}
+                <Button
+                        onClick={handleAddStyle}
+                        variant="contained"
+                        name="useBase">
+                        Use Base
+                    </Button>
+            </Grid>
     </React.Fragment>
     );
 }

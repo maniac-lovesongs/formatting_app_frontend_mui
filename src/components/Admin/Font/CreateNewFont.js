@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import constants from '../../../utils/constants.js';
 import { useObserver } from '../../../utils/hooks/useObserver.js';
 import { apiCall, apiCallPost } from "../../../utils/apiFunctions.js";
-import { Box, Grid, Paper, TextField, Select, MenuItem, Button, ButtonGroup } from "@mui/material";
+import { Box, Grid, Paper, TextField  } from "@mui/material";
 import Title from "../Title/Title.js";
 import "./Font.scss";
 import CharacterSetAdder from '../CharacterSet/CharacterSetAdder.js';
@@ -10,9 +10,6 @@ import CharacterSetAdder from '../CharacterSet/CharacterSetAdder.js';
 /***************************************************************/
 const CreateNewFont = (input) => {
     const ref = useRef(null);
-    const [styles, setStyles] = useState(null);
-    const [style, setStyle] = useState("normal");
-    const [addedStyles, setAddedStyles] = useState([]);
     /***************************************************************/
     const observerId = useObserver({ "callback": (dataChanged) => { } });
     /***************************************************************/
@@ -42,8 +39,8 @@ const CreateNewFont = (input) => {
                 <Title className="fonts-title">Create New Font</Title>
                 <Grid container className="fonts-create-new" spacing={2}>
                     <Grid item container xs={12}  spacing={2}>
-                        <Grid item xs={6}>Name</Grid>
-                        <Grid item xs={6}>
+                        <Grid item xs={1}>Name</Grid>
+                        <Grid item xs={11}>
                                 <TextField id="outlined-basic" name="fontName" fullWidth variant="outlined" />
                         </Grid>
                     </Grid>
