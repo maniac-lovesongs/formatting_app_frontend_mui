@@ -20,9 +20,12 @@ const CharacterSetBases = (input) => {
             const uri = "/api/fonts/character_sets/bases/all"
             apiCall(uri, {}, (args, d) => {
                 if (d) {
-                    console.log(d);
-                    setBases(d.bases)
-                    setSelectedBase(d.bases[0]);
+                    const b = d.bases.map((b,i) => {
+                        b["value"] = b.name;
+                        return b;
+                    });
+                    setBases(b)
+                    setSelectedBase(b[0]);
                 }
             });
 
@@ -30,11 +33,10 @@ const CharacterSetBases = (input) => {
     }, []);
     /***************************************************************/
     const handleSelectBase = (e) => {
-        const dataset = Object.keys(e.explicitOriginalTarget.dataset);
-        const temp = { "value": e.target.value };
-        dataset.forEach((k) => {
-            temp[k] = e.explicitOriginalTarget.dataset[k];
-        });
+        const temp = bases.filter((b) => {
+            return b.name === e.target.value;
+        })[0];
+
         setSelectedBase(temp);
     }
     /***************************************************************/
@@ -52,12 +54,16 @@ const CharacterSetBases = (input) => {
         });
     }
     /***************************************************************/
+    const handleUseBase = () => {
+        input.setUsingBase(selectedBase);
+    }
+    /***************************************************************/
     return (
     <React.Fragment> 
             <Grid item xs={1}>Base</Grid>
             <Grid item xs={11}>
             {selectedBase && <Select
-                    value={selectedBase.name}
+                    value={selectedBase.value}
                     label="Bases"
                     fullWidth
                     sx={{
@@ -68,9 +74,9 @@ const CharacterSetBases = (input) => {
                     {bases && makeBaseMenuItems()}
                 </Select>}
                 <Button
-                        onClick={(e) => {console.log(e)}}
-                        variant="contained"
-                        name="useBase">
+                    onClick={handleUseBase}
+                    variant="contained"
+                    name="useBase">
                         Use Base
                 </Button>
             </Grid>

@@ -2,18 +2,15 @@ import React, { useState, useEffect, useRef } from 'react';
 import constants from '../../../utils/constants.js';
 import { useObserver } from '../../../utils/hooks/useObserver.js';
 import { apiCall, apiCallPost } from "../../../utils/apiFunctions.js";
-import { Grid, Select, MenuItem, Button, ButtonGroup, Chip } from "@mui/material";
+import { Grid, Select, MenuItem, Button, ButtonGroup } from "@mui/material";
 import { Clear } from '@mui/icons-material';
-import CharacterSetCreator from './CharacterSetCreator.js';
-import Title from "../Title/Title.js";
 import "./CharacterSet.scss";
 
 /***************************************************************/
-const CharacterSetAdder = (input) => {
+const StyleSelector = (input) => {
     const ref = useRef(null);
     const [availableStyles, setAvailableStyles] = useState(null);
     const [selectedStyle, setSelectedStyle] = useState(null);
-    const [usingStyle, setUsingStyle] = useState(null);
     const [addedStyles, setAddedStyles] = useState({
         "italic": null,
         "bold": null,
@@ -26,8 +23,7 @@ const CharacterSetAdder = (input) => {
     useEffect(() => {
         // register a listener 
         if (availableStyles === null) {
-            const uri = "/api/styles/all";
-            apiCall(uri, {}, (args, d) => {
+            apiCall(input.uri, {}, (args, d) => {
                 if (d) {
                     setAvailableStyles(d.styles);
                     const temp = { ...d.styles[0], "value": d.styles[0].name };
@@ -53,17 +49,14 @@ const CharacterSetAdder = (input) => {
     };
     /***************************************************************/
     const handleSelectStyle = (e) => {
-        const dataset = Object.keys(e.explicitOriginalTarget.dataset);
-        const temp = { "value": e.target.value };
-        dataset.forEach((k) => {
-            temp[k] = e.explicitOriginalTarget.dataset[k];
-        });
+        const temp = availableStyles.filter((s) => {
+            return s.name === e.target.value;
+        })[0];
         setSelectedStyle(temp);
     }
     /***************************************************************/
     const handleAddStyle = (e) => {
-        const styleNotAdded = addedStyles[selectedStyle.name] === null; 
-        if (styleNotAdded) {
+        if (addedStyles[selectedStyle.name] === null) {
             const temp = { ...addedStyles };
             temp[selectedStyle.name] = selectedStyle;
             const stylesTemp = availableStyles.filter((s) => {
@@ -89,8 +82,9 @@ const CharacterSetAdder = (input) => {
             setAddedStyles(tempAddedStyles);
             setSelectedStyle(tempAvailableStyles[0]);
 
-            if(usingStyle.name === s.name){
-                setUsingStyle(null);
+            if(input.usingStyle.name === s.name){
+                input.setUsingStyle(null);
+                input.setUsingBase(null);
             }
         }
     }
@@ -106,13 +100,16 @@ const CharacterSetAdder = (input) => {
                     }}>
                         <Button
                             onClick={() => {
-                                setUsingStyle(s);
+                                input.setUsingStyle(s);
+                                input.setUsingBase(null);
                             }}
                         >{s.name}</Button>
                         <Button
                             onClick={removeAddedStyle(s)}
                             data-d={s.id}
-                            data-name={s.name}><Clear /></Button>
+                            data-name={s.name}>
+                                <Clear />
+                        </Button>
                     </ButtonGroup>
                 )
             }
@@ -153,10 +150,10 @@ const CharacterSetAdder = (input) => {
                     {makeAddedStyles()}
                 </ButtonGroup>
             </Grid>    
-            {usingStyle && <CharacterSetCreator style={usingStyle}/>}
+
     </React.Fragment>
     );
 }
 
-export default CharacterSetAdder;
+export default StyleSelector;
 /**************************************************************/

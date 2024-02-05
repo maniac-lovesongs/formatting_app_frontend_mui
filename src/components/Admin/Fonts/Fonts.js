@@ -56,12 +56,32 @@ const FontsInner = (input) => {
         {
             field: "view",
             headerName: "View",
-            width: 400,
+            width: 200,
             renderCell: (params) => {
                 return <a href={params.id}>View</a>
             },
-        },
-        actionsColumn
+      },
+      {
+        field: "addStyle", 
+        headerName: "Add Style", 
+        width: 200, 
+        renderCell: (params) => {
+          const fontName = params.row.name.toLowerCase().split(" ").join("_");
+          let styles = [];
+          for (let i = 0; i < params.row.styles.length; i++){
+            const temp = params.row.styles[i];
+            const tempStyle = temp.split(" ").map((w, i) => {
+              return w.toLowerCase();
+            }).join("-");
+            styles.push(tempStyle);
+          }
+
+
+
+          return <a href={"/admin/fonts/create/"+ params.id + "/name/" + fontName + "/styles/" + styles.join("--") }>Add Style</a>
+        }
+      },
+      actionsColumn
     ];
   /***************************************************************/
   const updateFonts = (updatedRow) => {
