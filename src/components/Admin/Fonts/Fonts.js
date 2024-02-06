@@ -47,7 +47,7 @@ const FontsInner = (input) => {
         {
           field: 'styles',
           headerName: 'Styles',
-          width: 300,
+          width: 200,
           editable: false,
           renderCell: (params) => {
             return <span>{params.row.styles.join(", ")}</span>;
@@ -56,7 +56,7 @@ const FontsInner = (input) => {
         {
             field: "view",
             headerName: "View",
-            width: 200,
+            width: 50,
             renderCell: (params) => {
                 return <a href={params.id}>View</a>
             },
@@ -64,7 +64,7 @@ const FontsInner = (input) => {
       {
         field: "addStyle", 
         headerName: "Add Style", 
-        width: 200, 
+        width: 80, 
         renderCell: (params) => {
           const fontName = params.row.name.toLowerCase().split(" ").join("_");
           let styles = [];
@@ -83,6 +83,16 @@ const FontsInner = (input) => {
       },
       actionsColumn
     ];
+
+  /*****************************************************************/
+  useEffect(() => {
+          if (fonts === null) {
+              const uri = "/api/fonts/all";
+              apiCall(uri, {}, (args, d) => {
+                handleFontsChanged(d.fonts);
+              });
+          }
+      }, []);
   /***************************************************************/
   const updateFonts = (updatedRow) => {
     const uri = "/api/fonts/edit/" + updatedRow.id;
@@ -96,17 +106,8 @@ const FontsInner = (input) => {
     temp = temp === null? {"editableRows": changedFonts} : {...temp, "editableRows": changedFonts};
     appManager.setTemp(temp, "temp.editableRows");
   }
-  /*****************************************************************/
-  useEffect(() => {
-          if (fonts === null) {
-              const uri = "/api/fonts/all";
-              apiCall(uri, {}, (args, d) => {
-                handleFontsChanged(d.fonts);
-              });
-          }
-      }, []);
-    /***************************************************************/
-    return (
+  /***************************************************************/
+  return (
         <Box
         sx={{
           display: 'flex',

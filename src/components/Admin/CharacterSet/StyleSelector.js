@@ -82,7 +82,7 @@ const StyleSelector = (input) => {
             setAddedStyles(tempAddedStyles);
             setSelectedStyle(tempAvailableStyles[0]);
 
-            if(input.usingStyle.name === s.name){
+            if(input.usingStyle && input.usingStyle.name === s.name){
                 input.setUsingStyle(null);
                 input.setUsingBase(null);
             }
@@ -144,7 +144,7 @@ const StyleSelector = (input) => {
                 <ButtonGroup
                     sx={{
                         marginLeft: "1em",
-                        marginTop: "1em"
+                        marginTop: "2em"
                     }}
                 >
                     {makeAddedStyles()}
