@@ -12,7 +12,7 @@ import { useParams } from "react-router-dom";
 import "./Font.scss";
 
 /***************************************************************/
-const Fonts = (input) => {
+const Font = (input) => {
     const [font, setFont] = useState([]);
     const [characterSet, setCharacterSet] = useState(null);
     const {id} = useParams();
@@ -114,5 +114,5 @@ const Fonts = (input) => {
     );
 }
 
-export default Fonts;
+export default Font;
 /**************************************************************/

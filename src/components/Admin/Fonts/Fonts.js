@@ -47,7 +47,7 @@ const FontsInner = (input) => {
         {
           field: 'styles',
           headerName: 'Styles',
-          width: 200,
+          width: 200,        
           editable: false,
           renderCell: (params) => {
             return <span>{params.row.styles.join(", ")}</span>;
@@ -55,33 +55,14 @@ const FontsInner = (input) => {
         },
         {
             field: "view",
-            headerName: "View",
-            width: 50,
+            headerName: "View/Edit",
+            width: 100,
             renderCell: (params) => {
-                return <a href={params.id}>View</a>
+              const tempName = params.row.name.toLowerCase().split(" ").join("_"); 
+              return <a href={params.id +"/name/" + tempName}>View/Edit</a>
             },
-      },
-      {
-        field: "addStyle", 
-        headerName: "Add Style", 
-        width: 80, 
-        renderCell: (params) => {
-          const fontName = params.row.name.toLowerCase().split(" ").join("_");
-          let styles = [];
-          for (let i = 0; i < params.row.styles.length; i++){
-            const temp = params.row.styles[i];
-            const tempStyle = temp.split(" ").map((w, i) => {
-              return w.toLowerCase();
-            }).join("-");
-            styles.push(tempStyle);
-          }
-
-
-
-          return <a href={"/admin/fonts/create/"+ params.id + "/name/" + fontName + "/styles/" + styles.join("--") }>Add Style</a>
-        }
-      },
-      actionsColumn
+          },
+          actionsColumn
     ];
 
   /*****************************************************************/

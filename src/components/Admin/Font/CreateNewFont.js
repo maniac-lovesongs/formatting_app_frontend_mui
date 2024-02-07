@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import constants from '../../../utils/constants.js';
 import { useObserver } from '../../../utils/hooks/useObserver.js';
-import { Box, Grid, Paper, TextField, Tab, Tabs } from "@mui/material";
+import { Box, Grid, Paper, TextField, Tab, Tabs, capitalize } from "@mui/material";
 import { useParams } from "react-router-dom";
 import Title from "../Title/Title.js";
 import "./Font.scss";
@@ -50,7 +50,7 @@ const CreateNewFont = (input) => {
                 style={s}
                 tabId={i}
                 display={determineOpenedTab(i)}
-                fontName={fontName}
+                fontName={fontName? fontName : tempFontName}
             />);
         });
 
@@ -61,6 +61,15 @@ const CreateNewFont = (input) => {
         return allStyles.map((s) => {
             return (<Tab data-name={s} label={s}></Tab>)
         });
+    }
+    /***************************************************************/
+    const makeTitle = () => {
+        if(fontName)
+            return "Edit Font " + fontName.split("_").map((c) => {
+            return capitalize(c);
+        }).join(" ");
+
+        return "Create New Font";
     }
     /***************************************************************/
     return (
@@ -77,7 +86,7 @@ const CreateNewFont = (input) => {
                     padding: "1em" 
                 }}
                 elevation={1}>
-                <Title className="fonts-title">Create New Font</Title>
+                <Title className="fonts-title">{makeTitle()}</Title>
                 <Grid container className="fonts-create-new" spacing={2}>
                     <Grid
                         container

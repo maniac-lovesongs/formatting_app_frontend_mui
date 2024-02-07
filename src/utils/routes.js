@@ -40,7 +40,7 @@ const appRoutes = [
         component: AppContainer
     },
     {
-        path: "/admin/fonts/create/:id/name/:fontName/styles/:styles",
+        path: "/admin/fonts/view/:id/name/:fontName/",
         props: {
             "content": "admin.fonts.create",
             "parent": "admin",
