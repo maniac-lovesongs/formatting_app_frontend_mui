@@ -22,7 +22,6 @@ const Fonts = (input) => {
             setCharacterSet(tempStyle);
         }
     }});
-
     /***************************************************************/
     useEffect(() => {
         const uri = "/api/fonts/by_id/" + id; 

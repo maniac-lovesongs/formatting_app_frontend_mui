@@ -11,4 +11,4 @@ const processStyleName = (n) => {
     return capitalize(n.split("_").join(" "));
 }
 
-export {processFontName, processStyleName};
+export {processFontName, processStyleName, capitalize};

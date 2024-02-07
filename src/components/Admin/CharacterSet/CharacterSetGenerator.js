@@ -58,7 +58,8 @@ const CharacterSetGenerator = (input) => {
                 />
                 <Button
                     sx={{
-                        marginTop: "1em"
+                        marginTop: "1em",
+                        marginBottom: "1em"
                     }}
                     onClick={generateFont}
                     variant="contained">

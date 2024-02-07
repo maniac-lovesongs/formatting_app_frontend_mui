@@ -4,21 +4,15 @@ import constants from '../../../utils/constants.js';
 import {DataGrid, GridRowModes} from '@mui/x-data-grid';
 import {useEditableDataGridRows} from '../../../utils/hooks/useEditableDataGridRows.js';
 import {useObserver} from '../../../utils/hooks/useObserver.js';
+import { apiCall } from '../../../utils/apiFunctions.js';
+
 import "./CharacterSet.scss";
 
 /***************************************************************/
 const DisplayTable = (input) => {
     const ref = useRef(null);
-    const [rowModesModel, setRowModesModel] = useState({});
     /***************************************************************/
-    const observerId = useObserver({"callback": (dataChanged) => {
-        if(dataChanged === "temp.editableRows"){
-            input.setPairs(appManager.getTemp().editableRows);
-        }
-        else if(dataChanged === "temp.rowModesModel"){
-            setRowModesModel(appManager.getTemp().rowModesModel);
-        }
-    }});
+    const observerId = useObserver({});
     /***************************************************************/
     const {actionsColumn, editFunctions} = useEditableDataGridRows({
         "deleteConfirmationTitle": "Delete Character Pair",
@@ -29,7 +23,7 @@ const DisplayTable = (input) => {
         "makeDeleteConfirmationMessage": (params) => {
             return `Would you like to delete (${params.row.symbol}, ${params.row.value}) pair?`;
         },
-        "rowModesModel": rowModesModel, 
+        "rowModesModel": input.rowModesModel, 
         "rows": input.pairs});
     /***************************************************************/
     const columns = [
@@ -51,12 +45,6 @@ const DisplayTable = (input) => {
         },
         actionsColumn
       ];
-   /***************************************************************/
-   const handleCharactersChanged = (changedCharacters) => {
-    let temp = appManager.getTemp(); 
-    temp = temp === null? {"editableRows": changedCharacters} : {...temp, "editableRows": changedCharacters};
-    appManager.setTemp(temp, "temp.editableRows");
-  }
     /***************************************************************/
     return (
             <React.Fragment>
@@ -66,7 +54,7 @@ const DisplayTable = (input) => {
                         onRowModesModelChange={(temp) => {
                             editFunctions.handleRowModesModelChange(temp);
                           }}
-                          rowModesModel={rowModesModel}
+                          rowModesModel={input.rowModesModel}
                           onProcessRowUpdateError={(error) => {
                               console.log("The error made was");
                               console.log(error);
@@ -74,8 +62,8 @@ const DisplayTable = (input) => {
                           processRowUpdate={(newRow) => {
                             const updatedRow = { ...newRow, isNew: false };
                             const temp = input.pairs.map((row) => (row.id === newRow.id ? updatedRow : row));
-                            handleCharactersChanged(temp);
-                            if (rowModesModel[updatedRow.id]?.mode !== GridRowModes.Edit) {
+                            input.handleCharactersChanged(temp);
+                            if (input.rowModesModel[updatedRow.id]?.mode !== GridRowModes.Edit) {
                               //updateFonts(updatedRow);   
                             }
                             return updatedRow;                              

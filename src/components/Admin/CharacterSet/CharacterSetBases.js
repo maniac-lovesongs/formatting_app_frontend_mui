@@ -60,8 +60,16 @@ const CharacterSetBases = (input) => {
     /***************************************************************/
     return (
     <React.Fragment> 
-            <Grid item xs={1}>Base</Grid>
-            <Grid item xs={11}>
+            <Grid
+            sx={{textAlign: "left"}} 
+            item 
+            xs={12}>Base</Grid>
+            <Grid
+                justifyContent="flex-start" 
+                item 
+                sx={{marginBottom: "0.5em"}}
+                container
+                xs={12}>
             {selectedBase && <Select
                     value={selectedBase.value}
                     label="Bases"

@@ -1,27 +1,21 @@
 import React, { useState, useEffect, useRef } from 'react';
 import constants from '../../../utils/constants.js';
 import { useObserver } from '../../../utils/hooks/useObserver.js';
-import { Box, Grid, Paper, TextField } from "@mui/material";
+import { Box, Grid, Paper, TextField, Tab, Tabs } from "@mui/material";
 import { useParams } from "react-router-dom";
 import Title from "../Title/Title.js";
 import "./Font.scss";
 import { processFontName } from '../CharacterSet/utils.js';
-import StyleSelector from '../CharacterSet/StyleSelector.js';
-import CharacterSetBases from '../CharacterSet/CharacterSetBases.js';
-import CharacterSetGenerator from '../CharacterSet/CharacterSetGenerator.js';
-import DisplayTable from '../CharacterSet/DisplayTable.js';
+import CharacterSetTab from '../CharacterSet/CharacterSetTab.js';
+import { apiCall } from '../../../utils/apiFunctions.js';
 
 /***************************************************************/
 const CreateNewFont = (input) => {
     const ref = useRef(null);
-    const [usingStyle, setUsingStyle] = useState(null);
-    const [usingBase, setUsingBase] = useState(null);
-    const [pairs, setPairs] = useState({
-        "normal": null, 
-        "bold": null, 
-        "italic": null, 
-        "bold italic": null});
-    const { id,fontName,styles } = useParams();
+    const [tempFontName, setTempFontName] = useState('');
+    const { id, fontName, styles } = useParams();
+    const [openedTab, setOpenedTab] = useState(0);
+    const allStyles = ["normal", "bold", "italic", "bold italic"];
     /***************************************************************/
     const observerId = useObserver({ "callback": (dataChanged) => { } });
     /***************************************************************/
@@ -29,10 +23,44 @@ const CreateNewFont = (input) => {
     }, []);
     /***************************************************************/
     const makeFontName = () => {
-        if (fontName) 
+        if (fontName) {
             return processFontName(fontName);
+        }
+        return (<TextField 
+            value={tempFontName}
+            onChange={(e) => {
+                setTempFontName(e.target.value);
+            }}
+            id="outlined-basic" 
+            fullWidth 
+            variant="outlined" />);
+    }
+    /***************************************************************/
+    const handleTabChange = (e,nv) => {
+        setOpenedTab(nv);
+    }
+    /***************************************************************/
+    const determineOpenedTab = (n) => {
+        return n === openedTab ? "block" : "none";
+    }
+    /***************************************************************/
+    const makeCharacterSetTabPanels = () => {
+        const characterSetTaPanels = allStyles.map((s,i) => {
+            return (<CharacterSetTab 
+                style={s}
+                tabId={i}
+                display={determineOpenedTab(i)}
+                fontName={fontName}
+            />);
+        });
 
-        return (<TextField id="outlined-basic" name="fontName" fullWidth variant="outlined" />);
+        return characterSetTaPanels;
+    }
+    /***************************************************************/
+    const makeTabs = () => {
+        return allStyles.map((s) => {
+            return (<Tab data-name={s} label={s}></Tab>)
+        });
     }
     /***************************************************************/
     return (
@@ -44,11 +72,17 @@ const CreateNewFont = (input) => {
             }}
         >
             <Paper
-                sx={{ width: "100%", padding: "1em" }}
+                sx={{ 
+                    width: "100%", 
+                    padding: "1em" 
+                }}
                 elevation={1}>
-                <Title className="fonts-title">Create New Character Set</Title>
+                <Title className="fonts-title">Create New Font</Title>
                 <Grid container className="fonts-create-new" spacing={2}>
-                    <Grid container item className="slide" xs={12} data-slide={0}>
+                    <Grid
+                        container
+                        item
+                        xs={12} >
                         <Grid item container xs={12}  spacing={2}>
                             <Grid item xs={1}>Name</Grid>
                             <Grid item xs={11}>
@@ -56,49 +90,19 @@ const CreateNewFont = (input) => {
                             </Grid>
                         </Grid>
                     </Grid>
-                    <Grid item container xs={12} className='slide' data-slide={1}>
-                        <StyleSelector 
-                            setUsingStyle={setUsingStyle} 
-                            setUsingBase={setUsingBase}
-                            usingStyle={usingStyle} 
-                            styles={styles} 
-                            uri="/api/styles/all"
-                        />
-                    </Grid>
-                    <Grid item container xs={12} className="slide" data-slide={2}>
-                        {usingStyle && 
-                        <React.Fragment>
-                            <Grid item container xs={12}>
-                                <Title>Creating Character Set: {usingStyle.name}</Title>
-                            </Grid>
-                            <CharacterSetBases 
-                                setUsingBase={setUsingBase} 
-                                usingBase={usingBase}
-                            />
-                            {usingBase && <CharacterSetGenerator 
-                                setUsingBase={setUsingBase}
-                                setPairs={setPairs}
-                                usingBase={usingBase}
-                            />}
-                        </React.Fragment>}                        
-                    </Grid>
-                    <Grid item container xs={12} className="slide" data-slide={3}>
-                        {usingBase && pairs[usingStyle.name] && 
-                        <React.Fragment>
-                            <Grid item container xs={12}>
-                                <Title>Pairs</Title>
-                            </Grid>
-                            <Grid item container xs={12}>
-                                <DisplayTable 
-                                    usingBase={usingBase}
-                                    usingStyle={usingStyle}
-                                    setPairs={setPairs}
-                                    pairs={pairs}
-                                />
-                            </Grid>
-                        </React.Fragment>}                        
-                    </Grid>
                 </Grid>
+            </Paper>
+            <Paper
+                sx={{
+                    marginTop: "1.5em",
+                    width: "100%",
+                    padding: "1em"
+                }}
+                elevation={1}>
+                <Tabs value={openedTab} onChange={handleTabChange}>
+                    {makeTabs()}
+                </Tabs>
+                {makeCharacterSetTabPanels()}
             </Paper>
         </Box>
     );
