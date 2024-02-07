@@ -131,7 +131,9 @@ const CreateNewFont = (input) => {
                     padding: "1em"
                 }}
                 elevation={1}>
-                <Tabs value={openedTab} onChange={handleTabChange}>
+                <Tabs 
+                value={openedTab} 
+                onChange={handleTabChange}>
                     {makeTabs()}
                 </Tabs>
                 {makeCharacterSetTabPanels()}
