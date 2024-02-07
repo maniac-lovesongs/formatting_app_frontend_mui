@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import constants from '../../../utils/constants.js';
 import { useObserver } from '../../../utils/hooks/useObserver.js';
-import { Box, Grid, Paper, TextField, Tab, Tabs, capitalize } from "@mui/material";
+import { Box, Grid, Paper, TextField, Tab, Tabs,Chip } from "@mui/material";
 import { useParams } from "react-router-dom";
 import Title from "../Title/Title.js";
 import "./Font.scss";
-import { processFontName } from '../CharacterSet/utils.js';
+import { processFontName, capitalize} from '../CharacterSet/utils.js';
 import CharacterSetTab from '../CharacterSet/CharacterSetTab.js';
 import { apiCall } from '../../../utils/apiFunctions.js';
 
@@ -15,6 +15,7 @@ const CreateNewFont = (input) => {
     const [tempFontName, setTempFontName] = useState('');
     const { id, fontName, styles } = useParams();
     const [openedTab, setOpenedTab] = useState(0);
+    const [availableStyles, setAvailableStyles] = useState(null);
     const allStyles = ["normal", "bold", "italic", "bold italic"];
     /***************************************************************/
     const observerId = useObserver({ "callback": (dataChanged) => { } });
@@ -49,6 +50,8 @@ const CreateNewFont = (input) => {
             return (<CharacterSetTab 
                 style={s}
                 tabId={i}
+                availableStyles={availableStyles}
+                setAvailableStyles={setAvailableStyles}
                 display={determineOpenedTab(i)}
                 fontName={fontName? fontName : tempFontName}
             />);
@@ -65,11 +68,20 @@ const CreateNewFont = (input) => {
     /***************************************************************/
     const makeTitle = () => {
         if(fontName)
-            return "Edit Font " + fontName.split("_").map((c) => {
+            return "View/Edit Font " + fontName.split("_").map((c) => {
             return capitalize(c);
         }).join(" ");
 
         return "Create New Font";
+    }
+    /***************************************************************/
+    const makeAvailableStyles = () => {
+        return ( availableStyles && availableStyles.map((s) => {
+            return (<Chip 
+                sx={{marginRight: "1em"}}
+                label={s} 
+                variant="outlined" />)
+        }));
     }
     /***************************************************************/
     return (
@@ -96,6 +108,17 @@ const CreateNewFont = (input) => {
                             <Grid item xs={1}>Name</Grid>
                             <Grid item xs={11}>
                                 {makeFontName()}
+                            </Grid>
+                        </Grid>
+                    </Grid>
+                    <Grid
+                        container
+                        item
+                        xs={12} >
+                        <Grid item container xs={12}  spacing={2}>
+                            <Grid item xs={1}>Styles</Grid>
+                            <Grid item xs={11}>
+                                {makeAvailableStyles()}
                             </Grid>
                         </Grid>
                     </Grid>

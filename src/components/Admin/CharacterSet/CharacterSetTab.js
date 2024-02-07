@@ -43,11 +43,19 @@ const CharacterSetTab = (input) => {
     const getCharacterSetHelper = async (s,f) => {
         const uri = "/api/fonts/character_sets/font/" + f + "/style/" + s;
         apiCall(uri, {}, (args, d) => {
+            console.log("style: " + input.style);
+            console.log(d);
             if (d.characters) {
                 const chs = [];
                 Object.keys(d.characters).forEach((v) => {
                     chs.push(d.characters[v]); 
                 });
+            
+            if(!input.availableStyles){
+                input.setAvailableStyles(d.availableStyles);
+            }
+
+            setExistingCharSet(d.availableStyles.includes(input.style));
             setUsingBase(null);
             setPairs(chs);
         } 
@@ -56,16 +64,9 @@ const CharacterSetTab = (input) => {
     useEffect(() => {
         if(input.fontName && input.fontName !== ''){
             const tempName = input.fontName.toLowerCase().split(" ").join("_");
-            const uri = "/api/fonts/" + tempName + "/exists";
+            const tempStyle = input.style.toLowerCase().split(" ").join("_");
 
-            apiCall(uri, {}, (args, d) => {
-                setExistingCharSet(d.exists &&  d.font.styles.includes(input.style));
-
-                if(d && d.exists && d.font.styles.includes(input.style)){
-                    const tempStyle = input.style.toLowerCase().split(" ").join("_");
-                    getCharacterSetHelper(tempStyle, tempName);
-                }
-            });
+            getCharacterSetHelper(tempStyle, tempName);
         };
     }, []);
     /***************************************************************/
