@@ -84,15 +84,48 @@ class AppManager{
     }
     /**************************************************************/
     setTemp(t,changed){
-        this.temp = t; 
+        const levels = changed.split(".").slice(1);
+        if(this.temp === null)
+            this.temp = {};
+
+
+        let last = this.temp;
+        for(let i = 0; i < levels.length; i++){
+            const currentLevel = levels[i];
+
+            if(last[currentLevel] === undefined)
+                last[currentLevel] = {};
+
+            if(i === levels.length - 1)
+                last[currentLevel] = t; 
+            else
+                last = last[currentLevel];
+ 
+        }
+        
         observerManager.notify([changed]);
 
     }
     /**************************************************************/
     /* Getters                                                    */
     /**************************************************************/
-    getTemp(){
-        return this.temp;
+    getTemp(args){
+        if(args === undefined) return this.temp;
+
+        console.log("Args does not equal undefined");
+        console.log(args);
+        const levels = args.split(".").slice(1);
+        let last = this.temp;
+        for(let i = 0; i < levels.length; i++){
+            const currentLevel = levels[i];
+
+            if(last[currentLevel] === undefined)
+                return undefined; 
+
+            last = last[currentLevel];
+        }
+
+        return last; 
     }
     /**************************************************************/
     getCurrentUser(){

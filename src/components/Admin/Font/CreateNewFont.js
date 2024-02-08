@@ -51,6 +51,7 @@ const CreateNewFont = (input) => {
                 style={s}
                 tabId={i}
                 availableStyles={availableStyles}
+                dataName="characterSet"
                 setAvailableStyles={setAvailableStyles}
                 display={determineOpenedTab(i)}
                 fontName={fontName? fontName : tempFontName}

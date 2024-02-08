@@ -4,14 +4,28 @@ import constants from '../../utils/constants.js';
 import {DataGrid, GridRowModes} from '@mui/x-data-grid';
 import {useEditableDataGridRows} from "../../utils/hooks/useEditableDataGridRows.js"
 import {useObserver} from '../../utils/hooks/useObserver.js';
-import { apiCall } from '../../utils/apiFunctions.js';
+import { apiCall, getCharacterSetHelper } from '../../utils/apiFunctions.js';
 import "./DisplayTable.scss";
 
 /***************************************************************/
 const DisplayTable = (input) => {
     const ref = useRef(null);
     /***************************************************************/
-    const observerId = useObserver({});
+    const observerId = useObserver({
+        "callback": (dataChanged) => {
+            /*const tempDataChanged = "temp." + input.dataName + ".editableRows";
+            const temp = appManager.getTemp(tempDataChanged);
+            if(dataChanged === tempDataChanged){
+                input.setPairs(temp);
+            }
+            if (dataChanged === "temp." + input.dataName + ".editableRows") {
+                input.setPairs(temp[input.dataName].editableRows);
+            }
+            else if (dataChanged === "temp."+ input.dataName + ".rowModesModel") {
+                input.setRowModesModel(temp[input.dataName].rowModesModel);
+            }*/
+        }
+    });
     /***************************************************************/
     const {actionsColumn, editFunctions} = useEditableDataGridRows({
         "deleteConfirmationTitle": input.deleteTitle,
@@ -19,6 +33,7 @@ const DisplayTable = (input) => {
         "makeSaveConfirmationMessage": input.saveMessage,
         "makeDeleteConfirmationMessage": input.deleteMessage,
         "rowModesModel": input.rowModesModel, 
+        "dataName": input.dataName,
         "rows": input.pairs});
     /***************************************************************/
     const columns = [...input.columns];

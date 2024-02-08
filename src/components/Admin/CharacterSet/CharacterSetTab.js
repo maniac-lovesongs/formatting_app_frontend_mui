@@ -23,7 +23,13 @@ const CharacterSetTab = (input) => {
     const [existingCharSet, setExistingCharSet] = useState(false);
     const [rowModesModel, setRowModesModel] = useState({});
     /***************************************************************/
-    const observerId = useObserver({"callback": (dataChanged) => {}});
+    const observerId = useObserver({"callback": (dataChanged) => {
+        const tempDataChanged = "temp.characterSet." + input.style + ".editableRows";
+        if(dataChanged === tempDataChanged){
+            const temp = appManager.getTemp(tempDataChanged);
+            setPairs(temp);
+        }
+    }});
   /***************************************************************/
     useEffect(() => {
         if(input.fontName && input.fontName !== '' && !pairs){
@@ -37,7 +43,8 @@ const CharacterSetTab = (input) => {
 
                 setExistingCharSet(d.availableStyles.includes(input.style));
                 setUsingBase(null);
-                setPairs(extra["chs"]);
+                handleCharactersChanged(extra["chs"]);
+                appManager.setCurrentData(d);
             });
         };
     }, []);
@@ -75,6 +82,11 @@ const CharacterSetTab = (input) => {
         }).join(" ");
     }
     /***************************************************************/
+    const handleCharactersChanged = (changedCharacters) => {
+        const changed = "temp.characterSet." + input.style + ".editableRows";
+        appManager.setTemp(changedCharacters, changed);
+    }
+    /***************************************************************/
     return (
         <Grid
             sx={{
@@ -104,6 +116,7 @@ const CharacterSetTab = (input) => {
                             setPairs={setPairs}
                             columns={characterSet.columns}
                             pairs={pairs}
+                            dataName={input.dataName + "." + input.style}
                             deleteTitle="Delete Character Pair"
                             saveTitle="Save Character Pair"
                             saveMessage={characterSet.saveMessage}

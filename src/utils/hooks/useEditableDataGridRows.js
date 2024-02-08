@@ -10,24 +10,30 @@ import { appManager } from "../../models/AppManager/managers.js";
 import {Edit, Delete, Save, Cancel } from '@mui/icons-material';
 
 const useEditableDataGridRows = (d) => {
-    const [editableRows, setEditableRows] = useState(d.rows);
-    const [rowModesModel, setRowModesModel] = useState(d.rowModesModel);
+  const [editableRows, setEditableRows] = useState(d.rows);
+  const [rowModesModel, setRowModesModel] = useState(d.rowModesModel);
   /***************************************************************/
     const observerId = useObserver({
       "callback": (dataChanged) => {
-        if(dataChanged === "temp.editableRows"){
-          setEditableRows(appManager.getTemp().editableRows)
+        const [tempEditableRows, tempRowModesModel] = makeNames();
+        if(dataChanged === tempEditableRows){
+          const t = appManager.getTemp(tempEditableRows);
+          setEditableRows(t)
         }
-        else if(dataChanged === "temp.rowModesModel"){
-          setRowModesModel(appManager.getTemp().rowModesModel);
+        else if(dataChanged === tempRowModesModel){
+          const t = appManager.getTemp(tempRowModesModel);
+          setRowModesModel(t);
         }
       }
     });
   /***************************************************************/
+  const makeNames = () => {
+    return ["temp." + d.dataName + ".editableRows",
+    "temp." + d.dataName + ".rowModelsModel"];
+  }
+  /***************************************************************/
     const handleEditableRowsChange = (value) => {
-      let temp = appManager.getTemp();
-      temp = temp === null? {"editableRows": value} : {...temp, "editableRows": value};
-      appManager.setTemp(temp, "temp.editableRows");
+      appManager.setTemp(value, "temp."+  d.dataName + ".editableRows");
     }
   /***************************************************************/
     const actionsColumn = {
@@ -103,9 +109,7 @@ const useEditableDataGridRows = (d) => {
   };
       /***************************************************************/
       const handleRowModesModelChange = (newRowModesModel) => {
-        let temp = appManager.getTemp();
-        temp = temp === null? {"rowModesModel": newRowModesModel} : {...temp, "rowModesModel": newRowModesModel};
-        appManager.setTemp(temp, "temp.rowModesModel");
+        appManager.setTemp(newRowModesModel, "temp." + d.dataName + ".rowModesModel");
     };
     /***************************************************************/
     const handleRowEditStop = (params, event) => {

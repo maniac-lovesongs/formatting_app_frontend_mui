@@ -23,6 +23,7 @@
     "react-toastify": "^10.0.4",
     "sass": "^1.70.0",
     "sort-by": "^1.2.0",
+    "use-editable": "^2.3.3",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
