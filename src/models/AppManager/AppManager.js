@@ -102,6 +102,9 @@ class AppManager{
                 last = last[currentLevel];
  
         }
+        console.log("We are in setTemp");
+        console.log(levels);
+        console.log(this.temp);
         
         observerManager.notify([changed]);
 
@@ -111,9 +114,7 @@ class AppManager{
     /**************************************************************/
     getTemp(args){
         if(args === undefined) return this.temp;
-
-        console.log("Args does not equal undefined");
-        console.log(args);
+        
         const levels = args.split(".").slice(1);
         let last = this.temp;
         for(let i = 0; i < levels.length; i++){

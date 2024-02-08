@@ -25,9 +25,14 @@ const CharacterSetTab = (input) => {
     /***************************************************************/
     const observerId = useObserver({"callback": (dataChanged) => {
         const tempDataChanged = "temp.characterSet." + input.style + ".editableRows";
+        const tempDataChangedRowModesModel = "temp.characterSet." + input.style + ".rowModesModel";
         if(dataChanged === tempDataChanged){
             const temp = appManager.getTemp(tempDataChanged);
             setPairs(temp);
+        }
+        else if(dataChanged === tempDataChangedRowModesModel){
+            const temp = appManager.getTemp(tempDataChangedRowModesModel);
+            setRowModesModel(temp);
         }
     }});
   /***************************************************************/
@@ -120,6 +125,7 @@ const CharacterSetTab = (input) => {
                             deleteTitle="Delete Character Pair"
                             saveTitle="Save Character Pair"
                             saveMessage={characterSet.saveMessage}
+                            managed={true}
                             deleteMessage={characterSet.deleteMessage}
                             rowModesModel={rowModesModel}
                             setRowModesModel={setRowModesModel}

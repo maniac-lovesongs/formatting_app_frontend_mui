@@ -29,7 +29,7 @@ const useEditableDataGridRows = (d) => {
   /***************************************************************/
   const makeNames = () => {
     return ["temp." + d.dataName + ".editableRows",
-    "temp." + d.dataName + ".rowModelsModel"];
+    "temp." + d.dataName + ".rowModesModel"];
   }
   /***************************************************************/
     const handleEditableRowsChange = (value) => {
@@ -109,6 +109,8 @@ const useEditableDataGridRows = (d) => {
   };
       /***************************************************************/
       const handleRowModesModelChange = (newRowModesModel) => {
+        console.log("In UseEditableDataGridRows");
+        console.log(newRowModesModel);
         appManager.setTemp(newRowModesModel, "temp." + d.dataName + ".rowModesModel");
     };
     /***************************************************************/

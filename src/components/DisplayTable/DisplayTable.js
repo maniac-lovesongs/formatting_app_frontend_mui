@@ -13,17 +13,18 @@ const DisplayTable = (input) => {
     /***************************************************************/
     const observerId = useObserver({
         "callback": (dataChanged) => {
-            /*const tempDataChanged = "temp." + input.dataName + ".editableRows";
-            const temp = appManager.getTemp(tempDataChanged);
-            if(dataChanged === tempDataChanged){
+            const tempDataChangedEditableRows = "temp." + input.dataName + ".editableRows";
+            const tempDataChangedRowModesModel = "temp." + input.dataName + ".rowModesModel";
+
+            // These callbacks only work if another component isn't maganaging this display table
+            if(dataChanged === tempDataChangedEditableRows && !input.managed){
+                const temp = appManager.getTemp(tempDataChangedEditableRows);
                 input.setPairs(temp);
             }
-            if (dataChanged === "temp." + input.dataName + ".editableRows") {
-                input.setPairs(temp[input.dataName].editableRows);
+            else if (dataChanged === tempDataChangedRowModesModel && !input.managed) {
+                const temp = appManager.getTemp(tempDataChangedRowModesModel);
+                input.setRowModesModel(temp);
             }
-            else if (dataChanged === "temp."+ input.dataName + ".rowModesModel") {
-                input.setRowModesModel(temp[input.dataName].rowModesModel);
-            }*/
         }
     });
     /***************************************************************/
@@ -32,6 +33,7 @@ const DisplayTable = (input) => {
         "saveConfirmationTitle": input.saveTitle,
         "makeSaveConfirmationMessage": input.saveMessage,
         "makeDeleteConfirmationMessage": input.deleteMessage,
+        "setRowModesModel": input.setRowModesModel,
         "rowModesModel": input.rowModesModel, 
         "dataName": input.dataName,
         "rows": input.pairs});
