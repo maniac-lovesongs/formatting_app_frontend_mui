@@ -13,11 +13,21 @@ const DeleteAll = (input) => {
     /***************************************************************/
     const observerId = useObserver({"callback": (dataChanged) => {}});
     /***************************************************************/
+    const makeSuccessMessage = (s, f) => {
+        return (
+            <span>You have successfully deleted all of the <i>{s}</i> characters of the font <i>{f}</i></span>
+        );
+    }
+    /***************************************************************/
     return (
     <ConfirmationDialog 
         inner="Delete"
+        successMessage={makeSuccessMessage(input.style, processFontName(input.fontName))}    
         title="Delete?"
-        onClickHandler={(e,setOpen) => {setOpen(false); }} 
+            onClickHandler={(e, setOpen, handleSuccess) => {
+                setOpen(false);
+                handleSuccess(true)();
+            }} 
         props={{"variant": "contained"}}
         triggerComponent={ButtonWithIcon(DeleteIcon, {marginBottom: "1em"})}>
         <span>

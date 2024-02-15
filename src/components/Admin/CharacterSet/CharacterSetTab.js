@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { styled, useTheme } from '@mui/material/styles';
-import constants from '../../../utils/constants.js';
 import { useObserver } from '../../../utils/hooks/useObserver.js';
 import { Grid, Button, ButtonGroup, Tabs, Tab } from "@mui/material";
 import Title from "../Title/Title.js";
@@ -12,7 +11,8 @@ import DisplayTable from '../../DisplayTable/DisplayTable.js';
 import SaveReset from './SaveReset.js';
 import DeleteAll from './DeleteAll.js';
 import { apiCall, getCharacterSetHelper } from '../../../utils/apiFunctions.js';
-import {processFontName,capitalize} from "./utils.js";
+import { processFontName, capitalize } from "./utils.js";
+import { makePathName } from "../../DisplayTable/utils.js";
 
 
 /***************************************************************/
@@ -24,8 +24,12 @@ const CharacterSetTab = (input) => {
     const [rowModesModel, setRowModesModel] = useState({});
     /***************************************************************/
     const observerId = useObserver({"callback": (dataChanged) => {
-        const tempDataChanged = "temp.characterSet." + input.style + ".editableRows";
-        const tempDataChangedRowModesModel = "temp.characterSet." + input.style + ".rowModesModel";
+        const tempDataChanged = makePathName(["characterSet", 
+        input.style, 
+        "editableRows"]);
+        const tempDataChangedRowModesModel =  makePathName(["characterSet", 
+        input.style, 
+        "rowModesModel"]);
         if(dataChanged === tempDataChanged){
             const temp = appManager.getTemp(tempDataChanged);
             setPairs(temp);
@@ -48,11 +52,20 @@ const CharacterSetTab = (input) => {
 
                 setExistingCharSet(d.availableStyles.includes(input.style));
                 setUsingBase(null);
-                handleCharactersChanged(extra["chs"]);
-                appManager.setCurrentData(d);
+                appManager.setReset(extra.chs, makePathName(["characterSet", 
+                input.style, 
+                "editableRows"]));
+                handleCharactersChanged(extra.chs);
             });
         };
     }, []);
+    /***************************************************************/
+    const handleReset = () => {
+        const resetPath = makePathName(["characterSet", input.style, "editableRows"]);
+        const reset = appManager.getReset(resetPath);
+        if(reset.resetExists)
+            handleCharactersChanged({...reset.data})
+    }
     /***************************************************************/
     const makeTopPart = (usingBase) => {
         if(!existingCharSet){
@@ -88,8 +101,10 @@ const CharacterSetTab = (input) => {
     }
     /***************************************************************/
     const handleCharactersChanged = (changedCharacters) => {
-        const changed = "temp.characterSet." + input.style + ".editableRows";
-        appManager.setTemp(changedCharacters, changed);
+        appManager.setTemp(changedCharacters, 
+            makePathName(["characterSet",
+                input.style, 
+                "editableRows"]));
     }
     /***************************************************************/
     return (
@@ -126,6 +141,8 @@ const CharacterSetTab = (input) => {
                             saveTitle="Save Character Pair"
                             saveMessage={characterSet.saveMessage}
                             managed={true}
+                            successMessageDelete={characterSet.successMessageDelete}
+                            successMessageSave={characterSet.successMessageSave}
                             deleteMessage={characterSet.deleteMessage}
                             rowModesModel={rowModesModel}
                             setRowModesModel={setRowModesModel}
@@ -138,6 +155,7 @@ const CharacterSetTab = (input) => {
                 xs={12}>
                     <ButtonGroup>
                        <SaveReset
+                            resetHandler={handleReset}
                             style={input.style} 
                             fontName={input.fontName} 
                        />

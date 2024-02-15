@@ -5,6 +5,7 @@ import {DataGrid, GridRowModes} from '@mui/x-data-grid';
 import {useEditableDataGridRows} from "../../utils/hooks/useEditableDataGridRows.js"
 import {useObserver} from '../../utils/hooks/useObserver.js';
 import { apiCall, getCharacterSetHelper } from '../../utils/apiFunctions.js';
+import { makePathName } from './utils.js';
 import "./DisplayTable.scss";
 
 /***************************************************************/
@@ -13,9 +14,9 @@ const DisplayTable = (input) => {
     /***************************************************************/
     const observerId = useObserver({
         "callback": (dataChanged) => {
-            const tempDataChangedEditableRows = "temp." + input.dataName + ".editableRows";
-            const tempDataChangedRowModesModel = "temp." + input.dataName + ".rowModesModel";
-
+            const tempDataChangedEditableRows = makePathName([...input.dataName.split("."), "editableRows"]);
+            const tempDataChangedRowModesModel = makePathName([...input.dataName.split("."), "rowModesModel"]);
+            
             // These callbacks only work if another component isn't maganaging this display table
             if(dataChanged === tempDataChangedEditableRows && !input.managed){
                 const temp = appManager.getTemp(tempDataChangedEditableRows);
@@ -33,13 +34,14 @@ const DisplayTable = (input) => {
         "saveConfirmationTitle": input.saveTitle,
         "makeSaveConfirmationMessage": input.saveMessage,
         "makeDeleteConfirmationMessage": input.deleteMessage,
+        "makeSuccessMessageSave": input.successMessageSave,
+        "makeSuccessMessageDelete": input.successMessageDelete,
         "setRowModesModel": input.setRowModesModel,
         "rowModesModel": input.rowModesModel, 
         "dataName": input.dataName,
         "rows": input.pairs});
     /***************************************************************/
-    const columns = [...input.columns];
-    columns.push(actionsColumn)
+    const columns = [...input.columns, actionsColumn];
     /***************************************************************/
     return (
             <React.Fragment>
@@ -59,7 +61,7 @@ const DisplayTable = (input) => {
                             const temp = input.pairs.map((row) => (row.id === newRow.id ? updatedRow : row));
                             input.handleCharactersChanged(temp);
                             if (input.rowModesModel[updatedRow.id]?.mode !== GridRowModes.Edit) {
-                              //updateFonts(updatedRow);   
+                              //if(input.updater) input.updater(updatedRow);   
                             }
                             return updatedRow;                              
                           }}

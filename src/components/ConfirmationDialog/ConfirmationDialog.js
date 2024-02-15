@@ -7,12 +7,14 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
+import { Alert, Snackbar } from "@mui/material";
 import "./ConfirmationDialog.scss";
 
 /***************************************************************/
 const ConfirmationDialog = (input) => {
     const ref = useRef(null);
     const [open, setOpen] = useState(false);
+    const [successful, setSuccessful] = useState(false);
     const TriggerComponent = input.triggerComponent; 
     /***************************************************************/
     const observerId = useObserver({"callback": (dataChanged) => { }});
@@ -27,12 +29,17 @@ const ConfirmationDialog = (input) => {
     const handleClose = (choice) => {
         if(choice === "yes"){
             return (event) => {
-                console.log("YOU CHOSE YES");
-                input.onClickHandler(event, setOpen);
+                input.onClickHandler(event, setOpen, handleSuccess);
             }
         }
         return () => {
             setOpen(false);
+        }
+    };
+    /**************************************************************/
+    const handleSuccess = (v) => {
+        return () => {
+            setSuccessful(v);
         }
     };
     /**************************************************************/
@@ -47,11 +54,13 @@ const ConfirmationDialog = (input) => {
                 aria-labelledby="alert-dialog-title"
                 aria-describedby="alert-dialog-description"
             >
-                <DialogTitle id="alert-dialog-title">
+                <DialogTitle 
+                id="alert-dialog-title">
                     {input.title}
                 </DialogTitle>
                 <DialogContent>
-                    <DialogContentText id="alert-dialog-description">
+                    <DialogContentText 
+                    id="alert-dialog-description">
                         {input.children}
                     </DialogContentText>
                 </DialogContent>
@@ -62,6 +71,18 @@ const ConfirmationDialog = (input) => {
                     </Button>
                 </DialogActions>
             </Dialog>
+            <Snackbar 
+                open={successful} 
+                autoHideDuration={6000} 
+                onClose={handleSuccess(false)}>
+                    <Alert
+                        onClose={handleSuccess(false)}
+                        severity="success"
+                        variant="filled"
+                        sx={{ width: '100%' }}>
+                        {input.successMessage}
+                    </Alert>
+            </Snackbar>
         </React.Fragment>
     );
 }

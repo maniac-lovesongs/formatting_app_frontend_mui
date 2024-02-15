@@ -6,8 +6,9 @@ import {
   } from '@mui/x-data-grid';
 import { useObserver } from './useObserver';
 import ConfirmationDialog from '../../components/ConfirmationDialog/ConfirmationDialog.js';
+import { makePathName } from '../../components/DisplayTable/utils.js';
 import { appManager } from "../../models/AppManager/managers.js";
-import {Edit, Delete, Save, Cancel } from '@mui/icons-material';
+import { Edit, Delete, Save, Cancel } from '@mui/icons-material';
 
 const useEditableDataGridRows = (d) => {
   const [editableRows, setEditableRows] = useState(d.rows);
@@ -28,12 +29,13 @@ const useEditableDataGridRows = (d) => {
     });
   /***************************************************************/
   const makeNames = () => {
-    return ["temp." + d.dataName + ".editableRows",
-    "temp." + d.dataName + ".rowModesModel"];
+    return [
+      makePathName([...d.dataName.split("."), "editableRows"]),
+      makePathName([...d.dataName.split("."), "rowModesModel"])];
   }
   /***************************************************************/
     const handleEditableRowsChange = (value) => {
-      appManager.setTemp(value, "temp."+  d.dataName + ".editableRows");
+      appManager.setTemp(value, makePathName([...d.dataName.split("."), "editableRows"]));
     }
   /***************************************************************/
     const actionsColumn = {
@@ -50,11 +52,13 @@ const useEditableDataGridRows = (d) => {
           icon={<Delete/>}
           inner="Delete?"
           title={d.deleteConfirmationTitle}
+          successMessage={d.makeSuccessMessageDelete(params)}  
           label="Delete"
           color="inherit"
-          onClickHandler={(event,setOpen) => {
-            handleDeleteClick(id,editableRows,setEditableRows)();
+            onClickHandler={(event, setOpen, handleSuccess) => {
+            handleDeleteClick(id,editableRows)();
             setOpen(false);
+            handleSuccess(true)();
           }}
           triggerComponent={GridActionsCellItem}>
             <span>{d.makeDeleteConfirmationMessage(params)}</span>
@@ -67,13 +71,15 @@ const useEditableDataGridRows = (d) => {
           icon={<Save/>}
           inner="Save?"
           title={d.saveConfirmationTitle}
+          successMessage={d.makeSuccessMessageSave(params)}  
           label="Save"
           sx={{
             color: 'primary.main',
           }}
-          onClickHandler={(event,setOpen) => {
-            handleSaveClick(id, rowModesModel, handleRowModesModelChange)();
-            setOpen(false);
+            onClickHandler={(event, setOpen, handleSuccess) => {
+              handleSaveClick(id, rowModesModel, handleRowModesModelChange)();
+              setOpen(false);
+              handleSuccess(true)();  
           }}
           triggerComponent={GridActionsCellItem}>
             <span>{d.makeSaveConfirmationMessage(params)}</span>
@@ -109,9 +115,7 @@ const useEditableDataGridRows = (d) => {
   };
       /***************************************************************/
       const handleRowModesModelChange = (newRowModesModel) => {
-        console.log("In UseEditableDataGridRows");
-        console.log(newRowModesModel);
-        appManager.setTemp(newRowModesModel, "temp." + d.dataName + ".rowModesModel");
+        appManager.setTemp(newRowModesModel, makePathName([...d.dataName.split("."), "rowModesModel"]));
     };
     /***************************************************************/
     const handleRowEditStop = (params, event) => {
@@ -128,9 +132,9 @@ const useEditableDataGridRows = (d) => {
       setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.View } });
     };
     /***************************************************************/
-    const handleDeleteClick = (id,rows,setRows) => () => {
-       // console.log(params);
-        //setRows(rows.filter((row) => row.id !== id));
+    const handleDeleteClick = (id,rows) => () => {
+      const tempRows = rows.filter(row => row.id !== id);
+      appManager.setTemp(tempRows, makePathName([...d.dataName.split("."), "editableRows"]));
     };
     /***************************************************************/
     const handleCancelClick = (id, rowModesModel,rows, setRows, setRowModesModel) => () => {

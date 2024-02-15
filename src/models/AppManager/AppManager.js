@@ -2,24 +2,30 @@ import observerManager from "./ObserverManager";
 import {historyManager} from "../History/HistoryManager";
 import InstaStringModel from "../InstaString/InstaStringModel";
 
-class AppManager{
+class AppManager {
     /**************************************************************/
-    constructor() {        
+    constructor() {
         this.string = new InstaStringModel();
         this.defaults = {
             "font": "Sans Serif",
             "style": "normal",
             "selectedText": null,
-            "bold": false, 
-            "italic": false, 
-            "availableStyles": {"bold": true, "italic": true, "normal": true, "bold italic": true}
+            "bold": false,
+            "italic": false,
+            "availableStyles": { 
+                "bold": true, 
+                "italic": true, 
+                "normal": true, 
+                "bold italic": true
+            }
         };
-        this.current_user = null; 
+        this.current_user = null;
         this.temp = null;
+        this.resets = null;
         this.state = {};
         this.initState();
 
-        this.currentData = null; 
+        this.currentData = null;
         
         this.panels = {
             'font picker': false
@@ -27,13 +33,13 @@ class AppManager{
         this.modes = {
             'list': false,
         }
-        this.clipboard = null; 
+        this.clipboard = null;
 
         // take a snapshot of the initial state
         historyManager.snapshot("init", this.snapshot());
     }
     /**************************************************************/
-    setCurrentUser(u){
+    setCurrentUser(u) {
         this.current_user = u;
         observerManager.notify(["current_user"]);
     }
@@ -46,26 +52,26 @@ class AppManager{
         });
     }
     /**************************************************************/
-    setStyleBasic(s){
-        this.state.style = s; 
+    setStyleBasic(s) {
+        this.state.style = s;
         observerManager.notify(["style"]);
     }
     /**************************************************************/
-    setCurrentData(c){
-        this.currentData = c; 
+    setCurrentData(c) {
+        this.currentData = c;
         this.state.style = c.style;
         this.state.bold = c.styleInfo.isBold;
-        this.state.italic = c.styleInfo.isItalic; 
+        this.state.italic = c.styleInfo.isItalic;
         this.state.font = c.font;
 
         const styles = Object.keys(this.state.availableStyles);
-        for(let i = 0; i < styles.length; i++){
+        for (let i = 0; i < styles.length; i++) {
             const st = styles[i];
             this.state.availableStyles[st] = c.availableStyles.includes(st);
         }
 
         const changed = ["currenData"];
-        if (this.string.cursor[0] !== this.string.cursor[1]){
+        if (this.string.cursor[0] !== this.string.cursor[1]) {
             changed.push("string");
             this.string.editSelection(this.state.font,
                 this.state.style, c);
@@ -74,62 +80,60 @@ class AppManager{
         observerManager.notify(changed);
     }
     /**************************************************************/
-    setFontBasic(f){
-        this.state.font = f; 
+    setFontBasic(f) {
+        this.state.font = f;
         observerManager.notify(["font"]);
     }
     /**************************************************************/
-    userLoggedIn(){
-        return this.current_user !== null; 
+    userLoggedIn() {
+        return this.current_user !== null;
     }
-    /**************************************************************/
-    setTemp(t,changed){
-        const levels = changed.split(".").slice(1);
-        if(this.temp === null)
-            this.temp = {};
 
-
-        let last = this.temp;
-        for(let i = 0; i < levels.length; i++){
-            const currentLevel = levels[i];
-
-            if(last[currentLevel] === undefined)
-                last[currentLevel] = {};
-
-            if(i === levels.length - 1)
-                last[currentLevel] = t; 
-            else
-                last = last[currentLevel];
- 
-        }
-        console.log("We are in setTemp");
-        console.log(levels);
-        console.log(this.temp);
-        
-        observerManager.notify([changed]);
-
-    }
     /**************************************************************/
     /* Getters                                                    */
     /**************************************************************/
-    getTemp(args){
-        if(args === undefined) return this.temp;
+    getReset(args) {
+        if (args === undefined || 
+            this.reset === undefined || 
+            this.reset === null) 
+            return {value: this.reset, resetExists: false};
         
         const levels = args.split(".").slice(1);
-        let last = this.temp;
-        for(let i = 0; i < levels.length; i++){
+        let last = this.reset;
+        for (let i = 0; i < levels.length; i++) {
             const currentLevel = levels[i];
 
-            if(last[currentLevel] === undefined)
-                return undefined; 
+            if (last[currentLevel] === undefined)
+                return undefined;
 
             last = last[currentLevel];
         }
 
-        return last; 
+        return {
+            "data": last, 
+        "resetExists": last !== undefined && last !== null}
     }
     /**************************************************************/
-    getCurrentUser(){
+    getTemp(args) {
+        if (args === undefined || 
+            this.temp === undefined || 
+            this.temp === null) return this.temp;
+        
+        const levels = args.split(".").slice(1);
+        let last = this.temp;
+        for (let i = 0; i < levels.length; i++) {
+            const currentLevel = levels[i];
+
+            if (last[currentLevel] === undefined)
+                return undefined;
+
+            last = last[currentLevel];
+        }
+
+        return last;
+    }
+    /**************************************************************/
+    getCurrentUser() {
         return this.current_user;
     }
     /**************************************************************/
@@ -138,7 +142,7 @@ class AppManager{
     }
     /**************************************************************/
     getFont() {
-        return this.state.font; 
+        return this.state.font;
     }
     /**************************************************************/
     getStyle() {
@@ -146,11 +150,11 @@ class AppManager{
     }
     /**************************************************************/
     getIsBold() {
-        return this.state.bold; 
+        return this.state.bold;
     }
     /**************************************************************/
     getIsItalic() {
-        return this.state.italic; 
+        return this.state.italic;
     }
     /**************************************************************/
     getAvailableStyles() {
@@ -158,7 +162,7 @@ class AppManager{
     }
     /**************************************************************/
     getString() {
-        return this.string.string; 
+        return this.string.string;
     }
     /**************************************************************/
     getPanel(panel) {
@@ -173,40 +177,42 @@ class AppManager{
         return this.defaults;
     }
     /**************************************************************/
-    getClipboard(){
+    getClipboard() {
         return this.clipboard;
     }
-   /**************************************************************/
-   getUriFriendlyStyle(){
+    /**************************************************************/
+    getUriFriendlyStyle() {
         return this.state.style.split(" ").join("_");
     }
     /**************************************************************/
-    getUriFriendlyFont(){
+    getUriFriendlyFont() {
         return this.state.font.toLowerCase().split(" ").join("_");
     }
     /**************************************************************/
-    getCurrentData(){
-        return {...this.currentData, 
-            "uriFriendlyStyle": this.getUriFriendlyStyle(), 
-            "uriFriendlyFont": this.getUriFriendlyFont()};
+    getCurrentData() {
+        return {
+            ...this.currentData,
+            "uriFriendlyStyle": this.getUriFriendlyStyle(),
+            "uriFriendlyFont": this.getUriFriendlyFont()
+        };
     }
 
     /**************************************************************/
     /* String                                                    */
     /**************************************************************/
-    insertLineBreak(pos){
+    insertLineBreak(pos) {
         const instaChar =
-        this.string.insertLineBreak(pos);
+            this.string.insertLineBreak(pos);
             
         historyManager.snapshot("inserted line break", this.snapshot());
         observerManager.notify(["string", "history", "string.cursor"]);
-        return instaChar;       
+        return instaChar;
     }
     /**************************************************************/
     insertSingleCharacter(ch, pos) {
         const instaChar =
             this.string.insertSingleCharacter(this.getFont(),
-                this.getStyle(),ch, pos, this.currentData);
+                this.getStyle(), ch, pos, this.currentData);
 
         historyManager.snapshot("inserted character", this.snapshot());
         observerManager.notify(["string", "history", "string.cursor"]);
@@ -214,8 +220,8 @@ class AppManager{
     }
     /**************************************************************/
     insertFromPaste(str) {
-        this.string.paste(str,false, this.currentData);
-        this.selectionMade = this.string.cursor[0] !== this.string.cursor[1]; 
+        this.string.paste(str, false, this.currentData);
+        this.selectionMade = this.string.cursor[0] !== this.string.cursor[1];
         historyManager.snapshot("paste", this.snapshot());
         observerManager.notify(["string", "history", "string.cursor"]);
     }
@@ -236,7 +242,7 @@ class AppManager{
     /**************************************************************/
     deleteAll() {
         this.string.deleteAll();
-        this.selectionMade = this.string.cursor[0] !== this.string.cursor[1]; 
+        this.selectionMade = this.string.cursor[0] !== this.string.cursor[1];
         historyManager.snapshot("delete all", this.snapshot());
         observerManager.notify(["string", "history"]);
     }
@@ -244,70 +250,70 @@ class AppManager{
     /* Setters                                                    */
     /**************************************************************/
     setSelectedText(t) {
-        this.state.selectedText = t; 
+        this.state.selectedText = t;
         observerManager.notify("state.current.selectedText");
     }
     /**************************************************************/
     setStyle(b, i, clicked) {
         let s = "normal";
         let bold = this.state.bold;
-        let italic = this.state.italic; 
+        let italic = this.state.italic;
 
         const availableStyles = this.getAvailableStyles();
         if (b && !i && availableStyles["bold"]) {
             s = "bold"
             bold = b;
-            italic = i; 
+            italic = i;
         }
         else if (!b && i && availableStyles["italic"]) {
             s = "italic"
-            bold = b; 
-            italic = i; 
+            bold = b;
+            italic = i;
         }
         else if (b && i && availableStyles["bold italic"]) {
             s = "bold italic";
-            bold = b; 
-            italic = i; 
+            bold = b;
+            italic = i;
         }
         else if (b && i && !availableStyles["bold italic"]) {
             if (clicked === "bold") {
                 s = "bold";
-                bold = true; 
-                italic = false; 
+                bold = true;
+                italic = false;
             }
             else if (clicked === "italic") {
                 s = "italic";
-                bold = false; 
-                italic = true; 
+                bold = false;
+                italic = true;
             }
 
         }
         else if (!b && !i) {
             s = "normal";
-            bold = b; 
-            italic = i; 
+            bold = b;
+            italic = i;
         }
 
-        this.state.style = s; 
+        this.state.style = s;
         this.state.bold = bold;
         this.state.italic = italic;
 
         historyManager.snapshot("style changed", this.snapshot());
-        observerManager.notify(["state","history"]);
+        observerManager.notify(["state", "history"]);
     }
     /**************************************************************/
     setFont(f) {
-        this.state.font = f; 
+        this.state.font = f;
         this.state.style = f === "Serif" ? "bold" : "normal";
         this.state.availableStyles = this.getAvailableStyles();
 
         historyManager.snapshot("font change", this.snapshot());
         observerManager.notify(["state", "history"]);
-    }    
+    }
     /**************************************************************/
     setCursor(start, end) {
         const data = this.string.setCursor(start, end);
-        this.selectionMade = start !== end; 
+        this.selectionMade = start !== end;
         observerManager.notify(["string",
             "string.cursor",
             "selectionMade",
@@ -315,12 +321,12 @@ class AppManager{
     }
     /**************************************************************/
     setPanelOpen(panel) {
-        this.panels[panel] = true; 
+        this.panels[panel] = true;
         observerManager.notify(['panels']);
     }
     /**************************************************************/
     setPanelClosed(panel) {
-        this.panels[panel] = false; 
+        this.panels[panel] = false;
         observerManager.notify(["panels"]);
     }
     /**************************************************************/
@@ -328,7 +334,50 @@ class AppManager{
         this.clipboard = clipboard;
         observerManager.notify(["clipboard"]);
     }
+    /**************************************************************/
+    setReset(r, changed) {
+        const levels = changed.split(".").slice(1);
 
+        if (this.resets === null)
+            this.resets = {};
+
+        let last = this.resets; 
+        for (let i = 0; i < levels.length; i++){
+            const currentLevel = levels[i];
+
+            if (last[currentLevel] === undefined)
+                last[currentLevel] = {};
+
+            if (i === last.length - 1)
+                last[currentLevel] = r;
+            else
+                last = last[currentLevel];
+        }
+
+    }
+    /**************************************************************/
+    setTemp(t,changed){
+        const levels = changed.split(".").slice(1);
+
+        if(this.temp === null)
+            this.temp = {};
+
+        let last = this.temp;
+        for(let i = 0; i < levels.length; i++){
+            const currentLevel = levels[i];
+
+            if(last[currentLevel] === undefined)
+                last[currentLevel] = {};
+
+            if(i === levels.length - 1)
+                last[currentLevel] = t; 
+            else
+                last = last[currentLevel];
+        }
+
+        observerManager.notify([changed]);
+
+    }
     /**************************************************************/
     /* History                                                    */
     /**************************************************************/
