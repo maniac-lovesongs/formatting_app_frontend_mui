@@ -3,17 +3,17 @@ import { useObserver } from '../../../../utils/hooks/useObserver.js';
 import { Grid, ButtonGroup} from "@mui/material";
 import Title from "../../Title/Title.js"
 import {appManager} from "../../../../models/AppManager/managers.js";
-import CharacterSetBases from '../../CharacterSet/CharacterSetBases.js';
-import CharacterSetGenerator from '../../CharacterSet/CharacterSetGenerator.js';
+import CharacterSetBases from '../old/CharacterSetBases.js';
+import CharacterSetGenerator from '../old/CharacterSetGenerator.js';
 import { characterSet } from '../displayTableMisc.js';
 import DisplayTable from '../../../DisplayTable/DisplayTable.js';
-import SaveReset from '../SaveReset.js';
-import DeleteAll from '../DeleteAll.js';
+import SaveReset from './SaveReset.js';
+import DeleteAll from './DeleteAll.js';
 import { apiCallPost, getCharacterSetHelper } from '../../../../utils/apiFunctions.js';
 import ChangeManager from "../../../../models/ChangeManager/ChangeManager.js"
 import { capitalize } from "../utils.js";
 import { makePathName } from "../../../DisplayTable/utils.js";
-import { initCharacterSet, handleReset, handleAvailableStylesChange, handleCharactersChanged } from '../characterSetTabUtils.js';
+import { initCharacterSet, handleReset, handleAvailableStylesChange, handleCharactersChanged } from './utils.js';
 
 
 /***************************************************************/

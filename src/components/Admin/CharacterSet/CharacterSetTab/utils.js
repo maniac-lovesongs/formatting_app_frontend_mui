@@ -1,5 +1,5 @@
-import { makePathName } from "../../DisplayTable/utils";
-import { appManager } from "../../../models/AppManager/managers.js";
+import { makePathName } from "../../../DisplayTable/utils";
+import { appManager } from "../../../../models/AppManager/managers.js";
 
 const makeCharacterSetFromDict = (d) => {
     const chs = [];

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
-import constants from '../../../utils/constants.js';
-import { useObserver } from '../../../utils/hooks/useObserver.js';
-import { apiCall, apiCallPost } from "../../../utils/apiFunctions.js";
+import constants from '../../../../utils/constants.js';
+import { useObserver } from '../../../../utils/hooks/useObserver.js';
+import { apiCall, apiCallPost } from "../../../../utils/apiFunctions.js";
 import { Grid, Select, MenuItem, Button, ButtonGroup, Chip } from "@mui/material";
 import "./CharacterSet.scss";
 

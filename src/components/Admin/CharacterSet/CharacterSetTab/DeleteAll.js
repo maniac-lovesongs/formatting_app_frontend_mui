@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
-import constants from '../../../utils/constants.js';
-import { useObserver } from '../../../utils/hooks/useObserver.js';
-import {appManager} from "../../../models/AppManager/managers.js";
+import constants from '../../../../utils/constants.js';
+import { useObserver } from '../../../../utils/hooks/useObserver.js';
+import {appManager} from "../../../../models/AppManager/managers.js";
 import DeleteIcon from '@mui/icons-material/Delete';
-import ConfirmationDialog from '../../ConfirmationDialog/ConfirmationDialog.js';
-import { apiCall } from '../../../utils/apiFunctions.js';
-import ButtonWithIcon from './ButtonWithIcon.js';
-import {processFontName} from "./utils.js";
+import ConfirmationDialog from '../../../ConfirmationDialog/ConfirmationDialog.js';
+import { apiCall } from '../../../../utils/apiFunctions.js';
+import ButtonWithIcon from '../ButtonWithIcon.js';
+import {processFontName} from "../utils.js";
 
 /***************************************************************/
 const DeleteAll = (input) => {
