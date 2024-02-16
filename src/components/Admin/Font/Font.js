@@ -7,7 +7,6 @@ import { Button, ButtonGroup, MenuItem, Paper, Grid, Box } from '@mui/material';
 import Select from '@mui/material/Select';
 import Title from "../Title/Title.js";
 import InputBox from '../../Formatter/InputBox/InputBox.js';
-import CharacterSet from '../CharacterSet/CharacterSet.js';
 import { useParams } from "react-router-dom";
 import "./Font.scss";
 
@@ -100,9 +99,6 @@ const Font = (input) => {
 
                             }
                     </Grid>
-                </Grid>
-                <Grid item container>
-                    {font.name && characterSet && <CharacterSet characterSet={characterSet} fontName={font.name} />}
                 </Grid>
                 <Grid item container>
                     <Grid item xs={12}>Test Input Box</Grid>

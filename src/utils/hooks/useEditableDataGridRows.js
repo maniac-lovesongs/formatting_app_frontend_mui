@@ -31,7 +31,8 @@ const useEditableDataGridRows = (d) => {
   const makeNames = () => {
     return [
       makePathName([...d.dataName.split("."), "editableRows"]),
-      makePathName([...d.dataName.split("."), "rowModesModel"])];
+      makePathName([...d.dataName.split("."), "rowModesModel"])
+    ];
   }
   /***************************************************************/
     const handleEditableRowsChange = (value) => {

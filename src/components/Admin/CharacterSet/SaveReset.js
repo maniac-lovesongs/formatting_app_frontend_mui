@@ -20,12 +20,12 @@ const SaveReset = (input) => {
                 "inner": "Save",
                 "type": "save",
                 "title": "Save?",
-                "handler": input.resetHandler,
+                "handler": input.saveHandler,
                 "successMessage": (s,f) => {
                     return (<span> You have successfully saved changes to the the data for the <i>{s}</i> character set of the font <i>{processFontName(f)}</i></span>)},
                 "triggerComponent": ButtonWithIcon(SaveIcon, {marginTop: "1em"}),
                 "message": (s,f) => {
-                    return (<span> You are about to delete all of the <i>{s}</i> characters of the font <i>{processFontName(f)}</i>. 
+                    return (<span> You are about to save all of the <i>{s}</i> characters of the font <i>{processFontName(f)}</i>. 
                     Are you sure you want to do this?</span>)
                 }},
             {
@@ -35,7 +35,7 @@ const SaveReset = (input) => {
                 "handler": input.resetHandler,
                 "successMessage": (s,f) => {
                     return (<span> You have successfully reset the data for the <i>{s}</i> character set of the font <i>{processFontName(f)}</i></span>)},
-                "triggerComponent": ButtonWithIcon(RotateLeftIcon, {marginTop: "1em"}),
+                "triggerComponent": ButtonWithIcon(RotateLeftIcon, {marginTop: "1em"}, input.resetSet),
                 "message": (s,f) => {
                     return (<span> You are about to reset the <i>{s}</i> characters of the font <i>{processFontName(f)}</i>. 
                     Are you sure you want to do this?</span>)

@@ -6,7 +6,8 @@ import { useParams } from "react-router-dom";
 import Title from "../Title/Title.js";
 import "./Font.scss";
 import { processFontName, capitalize} from '../CharacterSet/utils.js';
-import CharacterSetTab from '../CharacterSet/CharacterSetTab.js';
+//import CharacterSetTab from '../CharacterSet/CharacterSetTab.js';
+import CharacterSetTab from '../CharacterSet/CharacterSetTab/CharacterSetTab.js';
 import { apiCall } from '../../../utils/apiFunctions.js';
 
 /***************************************************************/

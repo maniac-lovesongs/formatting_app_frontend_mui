@@ -61,7 +61,7 @@ const DisplayTable = (input) => {
                             const temp = input.pairs.map((row) => (row.id === newRow.id ? updatedRow : row));
                             input.handleCharactersChanged(temp);
                             if (input.rowModesModel[updatedRow.id]?.mode !== GridRowModes.Edit) {
-                              //if(input.updater) input.updater(updatedRow);   
+                              if(input.updater) input.updater(updatedRow);   
                             }
                             return updatedRow;                              
                           }}
