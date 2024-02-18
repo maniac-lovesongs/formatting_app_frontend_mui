@@ -5,7 +5,6 @@ import SaveIcon from '@mui/icons-material/Save';
 import RotateLeftIcon from '@mui/icons-material/RotateLeft';
 import ConfirmationDialog from '../../ConfirmationDialog/ConfirmationDialog.js';
 import ButtonWithIcon from "../ButtonWithIcon/ButtonWithIcon.js";
-import { processFontName } from "../../../utils/utils.js";
 /***************************************************************/
 const SaveReset = (input) => {
     const ref = useRef(null);
@@ -19,25 +18,16 @@ const SaveReset = (input) => {
                 "type": "save",
                 "title": "Save?",
                 "handler": input.saveHandler,
-                "successMessage": (s,f) => {
-                    return (<span> You have successfully saved changes to the the data for the <i>{s}</i> character set of the font <i>{processFontName(f)}</i></span>)},
+                "successMessage": input.saveSuccessMessage,
                 "triggerComponent": ButtonWithIcon(SaveIcon, {marginTop: "1em"}),
-                "message": (s,f) => {
-                    return (<span> You are about to save all of the <i>{s}</i> characters of the font <i>{processFontName(f)}</i>. 
-                    Are you sure you want to do this?</span>)
-                }},
-            {
+                "message": input.saveMessage},{
                 "inner": "Reset",
                 "type": "reset",
                 "title": "Reset?",
                 "handler": input.resetHandler,
-                "successMessage": (s,f) => {
-                    return (<span> You have successfully reset the data for the <i>{s}</i> character set of the font <i>{processFontName(f)}</i></span>)},
+                "successMessage": input.resetSuccessMessage,
                 "triggerComponent": ButtonWithIcon(RotateLeftIcon, {marginTop: "1em"}, input.resetSet),
-                "message": (s,f) => {
-                    return (<span> You are about to reset the <i>{s}</i> characters of the font <i>{processFontName(f)}</i>. 
-                    Are you sure you want to do this?</span>)
-                }
+                "message": input.resetMessage
             }];
         
         return buttons.map((b) => {
@@ -47,7 +37,7 @@ const SaveReset = (input) => {
                     <ConfirmationDialog
                         inner={b.inner}
                         title={b.title}
-                        successMessage={b.successMessage && b.successMessage(s,f)}
+                        successMessage={b.successMessage}
                         onClickHandler={(e, setOpen, handleSuccess) => {
                             b.handler();
                             setOpen(false); 
@@ -56,7 +46,7 @@ const SaveReset = (input) => {
                         props={{"variant": "contained"}}
                         triggerComponent={Component}
                     >
-                        {b.message(s, f)}
+                        {b.message}
                     </ConfirmationDialog>
                 </React.Fragment>
             );
@@ -65,7 +55,7 @@ const SaveReset = (input) => {
     /***************************************************************/
     return (
         <ButtonGroup>
-            {makeButtons(input.style, input.fontName)}
+            {makeButtons()}
         </ButtonGroup>
     );
 }

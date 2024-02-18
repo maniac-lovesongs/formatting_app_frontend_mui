@@ -34,11 +34,7 @@ const CharacterSetInputBox = (input) => {
 
         apiCallPost(uri, {}, postData, ({ }, d) => {
             if (d && d.success) {
-                const chs = [];
-                Object.keys(d.chs).forEach((v,i) => {
-                    d.chs[v]['id'] = i; 
-                    chs.push(d.chs[v]);
-                });
+                const chs = makeCharacterSetFromDict(d);
 
                 input.setPairs(chs);
 

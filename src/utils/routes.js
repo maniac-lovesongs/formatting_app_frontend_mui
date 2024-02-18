@@ -40,6 +40,16 @@ const appRoutes = [
         component: AppContainer
     },
     {
+        path: "/admin/users/view/all",
+        props: {
+            "content": "admin.users.all",
+            "parent": "admin",
+            "protected": true,
+            "required_role": 1
+        },
+        component: AppContainer
+    },
+    {
         path: "/admin/fonts/create",
         props: {
             "content": "admin.fonts.create",

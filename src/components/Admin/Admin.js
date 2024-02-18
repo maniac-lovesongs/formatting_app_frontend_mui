@@ -7,6 +7,7 @@ import Main from "./Main/Main.js";
 import Fonts from "./Fonts/Fonts.js";
 import Font from "./Font/Font.js";
 import ViewAllRoles from './Role/ViewAllRoles.js';
+import ViewAllUsers from './User/ViewAllUsers.js';
 import "./Admin.scss";
 
 /***************************************************************/
@@ -30,6 +31,8 @@ const Admin = (input) => {
             return <CreateNewFont/>
         else if(input.content === "admin.roles.all")
             return <ViewAllRoles/>
+        else if(input.content === "admin.users.all")
+            return <ViewAllUsers/>
         return null;
     }
     /***************************************************************/

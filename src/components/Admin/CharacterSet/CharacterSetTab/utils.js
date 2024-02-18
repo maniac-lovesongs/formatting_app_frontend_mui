@@ -7,7 +7,8 @@ const uriFriendlyString = utils.uriFriendString;
 /***************************************************************/
 const makeCharacterSetFromDict = (d) => {
     const chs = [];
-    Object.keys(d.chs).forEach((v) => {
+    Object.keys(d.chs).forEach((v,i) => {
+        if(!d.chs[v].id) d.chs[v]['id'] = i; 
         chs.push(d.chs[v]);
     });
     return chs;

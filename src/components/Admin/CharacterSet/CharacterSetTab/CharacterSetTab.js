@@ -6,19 +6,17 @@ import {appManager} from "../../../../models/AppManager/managers.js";
 import CreateNewSetTop from './CreateNewSetTop.js';
 import { characterSet } from '../displayTableMisc.js';
 import DisplayTable from '../../../DisplayTable/DisplayTable.js';
-import SaveReset from './SaveReset.js';
+import SaveReset from "../../SaveReset/SaveReset.js";
 import DeleteAll from '../../DeleteAll/DeleteAll.js';
 import { getCharacterSetHelper } from '../../../../utils/apiFunctions.js';
 import ChangeManager from "../../../../models/ChangeManager/ChangeManager.js"
 import { makePathName } from "../../../DisplayTable/utils.js";
 import { initCharacterSet, uriFriendlyString, makeTitle } from './utils.js';
-import { processFontName } from '../../../../utils/utils.js';
 import { handleAvailableStylesChange, handleReset, handleSave, handleDelete} from "./handlers.js";
-
+import { deleteHelper, saveResetHelper } from '../utils.js';
 
 /***************************************************************/
 const CharacterSetTab = (input) => {
-    console.log('The new character set tab that we just created launched')
     const ref = useRef(null);
     const [usingBase, setUsingBase] = useState(null);
     const [pairs, setPairs] = useState(null);
@@ -26,26 +24,6 @@ const CharacterSetTab = (input) => {
     const [changes, setChanges] = useState(new ChangeManager());
     const [rowModesModel, setRowModesModel] = useState({});
 
-    /***************************************************************/
-    const deleteHelper = {
-        "makeSuccessMessage": (s,f) => {
-            return (<span> You are about to delete all of the <i>{s}</i> characters of the font <i>{processFontName(f)}</i>. Are you sure you 
-            want to do this?</span>)
-        },
-        "makeMesssage": (s,f) => {
-            return (
-            <span>
-                You are about to delete all of the <i>{s}</i> characters of the font <i>{processFontName(f)}</i>. Are you sure you 
-                want to do this?
-            </span>);
-        },
-        "onClickHandler": (e,setOpen, handleSuccess) => {
-            handleDelete(e,input,setOpen,handleSuccess, setExistingCharSet);
-        },
-        "handleAvailableStylesChange": (styles) => {
-            handleAvailableStylesChange(styles, input, setExistingCharSet);
-        }
-    };
     /***************************************************************/
     const observerId = useObserver({"callback": (dataChanged) => {
         const tempDataChanged = makePathName(["characterSet", input.style, "editableRows"]);
@@ -87,11 +65,15 @@ const CharacterSetTab = (input) => {
         }
         return (
             <DeleteAll 
-                handleAvailableStylesChange={deleteHelper.handleAvailableStylesChange}
+                handleAvailableStylesChange={(styles) => {
+                    handleAvailableStylesChange(styles, input, setExistingCharSet);
+                }}
                 fontName={input.fontName}
                 successMessage={deleteHelper.makeSuccessMessage(input.style,input.fontName)}
                 setAvailableStyles={input.setAvailableStyles}
-                onClickHandler={deleteHelper.onClickHandler}
+                onClickHandler={(e,setOpen, handleSuccess) => {
+                    handleDelete(e,input,setOpen,handleSuccess, setExistingCharSet);
+                }}
                 message={deleteHelper.makeMesssage(input.style,input.fontName)}
                 style={input.style}
             />        
@@ -161,6 +143,10 @@ const CharacterSetTab = (input) => {
                         resetHandler={() => {handleReset(input)}}
                         saveHandler={() => {handleSave(input,changes,setExistingCharSet, setUsingBase)}}
                         style={input.style} 
+                        saveSuccessMessage={saveResetHelper.makeSaveSuccessMessage(input.style, input.fontName)}
+                        resetSuccessMessage={saveResetHelper.makeResetSuccessMessage(input.style, input.fontName)}
+                        saveMessage={saveResetHelper.makeSaveMessage(input.style,input.fontName)}
+                        resetMessage={saveResetHelper.makeResetMessage(input.style, input.fontName)}
                         setAvailableStyles={input.setAvailableStyles}
                         availableStyles={input.availableStyles}
                         changes={changes}
