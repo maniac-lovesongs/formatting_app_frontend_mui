@@ -1,11 +1,9 @@
 import { makePathName } from "../../../DisplayTable/utils";
 import { appManager } from "../../../../models/AppManager/managers.js";
-import { capitalize } from "../utils.js";
+import { capitalize,  utils } from "../../../../utils/utils.js";
 import { handleCharactersChanged } from "./handlers.js";
 /***************************************************************/
-const uriFriendlyString = (s) => {
-    return s.toLowerCase().split(" ").join("_");
-}
+const uriFriendlyString = utils.uriFriendString;
 /***************************************************************/
 const makeCharacterSetFromDict = (d) => {
     const chs = [];
@@ -38,3 +36,4 @@ export {
     makeCharacterSetFromDict,
     initCharacterSet
 };
+/***************************************************************/

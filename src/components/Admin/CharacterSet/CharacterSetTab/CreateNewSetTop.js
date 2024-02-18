@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useObserver } from '../../../../utils/hooks/useObserver.js';
-import CharacterSetBases from '../old/CharacterSetBases.js';
-import CharacterSetGenerator from '../old/CharacterSetGenerator.js';
+import CharacterSetBases from '../CharacterSetGenerator/CharacterSetBases.js';
+import CharacterSetGenerator from '../CharacterSetGenerator/CharacterSetGenerator.js';
+import appManager from '../../../../models/AppManager/AppManager.js';
 
 /***************************************************************/
 const CreateNewSetTop = (input) => {

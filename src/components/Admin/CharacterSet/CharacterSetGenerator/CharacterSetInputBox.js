@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useObserver } from '../../../../utils/hooks/useObserver.js';
-import { apiCall, apiCallPost } from "../../../../utils/apiFunctions.js";
+import { apiCallPost } from "../../../../utils/apiFunctions.js";
+import { uriFriendlyString, makeCharacterSetFromDict } from '../CharacterSetTab/utils.js';
 import { Grid, TextField, Button } from "@mui/material";
 
 /***************************************************************/
@@ -20,7 +21,7 @@ const CharacterSetInputBox = (input) => {
     }
     /***************************************************************/
     const generateFont = () => {
-        const tempStyle = input.style.toLowerCase().split(" ").join("_");
+        const tempStyle = uriFriendlyString(input.style)
         const postData = {
             "alpha": value,
             "baseset": input.usingBase.baseset,
@@ -34,20 +35,23 @@ const CharacterSetInputBox = (input) => {
         apiCallPost(uri, {}, postData, ({ }, d) => {
             if (d && d.success) {
                 const chs = [];
-                Object.keys(d.pairs).forEach((v, i) => {
-                    d.pairs[v]["id"] = i;
-                    chs.push(d.pairs[v]);
+                Object.keys(d.chs).forEach((v,i) => {
+                    d.chs[v]['id'] = i; 
+                    chs.push(d.chs[v]);
                 });
+
                 input.setPairs(chs);
 
                 const tempId = input.changes.addChange({
-                    "change": "create new character set",
+                    "change": "create",
                     "data": {
                         "font": input.fontName,
                         "style": tempStyle,
                         "pairs": chs,
                     }
                 });
+
+                console.log(input.changes);
 
                 setChangeId(tempId);
                 input.setChanges(input.changes.clone());

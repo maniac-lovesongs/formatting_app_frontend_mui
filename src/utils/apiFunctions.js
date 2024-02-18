@@ -1,4 +1,4 @@
-import utils from "./utils.js";
+import {utils} from "./utils.js";
 
 const apiCall = async (uri, args, callback) => {
     const link = utils.make_backend(uri);

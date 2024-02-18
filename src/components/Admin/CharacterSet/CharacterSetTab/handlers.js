@@ -23,14 +23,19 @@ const handleCharactersChanged = (changedCharacters,input) => {
     appManager.setTemp(changedCharacters, makePathName(["characterSet",input.style,"editableRows"]));
 }
 /***************************************************************/
-const handleSave = (input,changes,setExistingCharSet,setUsingBase) => {
+const handleSave = (input,changes,setExistingCharSet, setUsingBase) => {
     const changeData = changes.getChanges();
     const sortedKeys = Object.keys(changeData).sort((a, b) => a - b).reverse();
-    sortedKeys.forEach((k) => {
-        if (changeData[k].change === "create new character set") {
-            handleCreateNewSet(input, changeData[k].data.pairs, setExistingCharSet, setUsingBase);
-        }
-    });
+    console.log(changeData);
+   // sortedKeys.forEach((k) => {
+    const k = sortedKeys[0]; 
+    if (changeData[k].change === "create") {
+        handleCreateNewSet(input, changeData[k].data.pairs, setExistingCharSet, setUsingBase);
+    }
+    else if(changeData[k].change === "update"){
+         handleUpdateSet(input,changeData[k].data.pairs, setExistingCharSet, setUsingBase);
+    }
+   // });
 }
 /***************************************************************/
 const handleCreateNewSet = (input, pairs, setExistingCharSet, setUsingBase) => {
@@ -53,13 +58,32 @@ const handleCreateNewSet = (input, pairs, setExistingCharSet, setUsingBase) => {
     });
 }
 /***************************************************************/
+const handleUpdateSet = (input, pairs, setExistingCharSet, setUsingBase) => {
+    const tempName = uriFriendlyString(input.fontName);
+    const tempStyle = uriFriendlyString(input.style);
+
+    const uri = "/api/fonts/character_sets/update/font/" + tempName + "/style/" + tempStyle;
+    const postData = { "pairs": pairs };
+    apiCallPost(uri, {}, postData, (args, d) => {
+        if (d && d.success) {
+            input.setAvailableStyles(d.availableStyles);
+            const chs = makeCharacterSetFromDict(d);
+
+            //setExistingCharSet(d.availableStyles.includes(input.style));
+            //setUsingBase(null);
+            //appManager.setReset(chs, makePathName(["characterSet",input.style,"editableRows"]));
+            //handleCharactersChanged(chs, input);
+        }
+    });
+}
+/***************************************************************/
 const handleDelete = (e,input,setOpen,handleSuccess) => {
         setOpen(false);
         const s = uriFriendlyString(input.style);
         const uri = "/api/fonts/character_sets/delete/font/" + input.fontName + "/style/" + s;
         apiCall(uri, {}, (args, d) => {
              if(d && d.success){
-                 input.handleAvailableStylesChange(d.availableStyles);
+                 handleAvailableStylesChange(d.availableStyles);
                  handleSuccess(true)();
              }
         });
@@ -71,5 +95,6 @@ export {
     handleCharactersChanged,
     handleCreateNewSet,
     handleSave,
-    handleDelete
+    handleDelete,
+    handleUpdateSet
 };

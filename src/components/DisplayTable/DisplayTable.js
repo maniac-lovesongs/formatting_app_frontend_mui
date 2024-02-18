@@ -4,7 +4,6 @@ import constants from '../../utils/constants.js';
 import {DataGrid, GridRowModes} from '@mui/x-data-grid';
 import {useEditableDataGridRows} from "../../utils/hooks/useEditableDataGridRows.js"
 import {useObserver} from '../../utils/hooks/useObserver.js';
-import { apiCall, getCharacterSetHelper } from '../../utils/apiFunctions.js';
 import { makePathName } from './utils.js';
 import "./DisplayTable.scss";
 
@@ -61,7 +60,7 @@ const DisplayTable = (input) => {
                             const temp = input.pairs.map((row) => (row.id === newRow.id ? updatedRow : row));
                             input.handleCharactersChanged(temp);
                             if (input.rowModesModel[updatedRow.id]?.mode !== GridRowModes.Edit) {
-                              if(input.updater) input.updater(updatedRow);   
+                              if(input.updater) input.updater(temp);   
                             }
                             return updatedRow;                              
                           }}

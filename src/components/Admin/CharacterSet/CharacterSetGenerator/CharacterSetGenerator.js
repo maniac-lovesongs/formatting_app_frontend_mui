@@ -7,8 +7,6 @@ import CharacterSetBases from "./CharacterSetBases.js";
 /***************************************************************/
 const CharacterSetGenerator = (input) => {
     const ref = useRef(null);
-    const [value, setValue] = useState("");
-    const [changeId, setChangeId] = useState(null);
 
     /***************************************************************/
     const observerId = useObserver({ "callback": (dataChanged) => { } });
@@ -18,11 +16,7 @@ const CharacterSetGenerator = (input) => {
     /***************************************************************/
     return (
         <React.Fragment>
-            <CharacterSetBases
-                setUsingBase={input.setUsingBase}
-                usingBase={input.usingBase}
-            />
-            {input.usingBase && <CharacterSetInputBox
+             <CharacterSetInputBox
                 usingBase={input.usingBase}
                 setUsingBase={input.setUsingBase}
                 setPairs={input.setPairs}
@@ -31,7 +25,7 @@ const CharacterSetGenerator = (input) => {
                 fontName={input.fontName}
                 pairs={input.pairs}
                 style={input.style}
-            />}
+            />
         </React.Fragment>
     );
 }

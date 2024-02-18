@@ -6,12 +6,12 @@ import { useParams } from "react-router-dom";
 import Title from "../Title/Title.js";
 import "./Font.scss";
 import { processFontName, capitalize} from '../CharacterSet/utils.js';
-//import CharacterSetTab from '../CharacterSet/CharacterSetTab.js';
 import CharacterSetTab from '../CharacterSet/CharacterSetTab/CharacterSetTab.js';
 import { apiCall } from '../../../utils/apiFunctions.js';
 
 /***************************************************************/
 const CreateNewFont = (input) => {
+    console.log("The create new font that we just edited launched");
     const ref = useRef(null);
     const [tempFontName, setTempFontName] = useState('');
     const { id, fontName, styles } = useParams();
