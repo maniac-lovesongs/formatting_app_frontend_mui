@@ -77,13 +77,13 @@ const handleUpdateSet = (input, pairs, setExistingCharSet, setUsingBase) => {
     });
 }
 /***************************************************************/
-const handleDelete = (e,input,setOpen,handleSuccess) => {
+const handleDelete = (e,input,setOpen,handleSuccess, setExistingCharSet) => {
         setOpen(false);
         const s = uriFriendlyString(input.style);
         const uri = "/api/fonts/character_sets/delete/font/" + input.fontName + "/style/" + s;
         apiCall(uri, {}, (args, d) => {
              if(d && d.success){
-                 handleAvailableStylesChange(d.availableStyles);
+                 handleAvailableStylesChange(d.availableStyles,input, setExistingCharSet);
                  handleSuccess(true)();
              }
         });

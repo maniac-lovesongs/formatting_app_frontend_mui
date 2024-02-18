@@ -40,7 +40,7 @@ const CharacterSetTab = (input) => {
             </span>);
         },
         "onClickHandler": (e,setOpen, handleSuccess) => {
-            handleDelete(e,input,setOpen,handleSuccess);
+            handleDelete(e,input,setOpen,handleSuccess, setExistingCharSet);
         },
         "handleAvailableStylesChange": (styles) => {
             handleAvailableStylesChange(styles, input, setExistingCharSet);
