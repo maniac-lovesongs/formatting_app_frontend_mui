@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useObserver } from '../../../../utils/hooks/useObserver.js';
-import { ButtonGroup, Alert, Snackbar} from "@mui/material";
-import {appManager} from "../../../../models/AppManager/managers.js";
+import { ButtonGroup } from "@mui/material";
 import SaveIcon from '@mui/icons-material/Save';
 import RotateLeftIcon from '@mui/icons-material/RotateLeft';
 import ConfirmationDialog from '../../../ConfirmationDialog/ConfirmationDialog.js';

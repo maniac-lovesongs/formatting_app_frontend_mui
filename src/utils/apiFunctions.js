@@ -40,4 +40,4 @@ const getCharacterSetHelper = async (s,f, callback) => {
   } 
 });}
 
-export { apiCall, apiCallPost, getCharacterSetHelper};
+export { apiCall, apiCallPost, getCharacterSetHelper };

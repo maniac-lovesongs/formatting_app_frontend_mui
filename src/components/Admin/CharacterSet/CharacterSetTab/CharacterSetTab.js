@@ -1,19 +1,18 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useObserver } from '../../../../utils/hooks/useObserver.js';
-import { Grid, ButtonGroup} from "@mui/material";
+import { Grid } from "@mui/material";
 import Title from "../../Title/Title.js"
 import {appManager} from "../../../../models/AppManager/managers.js";
-import CharacterSetBases from '../old/CharacterSetBases.js';
-import CharacterSetGenerator from '../old/CharacterSetGenerator.js';
+import CreateNewSetTop from './CreateNewSetTop.js';
 import { characterSet } from '../displayTableMisc.js';
 import DisplayTable from '../../../DisplayTable/DisplayTable.js';
 import SaveReset from './SaveReset.js';
 import DeleteAll from './DeleteAll.js';
-import { apiCallPost, getCharacterSetHelper } from '../../../../utils/apiFunctions.js';
+import { getCharacterSetHelper } from '../../../../utils/apiFunctions.js';
 import ChangeManager from "../../../../models/ChangeManager/ChangeManager.js"
-import { capitalize } from "../utils.js";
 import { makePathName } from "../../../DisplayTable/utils.js";
-import { initCharacterSet, handleReset, handleAvailableStylesChange, handleCharactersChanged } from './utils.js';
+import { initCharacterSet, uriFriendlyString, makeTitle } from './utils.js';
+import { handleAvailableStylesChange, handleReset, handleSave } from "./handlers.js";
 
 
 /***************************************************************/
@@ -26,12 +25,8 @@ const CharacterSetTab = (input) => {
     const [rowModesModel, setRowModesModel] = useState({});
     /***************************************************************/
     const observerId = useObserver({"callback": (dataChanged) => {
-        const tempDataChanged = makePathName(["characterSet", 
-        input.style, 
-        "editableRows"]);
-        const tempDataChangedRowModesModel =  makePathName(["characterSet", 
-        input.style, 
-        "rowModesModel"]);
+        const tempDataChanged = makePathName(["characterSet", input.style, "editableRows"]);
+        const tempDataChangedRowModesModel =  makePathName(["characterSet", input.style, "rowModesModel"]);
         if(dataChanged === tempDataChanged){
             const temp = appManager.getTemp(tempDataChanged);
             setPairs(temp);
@@ -44,94 +39,34 @@ const CharacterSetTab = (input) => {
   /***************************************************************/
     useEffect(() => {
         if(input.fontName && input.fontName !== '' && !pairs){
-            const tempName = input.fontName.toLowerCase().split(" ").join("_");
-            const tempStyle = input.style.toLowerCase().split(" ").join("_");
+            const tempName = uriFriendlyString(input.fontName);
+            const tempStyle = uriFriendlyString(input.style);
 
             getCharacterSetHelper(tempStyle, tempName, (d,extra) => {
-                initCharacterSet(d, extra.chs, {
-                    "availableStyles": input.availableStyles, 
-                    "setAvailableStyles": input.setAvailableStyles,
-                    "setExistingCharSet": setExistingCharSet,
-                    "setUsingBase": setUsingBase,
-                    "style": input.style, 
-                });
+                initCharacterSet(d, extra.chs, input, setExistingCharSet, setUsingBase);
             });
         };
     }, []);
     /***************************************************************/
-    const handleSave = () => {
-        const changeData = changes.getChanges();
-        const sortedKeys = Object.keys(changeData).sort((a, b) => a - b).reverse();
-        const tempName = input.fontName.toLowerCase().split(" ").join("_");
-        const tempStyle = input.style.toLowerCase().split(" ").join("_");
-        
-        sortedKeys.forEach((k) => {
-            if (changeData[k].change === "create new character set") {
-                const uri = "/api/fonts/character_sets/create/font/" + tempName + "/style/" + tempStyle;
-                const postData = { "pairs": changeData[k].data.pairs };
-                apiCallPost(uri, {}, postData, (args, d) => {
-                    if (d && d.success) {
-                        console.log(d);
-                        input.setAvailableStyles(d.availableStyles);
-
-                        const chs = [];
-                        Object.keys(d.chs).forEach((v) => {
-                            chs.push(d.chs[v]);
-                        });
-
-                        setExistingCharSet(d.availableStyles.includes(input.style));
-                        setUsingBase(null);
-
-                        appManager.setReset(chs, makePathName(["characterSet",
-                            input.style,
-                            "editableRows"]));
-                        handleCharactersChanged(chs);
-                    }
-                });
-
-            }
-        });
-    }
-    /***************************************************************/
     const makeTopPart = (usingBase) => {
         if(!existingCharSet){
-            return(                
-            <React.Fragment>
-                <CharacterSetBases
-                    setUsingBase={setUsingBase}
-                    usingBase={usingBase}
-                />
-               {usingBase && <CharacterSetGenerator
-                    usingBase={usingBase}
-                    setUsingBase={setUsingBase}
-                    setPairs={setPairs}
-                    changes={changes}
-                    setChanges={setChanges}
-                    fontName={input.fontName}
-                    pairs={pairs}
-                    style={input.style}
-                />}
-            </React.Fragment>);
+            return(<CreateNewSetTop 
+                        setUsingBase={setUsingBase}
+                        usingBase={usingBase}
+                        setPairs={setPairs}
+                        changes={changes}
+                        setChanges={setChanges}
+                        fontName={input.fontName}
+                        pairs={pairs}
+                        style={input.style}/>);
         }
         return (
             <DeleteAll 
-                handleAvailableStylesChange={(styles) => {
-                    handleAvailableStylesChange(styles, {
-                        "style": input.style, 
-                        "setAvailableStyles": input.setAvailableStyles, 
-                        "setExistingCharSet": setExistingCharSet
-                    });
-                }}
+                handleAvailableStylesChange={(styles) => {handleAvailableStylesChange(styles, input, setExistingCharSet)}}
                 fontName={input.fontName}
                 style={input.style}
             />        
         ); 
-    }
-    /***************************************************************/
-    const makeTitle = () => {
-        return input.style.split(" ").map((c) => {
-            return capitalize(c);
-        }).join(" ");
     }
     /***************************************************************/
     return (
@@ -142,7 +77,7 @@ const CharacterSetTab = (input) => {
             }}
             container>
             <Grid item xs={12}>
-                <Title>{makeTitle()}</Title>
+                <Title>{makeTitle(input.style)}</Title>
             </Grid>
             <Grid
                 justifyContent="flex-start"
@@ -180,20 +115,14 @@ const CharacterSetTab = (input) => {
                 item 
                 container 
                 xs={12}>
-                    <ButtonGroup>
-                       <SaveReset
-                            resetHandler={() => {
-                                handleReset({
-                                    "style": input.style,
-                                });
-                            }}
-                            saveHandler={handleSave}
-                            style={input.style} 
-                            changes={changes}
-                            setChanges={setChanges}
-                            fontName={input.fontName} 
-                       />
-                    </ButtonGroup>
+                    <SaveReset
+                        resetHandler={() => {handleReset(input)}}
+                        saveHandler={() => {handleSave(input,changes,setExistingCharSet,setUsingBase)}}
+                        style={input.style} 
+                        changes={changes}
+                        setChanges={setChanges}
+                        fontName={input.fontName} 
+                    />
             </Grid>
         </Grid>
     );
