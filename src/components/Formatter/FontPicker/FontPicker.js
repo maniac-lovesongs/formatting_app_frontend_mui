@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import {useObserver} from '../../../utils/hooks/useObserver.js';
-import Drawer from '@mui/material/Drawer';
 import { apiCall } from '../../../utils/apiFunctions.js';
-import {Select, MenuItem, FormControl, Chip, Button, Box, Grid} from "@mui/material/";
+import {Select, MenuItem, Chip, Button, Box, Grid, ButtonGroup} from "@mui/material/";
+import {FormatBold, FormatItalic} from "@mui/icons-material";
 import {appManager} from "../../../models/AppManager/managers.js";
 import "./FontPicker.scss";
 /***************************************************************/
@@ -15,6 +15,12 @@ const FontPicker = (input) => {
     const observerId = useObserver({"callback": (dataChanged) => {
         if(dataChanged === "state"){
             setSelectedFont(appManager.getFont());
+        }
+        else if(dataChanged === "string.cursor"){
+            if(appManager.string.getSelectionMade()){
+                const cursor = appManager.string.getCursor();
+                setExample(appManager.string.getSubstring(cursor));
+            }
         }
     }});
     /***************************************************************/
@@ -36,10 +42,8 @@ const FontPicker = (input) => {
         }
     }, []);
     /***************************************************************/
-    const writeString = (string, font, font_name) => {
-        const style = font_name === "Serif"? "bold" : "normal";
+    const writeString = (string, font, style) => {
         const characterSet = font[style];
-
         const tempString = [];
         for(let i = 0; i < string.length; i++){
             const c = string.charAt(i);
@@ -53,24 +57,26 @@ const FontPicker = (input) => {
         return tempString.join('');
     }
     /****************************************************************/
-    const makeFonts = (data) => {
+    const makeFonts = (data, example) => {
         const fontNames = Object.keys(data.chs);
         return fontNames.map((font_name) => {
             const font = data.chs[font_name];
             const tempExample = example.length === 0? font_name : example;
-            const tempString = writeString(tempExample, font, font_name);
+            const st = font_name === "Serif"? "bold" : "normal";
             return (
-            <MenuItem value={font_name}>
-                <Chip 
-                    sx={{"marginRight": "1em" }}
-                    label={font_name}/>
-                <span className="font-example">{tempString}</span>
-            </MenuItem>)
+                <MenuItem value={font_name}>
+                    <Chip 
+                        sx={{"marginRight": "1em" }}
+                        label={font_name}/>
+                    <span className="font-example">{writeString(tempExample, font, st)}</span>
+                </MenuItem>
+            );
         });
     }
     /***************************************************************/
     const handleUseFont = (e) => {
-        appManager.setFont(selectedFont);
+        console.log(data["allFonts"])
+        appManager.setFont(selectedFont, data["allFonts"][selectedFont].styles);
     }
     /***************************************************************/
     const handleSelect = (e) => {
@@ -92,7 +98,7 @@ const FontPicker = (input) => {
                                 }}
                                 fullWidth
                                 onChange={handleSelect}>
-                                {data && makeFonts(data)}
+                                {data && makeFonts(data, example)}
                             </Select>
                         </Grid>
                         <Grid item xs={12}>

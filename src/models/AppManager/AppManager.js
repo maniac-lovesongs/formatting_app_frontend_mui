@@ -302,10 +302,19 @@ class AppManager {
         observerManager.notify(["state", "history"]);
     }
     /**************************************************************/
-    setFont(f) {
+    setFont(f, allStyles = null){
         this.state.font = f;
         this.state.style = f === "Serif" ? "bold" : "normal";
-        this.state.availableStyles = this.getAvailableStyles();
+        this.state.availableStyles = {"bold": false, 
+        "normal": false, 
+        "italic": false, 
+        "bold italic": false};
+
+        if(allStyles !== null){
+            allStyles.forEach((k) => {
+                this.state.availableStyles[k] = true; 
+            })
+        }
 
         historyManager.snapshot("font change", this.snapshot());
         observerManager.notify(["state", "history"]);

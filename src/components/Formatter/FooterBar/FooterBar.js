@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import {Button, ButtonGroup, Grid, Paper, Drawer} from '@mui/material';
 import {FontDownload, FormatBold, FormatItalic, ContentPaste, Delete} from "@mui/icons-material";
 import FontPicker from '../FontPicker/FontPicker.js';
+import StyleButtons from '../StyleButtons/StyleButtons.js';
 import {apiCall} from "../../../utils/apiFunctions.js";
 import {useObserver} from '../../../utils/hooks/useObserver.js';
 import {appManager } from "../../../models/AppManager/managers.js";
@@ -24,75 +25,14 @@ const FooterBar = (input) => {
             apiCall(uri, {}, (args, d) => {
                 if (d && d.characters) {
                     appManager.setCurrentData(d);
-                    determineActiveButtons();
-                    determineButtonsInUse();
                 }
             });
 
-        }
-        else if(dataChanged === "currentData"){
-            determineActiveButtons();
-            determineButtonsInUse();   
         }
         else if(dataChanged === "clipboard"){
             setClipboard(appManager.getClipboard());
         }
     }});
-    /***************************************************************/
-    useEffect(() => {
-        determineActiveButtons();
-        determineButtonsInUse();
-    }, []);
-    /***************************************************************/
-    const determineActiveButtons = () => {
-        const availableStyles = appManager.getAvailableStyles();
-        const currentFont = appManager.getFont();
-
-        if (currentFont === "Serif") {
-            setDisableBold(true); // disable bold 
-            setDisableItalic(false); // do not disable italic
-        }
-        else {
-            setDisableBold(!availableStyles.bold);
-            setDisableItalic(!availableStyles.italic);
-        }
-    }
-    /***************************************************************/
-    const determineButtonsInUse = () => {
-        const style = appManager.getStyle();
-        if (style === "bold") {
-            setUsingBold(true);
-            setUsingItalic(false);
-        }
-        else if (style === "italic") {
-            setUsingItalic(true);
-            setUsingBold(false);
-        }
-        else if (style === "bold italic") {
-            setUsingBold(true);
-            setUsingItalic(true);
-        }
-        else if (style === "normal") {
-            setUsingBold(false);
-            setUsingItalic(false);
-        }
-    }
-    /***************************************************************/
-    const handleMakeBold = (e) => {
-        if (!disableBold) 
-            // if we can make this font bolds
-            appManager.setStyle(!usingBold, usingItalic, "bold");
-        
-        e.stopPropagation();
-
-    }
-    /***************************************************************/
-    const handleMakeItalic = (e) => {
-        if (!disableItalic)
-            // if we can make this font bold
-            appManager.setStyle(usingBold, !usingItalic, "italic");
-        e.stopPropagation();
-    }
     /***************************************************************/
     const handlePaste = () => {
         const temp = appManager.getClipboard();
@@ -138,18 +78,7 @@ const FooterBar = (input) => {
                              </Drawer>
                         }
                     </Button>
-                    <Button
-                        variant={usingBold? "contained" : "outlined"}
-                        onClick={handleMakeBold}
-                        disabled={disableBold}>
-                            <FormatBold/>
-                        </Button>
-                    <Button
-                        variant={usingItalic? "contained" : "outlined"}
-                        onClick={handleMakeItalic}
-                        disabled={disableItalic}>
-                            <FormatItalic />
-                    </Button>
+                    <StyleButtons/>
                     <Button
                         onClick={handleDelete}>
                         <Delete/>
