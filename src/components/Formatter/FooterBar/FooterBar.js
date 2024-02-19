@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import {Button, ButtonGroup, Grid, Paper} from '@mui/material';
+import {Button, ButtonGroup, Grid, Paper, Drawer} from '@mui/material';
 import {FontDownload, FormatBold, FormatItalic, ContentPaste, Delete} from "@mui/icons-material";
+import FontPicker from '../FontPicker/FontPicker.js';
 import {apiCall} from "../../../utils/apiFunctions.js";
-import {withObserver, useObserver} from '../../../utils/hooks/useObserver.js';
+import {useObserver} from '../../../utils/hooks/useObserver.js';
 import {appManager } from "../../../models/AppManager/managers.js";
 import "./FooterBar.scss";
 
 /***************************************************************/
 const FooterBar = (input) => {
-    //const [observerId, setObserverId] = useState(null);
     const [fontPickerOpen, setFontPickerOpen] = useState(false);
     const [disableBold, setDisableBold] = useState(false);
     const [disableItalic, setDisableItalic] = useState(false);
@@ -103,6 +103,15 @@ const FooterBar = (input) => {
         appManager.deleteAll();
     };
     /***************************************************************/
+    const handleFontPickerOpen = () => {
+        setFontPickerOpen(!fontPickerOpen);
+    }
+    /***************************************************************/
+    const handleToggleFontPickerOpen = (e) => {
+        e.stopPropagation();
+        handleFontPickerOpen();
+    }
+    /***************************************************************/
     return(
         <Grid
             item
@@ -116,9 +125,19 @@ const FooterBar = (input) => {
                 }} elevation={2}>
                     <ButtonGroup>
                     <Button
-                        onClick={(e) => {return null}}>
+                        onClick={handleFontPickerOpen}>
                             <FontDownload/>
-                        </Button>
+                        {fontPickerOpen && 
+                            <Drawer
+                                anchor="bottom"
+                                open={fontPickerOpen}
+                                onClose={handleToggleFontPickerOpen}>
+                                <FontPicker
+                                    location="bottom"
+                                />
+                             </Drawer>
+                        }
+                    </Button>
                     <Button
                         variant={usingBold? "contained" : "outlined"}
                         onClick={handleMakeBold}
@@ -138,7 +157,7 @@ const FooterBar = (input) => {
                     <Button
                         variant={clipboard === null ? "outlined" : "contained"}
                         disabled={clipboard === null}
-                        onClick={(e) => {return null}}
+                        onClick={handlePaste}
                     >
                         <ContentPaste/>
                     </Button>

@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from 'react';
-import constants from '../../../utils/constants.js';
 import { useObserver } from '../../../utils/hooks/useObserver.js';
 import { Box, Grid, Paper, TextField, Tab, Tabs,Chip } from "@mui/material";
 import { useParams } from "react-router-dom";
@@ -11,10 +10,10 @@ import { apiCall } from '../../../utils/apiFunctions.js';
 
 /***************************************************************/
 const CreateNewFont = (input) => {
-    console.log("The create new font that we just edited launched");
     const ref = useRef(null);
     const [tempFontName, setTempFontName] = useState('');
     const { id, fontName, styles } = useParams();
+    const [fontNameSaved, setFontNameSaved] = useState(false);
     const [openedTab, setOpenedTab] = useState(0);
     const [availableStyles, setAvailableStyles] = useState(null);
     const allStyles = ["normal", "bold", "italic", "bold italic"];
@@ -25,8 +24,8 @@ const CreateNewFont = (input) => {
     }, []);
     /***************************************************************/
     const makeFontName = () => {
-        if (fontName) {
-            return processFontName(fontName);
+        if (fontName || fontNameSaved) {
+            return processFontName(fontNameSaved? tempFontName : fontName);
         }
         return (<TextField 
             value={tempFontName}
@@ -51,6 +50,7 @@ const CreateNewFont = (input) => {
             return (<CharacterSetTab 
                 style={s}
                 tabId={i}
+                setFontNameSaved={setFontNameSaved}
                 availableStyles={availableStyles}
                 dataName="characterSet"
                 setAvailableStyles={setAvailableStyles}

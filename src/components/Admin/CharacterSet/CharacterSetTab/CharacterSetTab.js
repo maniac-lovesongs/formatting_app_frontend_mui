@@ -141,7 +141,10 @@ const CharacterSetTab = (input) => {
                 xs={12}>
                     <SaveReset
                         resetHandler={() => {handleReset(input)}}
-                        saveHandler={() => {handleSave(input,changes,setExistingCharSet, setUsingBase)}}
+                        saveHandler={() => {
+                            handleSave(input,changes,setExistingCharSet, setUsingBase)
+                            input.setFontNameSaved(true);
+                        }}
                         style={input.style} 
                         saveSuccessMessage={saveResetHelper.makeSaveSuccessMessage(input.style, input.fontName)}
                         resetSuccessMessage={saveResetHelper.makeResetSuccessMessage(input.style, input.fontName)}
