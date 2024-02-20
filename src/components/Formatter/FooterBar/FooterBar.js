@@ -6,6 +6,7 @@ import StyleButtons from '../StyleButtons/StyleButtons.js';
 import {apiCall} from "../../../utils/apiFunctions.js";
 import {useObserver} from '../../../utils/hooks/useObserver.js';
 import {appManager } from "../../../models/AppManager/managers.js";
+import { prepareCurrentData } from '../utils.js';
 import "./FooterBar.scss";
 
 /***************************************************************/
@@ -19,15 +20,7 @@ const FooterBar = (input) => {
     /***************************************************************/
     const observerId = useObserver({"callback": (dataChanged) => {
         if (dataChanged === "state") {
-            const s = appManager.getUriFriendlyStyle();
-            const f = appManager.getUriFriendlyFont();
-            const uri = "/api/fonts/character_sets/font/" + f + "/style/" + s;
-            apiCall(uri, {}, (args, d) => {
-                if (d && d.characters) {
-                    appManager.setCurrentData(d);
-                }
-            });
-
+            prepareCurrentData();
         }
         else if(dataChanged === "clipboard"){
             setClipboard(appManager.getClipboard());
@@ -78,7 +71,7 @@ const FooterBar = (input) => {
                              </Drawer>
                         }
                     </Button>
-                    <StyleButtons/>
+                    <StyleButtons wrapper={React.Fragment}/>
                     <Button
                         onClick={handleDelete}>
                         <Delete/>

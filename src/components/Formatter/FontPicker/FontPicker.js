@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import {useObserver} from '../../../utils/hooks/useObserver.js';
 import { apiCall } from '../../../utils/apiFunctions.js';
 import {Select, MenuItem, Chip, Button, Box, Grid, ButtonGroup} from "@mui/material/";
-import {FormatBold, FormatItalic} from "@mui/icons-material";
+import StyleButtons from '../StyleButtons/StyleButtons.js';
 import {appManager} from "../../../models/AppManager/managers.js";
 import "./FontPicker.scss";
 /***************************************************************/
@@ -101,14 +101,19 @@ const FontPicker = (input) => {
                                 {data && makeFonts(data, example)}
                             </Select>
                         </Grid>
-                        <Grid item xs={12}>
-                            <Button
-                                onClick={handleUseFont}
-                                fullWidth 
-                                sx={{"marginTop": "1em"}}
-                                variant="contained">
-                                    Use
-                            </Button>
+                        <Grid container item xs={12}>
+                            <ButtonGroup 
+                                sx={{"marginTop": "1em"}}>
+                                <Button
+                                    onClick={handleUseFont}
+                                    fullWidth
+                                    variant="contained">
+                                        Use
+                                </Button>
+                                <StyleButtons
+                                    wrapper={React.Fragment}
+                                />
+                            </ButtonGroup>
                         </Grid>
                     </Grid>
                 </Box>}

@@ -6,6 +6,7 @@ import InputBox from "./InputBox/InputBox.js";
 import HeaderBar from './HeaderBar/HeaderBar.js';
 import FooterBar from "./FooterBar/FooterBar.js";
 import {appManager} from "../../models/AppManager/managers.js";
+import { prepareFont, prepareCurrentData } from './utils.js';
 
 /***************************************************************/
 const Formatter = (input) => {
@@ -20,14 +21,7 @@ const Formatter = (input) => {
     /***************************************************************/
     useEffect(() => {
         if (fontLookup === null) {
-            const s = appManager.getUriFriendlyStyle();
-            const f = appManager.getUriFriendlyFont();
-            const uri = "/api/fonts/character_sets/font/" + f + "/style/" + s;
-            apiCall(uri, {}, (args, d) => {
-                if (d && d.characters) {
-                    appManager.setCurrentData(d);
-                }
-            });
+            prepareCurrentData();
         }
     }, []);    
     /***************************************************************/

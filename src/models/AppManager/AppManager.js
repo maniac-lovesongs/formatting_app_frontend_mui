@@ -39,50 +39,12 @@ class AppManager {
         historyManager.snapshot("init", this.snapshot());
     }
     /**************************************************************/
-    setCurrentUser(u) {
-        this.current_user = u;
-        observerManager.notify(["current_user"]);
-    }
-    /**************************************************************/
     initState() {
         const that = this;
         Object.keys(this.defaults).forEach((k) => {
             const temp = that.defaults[k];
             that.state[k] = temp;
         });
-    }
-    /**************************************************************/
-    setStyleBasic(s) {
-        this.state.style = s;
-        observerManager.notify(["style"]);
-    }
-    /**************************************************************/
-    setCurrentData(c) {
-        this.currentData = c;
-        this.state.style = c.style;
-        this.state.bold = c.styleInfo.isBold;
-        this.state.italic = c.styleInfo.isItalic;
-        this.state.font = c.font;
-
-        const styles = Object.keys(this.state.availableStyles);
-        for (let i = 0; i < styles.length; i++) {
-            const st = styles[i];
-            this.state.availableStyles[st] = c.availableStyles.includes(st);
-        }
-
-        const changed = ["currenData"];
-        if (this.string.cursor[0] !== this.string.cursor[1]) {
-            changed.push("string");
-            this.string.editSelection(this.state.font,
-                this.state.style, c);
-        }
-
-        observerManager.notify(changed);
-    }
-    /**************************************************************/
-    setFontBasic(f) {
-        this.state.font = f;
-        observerManager.notify(["font"]);
     }
     /**************************************************************/
     userLoggedIn() {
@@ -248,6 +210,44 @@ class AppManager {
     }
     /**************************************************************/
     /* Setters                                                    */
+    /**************************************************************/
+    setCurrentUser(u) {
+        this.current_user = u;
+        observerManager.notify(["current_user"]);
+    }
+    /**************************************************************/
+    setStyleBasic(s) {
+        this.state.style = s;
+        observerManager.notify(["style"]);
+    }
+    /**************************************************************/
+    setCurrentData(c) {
+        this.currentData = c;
+        this.state.style = c.style;
+        this.state.bold = c.styleInfo.isBold;
+        this.state.italic = c.styleInfo.isItalic;
+        this.state.font = c.font;
+
+        const styles = Object.keys(this.state.availableStyles);
+        for (let i = 0; i < styles.length; i++) {
+            const st = styles[i];
+            this.state.availableStyles[st] = c.availableStyles.includes(st);
+        }
+
+        const changed = ["currenData"];
+        if (this.string.cursor[0] !== this.string.cursor[1]) {
+            changed.push("string");
+            this.string.editSelection(this.state.font,
+                this.state.style, c);
+        }
+
+        observerManager.notify(changed);
+    }
+    /**************************************************************/
+    setFontBasic(f) {
+        this.state.font = f;
+        observerManager.notify(["font"]);
+    }
     /**************************************************************/
     setSelectedText(t) {
         this.state.selectedText = t;

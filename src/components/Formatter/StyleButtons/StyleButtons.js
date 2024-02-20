@@ -74,8 +74,10 @@ const StyleButtons = (input) => {
         e.stopPropagation();
     }
     /***************************************************************/
+    const Wrapper=input.wrapper;
+
     return(
-        <React.Fragment>
+        <Wrapper sx={input.sx}>
             <Button
                 variant={usingBold? "contained" : "outlined"}
                 onClick={handleMakeBold}
@@ -88,7 +90,7 @@ const StyleButtons = (input) => {
                 disabled={disableItalic}>
                 <FormatItalic />
             </Button>
-        </React.Fragment>
+        </Wrapper>
     );
 }
 
