@@ -15,13 +15,16 @@ const AppContainer = (input) => {
     const [isLoggedIn, setIsLoggedIn] = useState(null);
     const authHandlers = useAuth();
     /***************************************************************/
-    const observerId = useObserver({"callback": (dataChanged)=>{
-        if(dataChanged === "current_user"){
-            const temp = appManager.userLoggedIn()? {...appManager.getCurrentUser()} : null;
-            setCurrentUser(temp);
-            setIsLoggedIn(appManager.userLoggedIn());
-        }    
-    }});
+    const observerId = useObserver({
+        "caller": "AppContainer",
+        "callback": (dataChanged) => {
+                if(dataChanged === "current_user"){
+                    const temp = appManager.userLoggedIn()? {...appManager.getCurrentUser()} : null;
+                    setCurrentUser(temp);
+                    setIsLoggedIn(appManager.userLoggedIn());
+                }  
+            }
+    });
     /**************************************************************/
     useEffect(() => {
         // register a listener 

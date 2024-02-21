@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { apiCall} from '../../utils/apiFunctions.js';
 import {useObserver} from "../../utils/hooks/useObserver.js";
 import {Grid, Box, Paper} from "@mui/material";
 import InputBox from "./InputBox/InputBox.js";
@@ -13,7 +12,9 @@ const Formatter = (input) => {
     const ref = useRef(null);
     const [fontLookup, setFontLookup] = useState(null);
     /***************************************************************/
-    const observerId = useObserver({"callback": (dataChanged) => {
+    const observerId = useObserver({
+        "caller": "Formatter",
+        "callback": (dataChanged) => {
         if(dataChanged === "currentData"){
             setFontLookup(appManager.getCurrentData());
         }
@@ -50,7 +51,9 @@ const Formatter = (input) => {
                             "padding": "0.5em",
                             "margin": "1em"
                         }}>
-                        <InputBox />
+                        <InputBox
+                            wrapper={"div"}
+                         />
                     </Paper>
                 </Grid>
                 <FooterBar/>

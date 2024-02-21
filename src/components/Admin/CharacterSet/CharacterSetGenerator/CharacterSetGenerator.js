@@ -9,7 +9,10 @@ const CharacterSetGenerator = (input) => {
     const ref = useRef(null);
 
     /***************************************************************/
-    const observerId = useObserver({ "callback": (dataChanged) => { } });
+    const observerId = useObserver({ 
+        "caller": "CharacterSetGenerator",
+        "callback": (dataChanged) => { } 
+    });
     /***************************************************************/
     useEffect(() => {
     }, []);

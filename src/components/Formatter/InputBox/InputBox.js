@@ -8,15 +8,18 @@ const InputBox = (input) => {
     const [inputString, setInputString] = useState([]);
     const [selection, setSelection] = useState([null, null]);
     /***************************************************************/
-    const observerId = useObserver({"callback": (dataChanged) => {
-        if (dataChanged === "string") {
-            setInputString([...appManager.string.getString()]);
-            setSelection([...appManager.string.getCursor()]);
+    const observerId = useObserver({
+        "caller": "InputBox",
+        "callback": (dataChanged) => {
+            if (dataChanged === "string") {
+                setInputString([...appManager.string.getString()]);
+                setSelection([...appManager.string.getCursor()]);
+            }
+            else if (dataChanged === "string.cursor") {
+                setSelection([...appManager.string.getCursor()]);
+            }
         }
-        else if (dataChanged === "string.cursor") {
-            setSelection([...appManager.string.getCursor()]);
-        }  
-    }});
+    });
     /***************************************************************/
     useEffect(() => {
         setInputString(appManager.getString());
@@ -28,9 +31,8 @@ const InputBox = (input) => {
             let cursor = e.target.selectionStart;
             if (e.target.selectionStart !== inputString.length) {
                 const cursor = appManager.string.getValidPos(e.target.selectionStart);
-                //appManager.setCursor(cursor, cursor);
             } 
-            appManager.string.setCursor(cursor,cursor);
+            appManager.setCursor(cursor,cursor);
         }
         else {
             // if the user is making a selection, and the end of the 
@@ -38,14 +40,14 @@ const InputBox = (input) => {
             // need to do is find the beginning of the selection
             if (e.target.selectionEnd === inputString.length) {
                 const start = appManager.string.getValidPos(e.target.selectionStart);
-                appManager.string.setCursor(start, e.target.selectionEnd);
+                appManager.setCursor(start, e.target.selectionEnd);
             }
             else {
                 // find the end 
                 const end = appManager.string.getValidPos(e.target.selectionEnd, "forward");
                 // find the beginning
                 const start = appManager.string.getValidPos(e.target.selectionStart);
-                appManager.string.setCursor(start, end);
+                appManager.setCursor(start, end);
             }
         }
     }
@@ -104,7 +106,7 @@ const InputBox = (input) => {
                 if (cursor === e.target.selectionStart)
                     cursor -= 1;
 
-                appManager.string.setCursor(cursor, cursor);
+                appManager.setCursor(cursor, cursor);
             }
 
             e.preventDefault();
@@ -112,7 +114,7 @@ const InputBox = (input) => {
         else if (e.code === "ArrowRight") {
             if (e.target.selectionStart < inputString.length) {
                 let cursor = appManager.string.getValidPos(e.target.selectionStart + 1, "forward");
-                appManager.string.setCursor(cursor, cursor);
+                appManager.setCursor(cursor, cursor);
             }
             e.preventDefault();            
         }
@@ -129,17 +131,20 @@ const InputBox = (input) => {
     }
     /***************************************************************/
     return (
-        <textarea
-            ref={ref}
-            id="input-box"
-            onFocus={handleOnFocus}
-            onInput={handleInput}
-            onKeyDown={handleKeyDown}
-            onMouseUp={handleMouseUp}
-            onClick={handleMouseUp}
-            value={makeString()}
-            className='input-box'>
-        </textarea>
+        <React.Fragment>
+            <textarea
+                ref={ref}
+                id="input-box"
+                onFocus={handleOnFocus}
+                onInput={handleInput}
+                onKeyDown={handleKeyDown}
+                onMouseUp={handleMouseUp}
+                onClick={handleMouseUp}
+                value={makeString()}
+                className='input-box'>
+            </textarea>
+        </React.Fragment>
+
     );
 }
 

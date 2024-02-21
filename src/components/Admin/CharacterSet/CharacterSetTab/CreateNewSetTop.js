@@ -8,7 +8,10 @@ import appManager from '../../../../models/AppManager/AppManager.js';
 const CreateNewSetTop = (input) => {
     const ref = useRef(null);
     /***************************************************************/
-    const observerId = useObserver({"callback": (dataChanged) => {}});
+    const observerId = useObserver({
+        "caller": "CreateNewSetTop",
+        "callback": (dataChanged) => {}}
+    );
   /***************************************************************/
     useEffect(() => {}, []);
     /***************************************************************/

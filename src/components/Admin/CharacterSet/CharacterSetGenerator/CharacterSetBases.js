@@ -10,7 +10,9 @@ const CharacterSetBases = (input) => {
     const [selectedBase, setSelectedBase] = useState(null);
 
     /***************************************************************/
-    const observerId = useObserver({ "callback": (dataChanged) => { } });
+    const observerId = useObserver({ 
+        "caller": "CharacterSetBases",
+        "callback": (dataChanged) => { } });
     /***************************************************************/
     useEffect(() => {
         // register a listener 

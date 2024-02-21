@@ -4,12 +4,17 @@ class ObserverManager{
     }
 
     registerListener(callback) {
+        console.log("registering callback");
+        console.log(callback);
         this.listeners.push(callback);
+        console.log(this.listeners);
         return this.listeners.length - 1; 
     }
 
     unregisterListener(id) {
+        console.log("The id is: " + id);
         this.listeners[id] = null;
+        console.log(this.listeners);
     }
 
     notify(dataChanged) {

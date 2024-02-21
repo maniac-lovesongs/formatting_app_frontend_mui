@@ -17,7 +17,9 @@ const ConfirmationDialog = (input) => {
     const [successful, setSuccessful] = useState(false);
     const TriggerComponent = input.triggerComponent; 
     /***************************************************************/
-    const observerId = useObserver({"callback": (dataChanged) => { }});
+    const observerId = useObserver({
+        "caller": "ConfirmationDialog",
+        "callback": (dataChanged) => { }});
     /**************************************************************/
     useEffect(() => {
     }, []);

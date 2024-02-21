@@ -24,8 +24,8 @@ const prepareCurrentData = () => {
         const uri = "/api/fonts/character_sets/all_sets";
         apiCall(uri, {}, (args, d) => {
             if (d && d.success) {
-                const currenData = prepareFont(f,s,d);
                 localStorage.setItem("fontDatabase", JSON.stringify(d));
+                const currenData = prepareFont(f,s,d);
                 appManager.setCurrentData(currenData);
             }
         });                
@@ -38,4 +38,17 @@ const prepareCurrentData = () => {
     }
 }
 
-export {prepareFont, prepareCurrentData};
+const makeSelectItems = (d) => {
+    const temp = {};
+    
+    Object.keys(d.allFonts).forEach((k) => {
+        const font = d.allFonts[k];
+        temp[k] = {
+            "font": font, 
+            "style": font.name === "Serif"? "bold" : "normal"
+        };
+    });
+    return temp;
+}
+
+export {prepareFont, prepareCurrentData, makeSelectItems};

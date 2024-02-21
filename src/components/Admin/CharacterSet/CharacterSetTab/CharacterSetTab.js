@@ -25,18 +25,22 @@ const CharacterSetTab = (input) => {
     const [rowModesModel, setRowModesModel] = useState({});
 
     /***************************************************************/
-    const observerId = useObserver({"callback": (dataChanged) => {
-        const tempDataChanged = makePathName(["characterSet", input.style, "editableRows"]);
-        const tempDataChangedRowModesModel =  makePathName(["characterSet", input.style, "rowModesModel"]);
-        if(dataChanged === tempDataChanged){
-            const temp = appManager.getTemp(tempDataChanged);
-            setPairs(temp);
+    const observerId = useObserver({
+        "caller": "CharacterSetTab",
+        "callback": (dataChanged) => {
+            const tempDataChanged = makePathName(["characterSet", input.style, "editableRows"]);
+            const tempDataChangedRowModesModel =  makePathName(["characterSet", input.style, "rowModesModel"]);
+            if(dataChanged === tempDataChanged){
+                const temp = appManager.getTemp(tempDataChanged);
+                setPairs(temp);
+            }
+            else if(dataChanged === tempDataChangedRowModesModel){
+                const temp = appManager.getTemp(tempDataChangedRowModesModel);
+                setRowModesModel(temp);
+            }
         }
-        else if(dataChanged === tempDataChangedRowModesModel){
-            const temp = appManager.getTemp(tempDataChangedRowModesModel);
-            setRowModesModel(temp);
-        }
-    }});
+    }
+    );
   /***************************************************************/
     useEffect(() => {
         if(input.fontName && input.fontName !== '' && !pairs){

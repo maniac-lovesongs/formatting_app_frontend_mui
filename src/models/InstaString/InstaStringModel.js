@@ -72,8 +72,10 @@ class InstaStringModel {
         this.cursor = [start, end];
         const subarray = this.string.slice(start, end);
         this.substring = subarray;
-        observerManager.notify(["string",
-            "string.cursor",
+
+        console.log("CURSOR CHANGED in string.cursor");
+
+        observerManager.notify(["string.cursor",
             "selectionMade",
             "string.substring"]);
     }
@@ -87,6 +89,8 @@ class InstaStringModel {
     }
     /****************************************************************************/
     getSubstring(cursor = null) {
+        console.log("In getsubstring");
+        console.log(cursor);
         if (cursor === null)
             return this.string.substring;
         return this.string.slice(cursor[0], cursor[1]);

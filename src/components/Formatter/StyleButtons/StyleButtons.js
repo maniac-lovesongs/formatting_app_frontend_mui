@@ -12,12 +12,15 @@ const StyleButtons = (input) => {
     const [usingBold, setUsingBold] = useState(false);
     const [usingItalic, setUsingItalic] = useState(false);
     /***************************************************************/
-    const observerId = useObserver({"callback": (dataChanged) => {
-        if(dataChanged === "state"){
-            determineActiveButtons();
-            determineButtonsInUse();   
+    const observerId = useObserver({
+        "caller": "StyleButtons",
+        "callback": (dataChanged) => {
+            if(dataChanged === "state" ){
+                determineActiveButtons();
+                determineButtonsInUse();   
+            }
         }
-    }});
+    });
     /***************************************************************/
     useEffect(() => {
         determineActiveButtons();
@@ -25,6 +28,7 @@ const StyleButtons = (input) => {
     }, []);
     /***************************************************************/
     const determineActiveButtons = () => {
+        //const d = appManager.getTemp("temp.styleButtons");
         const availableStyles = appManager.getAvailableStyles();
         const currentFont = appManager.getFont();
 
@@ -39,6 +43,7 @@ const StyleButtons = (input) => {
     }
     /***************************************************************/
     const determineButtonsInUse = () => {
+      //  const d = appManager.getTemp("temp.styleButtons");
         const style = appManager.getStyle();
         if (style === "bold") {
             setUsingBold(true);
@@ -59,23 +64,23 @@ const StyleButtons = (input) => {
     }
     /***************************************************************/
     const handleMakeBold = (e) => {
-        if (!disableBold) 
-            // if we can make this font bolds
-            appManager.setStyle(!usingBold, usingItalic, "bold");
+        if (!disableBold) {
+            appManager.setStyle(!usingBold, usingItalic, "bold");    
+        }           
         
         e.stopPropagation();
 
     }
     /***************************************************************/
     const handleMakeItalic = (e) => {
-        if (!disableItalic)
-            // if we can make this font bold
+        if (!disableItalic){
             appManager.setStyle(usingBold, !usingItalic, "italic");
+        }
         e.stopPropagation();
     }
     /***************************************************************/
     const Wrapper=input.wrapper;
-
+    /***************************************************************/
     return(
         <Wrapper sx={input.sx}>
             <Button

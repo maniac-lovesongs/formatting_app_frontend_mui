@@ -323,10 +323,6 @@ class AppManager {
     setCursor(start, end) {
         const data = this.string.setCursor(start, end);
         this.selectionMade = start !== end;
-        observerManager.notify(["string",
-            "string.cursor",
-            "selectionMade",
-            "string.substring"]);
     }
     /**************************************************************/
     setPanelOpen(panel) {

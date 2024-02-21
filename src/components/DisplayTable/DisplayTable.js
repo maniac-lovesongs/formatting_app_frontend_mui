@@ -12,21 +12,23 @@ const DisplayTable = (input) => {
     const ref = useRef(null);
     /***************************************************************/
     const observerId = useObserver({
+        "caller": "DisplayTable",
         "callback": (dataChanged) => {
-            const tempDataChangedEditableRows = makePathName([...input.dataName.split("."), "editableRows"]);
-            const tempDataChangedRowModesModel = makePathName([...input.dataName.split("."), "rowModesModel"]);
-            
-            // These callbacks only work if another component isn't maganaging this display table
-            if(dataChanged === tempDataChangedEditableRows && !input.managed){
-                const temp = appManager.getTemp(tempDataChangedEditableRows);
-                input.setPairs(temp);
-            }
-            else if (dataChanged === tempDataChangedRowModesModel && !input.managed) {
-                const temp = appManager.getTemp(tempDataChangedRowModesModel);
-                input.setRowModesModel(temp);
+                const tempDataChangedEditableRows = makePathName([...input.dataName.split("."), "editableRows"]);
+                const tempDataChangedRowModesModel = makePathName([...input.dataName.split("."), "rowModesModel"]);
+                
+                // These callbacks only work if another component isn't maganaging this display table
+                if(dataChanged === tempDataChangedEditableRows && !input.managed){
+                    const temp = appManager.getTemp(tempDataChangedEditableRows);
+                    input.setPairs(temp);
+                }
+                else if (dataChanged === tempDataChangedRowModesModel && !input.managed) {
+                    const temp = appManager.getTemp(tempDataChangedRowModesModel);
+                    input.setRowModesModel(temp);
+                }
             }
         }
-    });
+    );
     /***************************************************************/
     const {actionsColumn, editFunctions} = useEditableDataGridRows({
         "deleteConfirmationTitle": input.deleteTitle,

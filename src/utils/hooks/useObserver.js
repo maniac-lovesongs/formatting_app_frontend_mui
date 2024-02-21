@@ -15,6 +15,7 @@ const withObserver = (callback, observerId, setObserverId) => {
 
 const useObserver = (input) => {
     const [observerId,setObserverId] = useState(null);
+
     useEffect(() => {
         // register a listener 
         if(observerId === null){

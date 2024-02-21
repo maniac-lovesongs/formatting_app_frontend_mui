@@ -11,7 +11,10 @@ const CharacterSetInputBox = (input) => {
     const [changeId, setChangeId] = useState(null);
 
     /***************************************************************/
-    const observerId = useObserver({ "callback": (dataChanged) => { } });
+    const observerId = useObserver({ 
+        "caller": "CharacterSetInputBox",
+        "callback": (dataChanged) => { } 
+    });
     /***************************************************************/
     useEffect(() => {
     }, []);
