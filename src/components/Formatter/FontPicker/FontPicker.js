@@ -80,21 +80,22 @@ const FontPicker = (input) => {
     /****************************************************************/
     const makeFonts = (fonts, example) => {
         const fontNames = Object.keys(fonts);
+        const tempCursor = appManager.string.cursor; 
+        let tempExample = '';
+        if(tempCursor[0] !== tempCursor[1]){
+            tempExample = appManager.string.getSubstring(tempCursor).map((s) => {
+                if(typeof s === 'object' && s !== null){
+                    return s.value;
+                }
+                return s;
+            }).join('');
+        }
+        else{
+            tempExample = font_name;
+        }
+
         return fontNames.map((font_name) => {
             const font = fonts[font_name];
-            const tempCursor = appManager.string.cursor; 
-            let tempExample = '';
-            if(tempCursor[0] !== tempCursor[1]){
-                tempExample = appManager.string.getSubstring(tempCursor).map((s) => {
-                    if(typeof s === 'object' && s !== null){
-                        return s.value;
-                    }
-                    return s;
-                }).join('');
-            }
-            else{
-                tempExample = font_name;
-            }
 
             return (
                 <MenuItem value={font_name}>
