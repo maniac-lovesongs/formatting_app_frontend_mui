@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useObserver } from '../../../../utils/hooks/useObserver.js';
+import { useObserver, observerManager } from '../../../../utils/hooks/useObserver.js';
 import { apiCall, apiCallPost } from "../../../../utils/apiFunctions.js";
 import CharacterSetInputBox from './CharacterSetInputBox.js';
 import CharacterSetBases from "./CharacterSetBases.js";
@@ -9,12 +9,16 @@ const CharacterSetGenerator = (input) => {
     const ref = useRef(null);
 
     /***************************************************************/
-    const observerId = useObserver({ 
+    const [observerId, setObserverId] = useObserver({ 
         "caller": "CharacterSetGenerator",
         "callback": (dataChanged) => { } 
     });
     /***************************************************************/
     useEffect(() => {
+        return () => {
+            observerManager.unregisterListener(observerId);
+            setObserverId(null);
+        }; 
     }, []);
     /***************************************************************/
     return (

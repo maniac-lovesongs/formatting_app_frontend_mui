@@ -3,7 +3,7 @@ import { appManager } from "../../models/AppManager/managers.js";
 import constants from '../../utils/constants.js';
 import {DataGrid, GridRowModes} from '@mui/x-data-grid';
 import {useEditableDataGridRows} from "../../utils/hooks/useEditableDataGridRows.js"
-import {useObserver} from '../../utils/hooks/useObserver.js';
+import {useObserver, observerManager} from '../../utils/hooks/useObserver.js';
 import { makePathName } from './utils.js';
 import "./DisplayTable.scss";
 
@@ -11,7 +11,7 @@ import "./DisplayTable.scss";
 const DisplayTable = (input) => {
     const ref = useRef(null);
     /***************************************************************/
-    const observerId = useObserver({
+    const [observerId, setObserverId] = useObserver({
         "caller": "DisplayTable",
         "callback": (dataChanged) => {
                 const tempDataChangedEditableRows = makePathName([...input.dataName.split("."), "editableRows"]);
@@ -29,6 +29,13 @@ const DisplayTable = (input) => {
             }
         }
     );
+    /**************************************************************/
+    useEffect(() => {
+        return () => {
+            observerManager.unregisterListener(observerId);
+            setObserverId(null);
+        }; 
+    }, []);
     /***************************************************************/
     const {actionsColumn, editFunctions} = useEditableDataGridRows({
         "deleteConfirmationTitle": input.deleteTitle,

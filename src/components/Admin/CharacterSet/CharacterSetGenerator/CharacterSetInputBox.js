@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useObserver } from '../../../../utils/hooks/useObserver.js';
+import { useObserver, observerManager} from '../../../../utils/hooks/useObserver.js';
 import { apiCallPost } from "../../../../utils/apiFunctions.js";
 import { uriFriendlyString, makeCharacterSetFromDict } from '../CharacterSetTab/utils.js';
 import { Grid, TextField, Button } from "@mui/material";
@@ -11,12 +11,16 @@ const CharacterSetInputBox = (input) => {
     const [changeId, setChangeId] = useState(null);
 
     /***************************************************************/
-    const observerId = useObserver({ 
+    const [observerId, setObserverId] = useObserver({ 
         "caller": "CharacterSetInputBox",
         "callback": (dataChanged) => { } 
     });
     /***************************************************************/
     useEffect(() => {
+        return () => {
+            observerManager.unregisterListener(observerId);
+            setObserverId(null);
+        }; 
     }, []);
     /***************************************************************/
     const handleInput = (e) => {

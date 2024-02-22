@@ -14,10 +14,13 @@ import "./Admin.scss";
 const Admin = (input) => {
     const ref = useRef(null);
     /***************************************************************/
-    const observerId = useObserver({"callback": (dataChanged) => {}});
+    const [observerId, setObserverId] = useObserver({"callback": (dataChanged) => {}});
     /***************************************************************/
     useEffect(() => {
-        //
+        return () => {
+            observerManager.unregisterListener(observerId);
+            setObserverId(null);
+        }; 
     }, []);
     /***************************************************************/
     const contentFactory = () => {

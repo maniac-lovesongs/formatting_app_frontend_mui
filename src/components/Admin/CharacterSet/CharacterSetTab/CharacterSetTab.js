@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useObserver } from '../../../../utils/hooks/useObserver.js';
+import { useObserver, observerManager } from '../../../../utils/hooks/useObserver.js';
 import { Grid } from "@mui/material";
 import Title from "../../Title/Title.js"
 import {appManager} from "../../../../models/AppManager/managers.js";
@@ -25,7 +25,7 @@ const CharacterSetTab = (input) => {
     const [rowModesModel, setRowModesModel] = useState({});
 
     /***************************************************************/
-    const observerId = useObserver({
+    const [observerId, setObserverId] = useObserver({
         "caller": "CharacterSetTab",
         "callback": (dataChanged) => {
             const tempDataChanged = makePathName(["characterSet", input.style, "editableRows"]);
@@ -39,7 +39,7 @@ const CharacterSetTab = (input) => {
                 setRowModesModel(temp);
             }
         }
-    }
+     }
     );
   /***************************************************************/
     useEffect(() => {
@@ -51,6 +51,11 @@ const CharacterSetTab = (input) => {
                 initCharacterSet(d, extra.chs, input, setExistingCharSet, setUsingBase);
             });
         };
+
+        return () => {
+            observerManager.unregisterListener(observerId);
+            setObserverId(null);
+        }; 
     }, []);
     /***************************************************************/
     const makeTopPart = (usingBase) => {

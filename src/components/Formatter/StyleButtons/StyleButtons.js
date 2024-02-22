@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import {Button} from '@mui/material';
 import {FormatBold, FormatItalic} from "@mui/icons-material";
-import {useObserver} from '../../../utils/hooks/useObserver.js';
+import {useObserver,observerManager} from '../../../utils/hooks/useObserver.js';
 import {appManager } from "../../../models/AppManager/managers.js";
 import "./StyleButtons.scss";
 
@@ -12,7 +12,7 @@ const StyleButtons = (input) => {
     const [usingBold, setUsingBold] = useState(false);
     const [usingItalic, setUsingItalic] = useState(false);
     /***************************************************************/
-    const observerId = useObserver({
+    const [observerId, setObserverId] = useObserver({
         "caller": "StyleButtons",
         "callback": (dataChanged) => {
             if(dataChanged === "state" ){
@@ -25,6 +25,11 @@ const StyleButtons = (input) => {
     useEffect(() => {
         determineActiveButtons();
         determineButtonsInUse();
+
+        return () => {
+            observerManager.unregisterListener(observerId);
+            setObserverId(null);
+        }; 
     }, []);
     /***************************************************************/
     const determineActiveButtons = () => {

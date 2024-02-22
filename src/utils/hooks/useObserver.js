@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import {appManager, observerManager} from "../../models/AppManager/managers.js";
 
 const withObserver = (callback, observerId, setObserverId) => {
@@ -22,13 +22,8 @@ const useObserver = (input) => {
             const id = observerManager.registerListener(input.callback);
             setObserverId(id);
         }
-    
-        return () => {
-            observerManager.unregisterListener(observerId);
-            setObserverId(null);
-        };   
     }, []);
-    return observerId;
+    return [observerId, setObserverId];
 };
 
-export {withObserver, useObserver};
+export {withObserver, useObserver, observerManager};

@@ -4,7 +4,7 @@ import Admin from '../Admin/Admin.js';
 import Formatter from '../Formatter/Formatter.js';
 import SignUp from "../Auth/SignUp/SignUp.js";
 import SignIn from "../Auth/SignIn/SignIn.js";
-import { useObserver } from '../../utils/hooks/useObserver.js';
+import { useObserver, observerManager } from '../../utils/hooks/useObserver.js';
 import useAuth from '../../utils/hooks/useAuth.js';
 import "./AppContainer.scss";
 
@@ -15,7 +15,7 @@ const AppContainer = (input) => {
     const [isLoggedIn, setIsLoggedIn] = useState(null);
     const authHandlers = useAuth();
     /***************************************************************/
-    const observerId = useObserver({
+    const [observerId, setObserverId] = useObserver({
         "caller": "AppContainer",
         "callback": (dataChanged) => {
                 if(dataChanged === "current_user"){
@@ -31,6 +31,11 @@ const AppContainer = (input) => {
         if (input.protected) {
             authHandlers.handleAuthentication(); 
         }
+
+        return () => {
+            observerManager.unregisterListener(observerId);
+            setObserverId(null);
+        }; 
     }, []);
     /**************************************************************/
     const contentFactory = (isLoggedIn, currentUser) => {

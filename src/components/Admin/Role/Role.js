@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { useEditable } from 'use-editable';
 import React, { useState, useEffect, useRef } from 'react';
-import { useObserver } from '../../../utils/hooks/useObserver.js';
+import { useObserver, observerManager } from '../../../utils/hooks/useObserver.js';
 import { appManager } from "../../../models/AppManager/managers.js";
 import { apiCall, apiCallPost } from "../../../utils/apiFunctions.js";
 import { Box, Grid, Paper } from "@mui/material";
@@ -14,7 +14,7 @@ const Role = (input) => {
   const [roles, setRoles] = useState(null);
   const [rowModesModel, setRowModesModel] = useState({});
   /***************************************************************/
-  const observerId = useObserver({
+  const [observerId, setObserverId] = useObserver({
     "callback": (dataChanged) => {
       if (dataChanged === "temp.roles.editableRows") {
         setRoles(appManager.getTemp("temp.roles.editableRows"));
@@ -32,6 +32,11 @@ const Role = (input) => {
       //  if (d && d.success) handleRolesChanged(d.roles);
       });
     }
+
+    return () => {
+      observerManager.unregisterListener(observerId);
+      setObserverId(null);
+    }; 
   }, []);
   /*****************************************************************/
   const handleRolesChanged = (changedRoles) => {

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { appManager } from "../../../models/AppManager/managers.js";
+import { appManager, observerManager } from "../../../models/AppManager/managers.js";
 import { apiCall } from "../../../utils/apiFunctions.js";
 import { useObserver} from '../../../utils/hooks/useObserver.js';
 import ConfirmationDialog from '../../ConfirmationDialog/ConfirmationDialog.js';
@@ -15,7 +15,7 @@ const Font = (input) => {
     const [font, setFont] = useState([]);
     const [characterSet, setCharacterSet] = useState(null);
     const {id} = useParams();
-    const observerId = useObserver({"callback": (dataChanged) => {
+    const [observerId, setObserverId] = useObserver({"callback": (dataChanged) => {
         if(dataChanged === "style"){
             const tempStyle = appManager.getStyle();
             setCharacterSet(tempStyle);
@@ -31,7 +31,10 @@ const Font = (input) => {
             appManager.setFontBasic(d.font.name);
             appManager.setStyleBasic(charSet);
         });
-
+        return () => {
+            observerManager.unregisterListener(observerId);
+            setObserverId(null);
+        }; 
     }, []);
     /***************************************************************/
     const handleSelectChange = (e) => {

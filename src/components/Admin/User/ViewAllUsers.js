@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef} from 'react';
-import {useObserver} from '../../../utils/hooks/useObserver.js';
+import {useObserver, observerManager} from '../../../utils/hooks/useObserver.js';
 import {appManager} from "../../../models/AppManager/managers.js";
 import { apiCall, apiCallPost } from "../../../utils/apiFunctions.js";
 import { usersDisplay } from './displayTable.js';
@@ -15,7 +15,7 @@ const ViewAllUsers = (input) => {
     const [users, setUsers] = useState(null);
     const [rowModesModel, setRowModesModel] = useState({});
     /***************************************************************/
-    const observerId = useObserver({"callback": (dataChanged) => {
+    const [observerId, setObserverId] = useObserver({"callback": (dataChanged) => {
       if(dataChanged === "temp.users.editableRows"){
         setUsers(appManager.getTemp("temp.users.editableRows"));
       }
@@ -31,6 +31,11 @@ const ViewAllUsers = (input) => {
                 if(d && d.success) handleUsersChanged(d.users);
               });
           }
+
+          return () => {
+            observerManager.unregisterListener(observerId);
+            setObserverId(null);
+        }; 
       }, []);
   /*****************************************************************/
   const handleUsersChanged = (changedUsers) => {

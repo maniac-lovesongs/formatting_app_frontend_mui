@@ -13,7 +13,7 @@ import "./Main.scss";
 const Main = (input) => {
     const ref = useRef(null);
     //const [observerId, setObserverId] = useState(null);
-    const observerId = useObserver({"callback": (dataChanged) => {}});
+    const [observerId, setObserverId] = useObserver({"callback": (dataChanged) => {}});
     const [counts, setCounts] = useState(null);
 
     /***************************************************************/
@@ -24,7 +24,10 @@ const Main = (input) => {
                 setCounts(d);
             });
         }
-
+        return () => {
+            observerManager.unregisterListener(observerId);
+            setObserverId(null);
+        }; 
     }, []);
     /***************************************************************/
     const makeCounts = (counts) => {

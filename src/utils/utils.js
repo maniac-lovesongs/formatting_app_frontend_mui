@@ -28,11 +28,21 @@ const makePathName = (variables) => {
 
 const uriFriendlyString = utils.uriFriendString;
 
+const createString = (arr, useSymbol = false) => {
+    return arr.reduce((prev,curr) => {
+       if(typeof curr === 'object' && curr !== null)
+          return useSymbol? prev + curr.symbol : prev + curr.value; 
+
+        return prev + curr; 
+    }, "");
+};
+
 export {
     utils, 
     capitalize, 
     processStyleName,
     processFontName,
     makePathName,
+    createString,
     uriFriendlyString
 };

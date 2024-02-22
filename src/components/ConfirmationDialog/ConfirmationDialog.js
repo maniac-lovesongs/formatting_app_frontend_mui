@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { appManager } from "../../models/AppManager/managers.js";
-import { useObserver } from '../../utils/hooks/useObserver.js';
+import { useObserver,observerManager } from '../../utils/hooks/useObserver.js';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
@@ -17,11 +17,15 @@ const ConfirmationDialog = (input) => {
     const [successful, setSuccessful] = useState(false);
     const TriggerComponent = input.triggerComponent; 
     /***************************************************************/
-    const observerId = useObserver({
+    const [observerId, setObserverId] = useObserver({
         "caller": "ConfirmationDialog",
         "callback": (dataChanged) => { }});
     /**************************************************************/
     useEffect(() => {
+        return () => {
+            observerManager.unregisterListener(observerId);
+            setObserverId(null);
+        }; 
     }, []);
     /**************************************************************/
     const handleClickOpen = () => {

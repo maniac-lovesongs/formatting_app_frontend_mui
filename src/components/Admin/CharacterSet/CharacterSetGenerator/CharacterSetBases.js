@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useObserver } from '../../../../utils/hooks/useObserver.js';
+import { useObserver, observerManager } from '../../../../utils/hooks/useObserver.js';
 import { apiCall } from '../../../../utils/apiFunctions.js';
 import { Grid, Select, MenuItem, Button, Chip } from "@mui/material";
 
@@ -10,7 +10,7 @@ const CharacterSetBases = (input) => {
     const [selectedBase, setSelectedBase] = useState(null);
 
     /***************************************************************/
-    const observerId = useObserver({ 
+    const [observerId, setObserverId] = useObserver({ 
         "caller": "CharacterSetBases",
         "callback": (dataChanged) => { } });
     /***************************************************************/
@@ -28,8 +28,12 @@ const CharacterSetBases = (input) => {
                     setSelectedBase(b[0]);
                 }
             });
-
         }
+
+        return () => {
+            observerManager.unregisterListener(observerId);
+            setObserverId(null);
+        }; 
     }, []);
     /***************************************************************/
     const handleSelectBase = (e) => {

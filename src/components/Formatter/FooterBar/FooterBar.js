@@ -3,7 +3,7 @@ import {Button, ButtonGroup, Grid, Paper, Drawer} from '@mui/material';
 import {FontDownload, ContentPaste, Delete} from "@mui/icons-material";
 import FontPicker from '../FontPicker/FontPicker.js';
 import StyleButtons from '../StyleButtons/StyleButtons.js';
-import {useObserver} from '../../../utils/hooks/useObserver.js';
+import {useObserver, observerManager} from '../../../utils/hooks/useObserver.js';
 import {appManager } from "../../../models/AppManager/managers.js";
 import { prepareCurrentData } from '../utils.js';
 import "./FooterBar.scss";
@@ -13,7 +13,7 @@ const FooterBar = (input) => {
     const [fontPickerOpen, setFontPickerOpen] = useState(false);
     const [clipboard, setClipboard] = useState(null);
     /***************************************************************/
-    const observerId = useObserver({
+    const [observerId, setObserverId] = useObserver({
         "caller": "FooterBar",
         "callback": (dataChanged) => {
             if (dataChanged === "state") {
@@ -24,6 +24,13 @@ const FooterBar = (input) => {
             }
         }
     });
+    /***************************************************************/
+    useEffect(() => {
+        return () => {
+            observerManager.unregisterListener(observerId);
+            setObserverId(null);
+        }; 
+    }, []);    
     /***************************************************************/
     const handlePaste = () => {
         const temp = appManager.getClipboard();

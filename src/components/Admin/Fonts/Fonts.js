@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import constants from '../../../utils/constants.js';
-import {useObserver} from '../../../utils/hooks/useObserver.js';
+import {useObserver, observerManager} from '../../../utils/hooks/useObserver.js';
 import {appManager} from "../../../models/AppManager/managers.js";
 import { apiCall, apiCallPost } from "../../../utils/apiFunctions.js";
 import { fontsDisplay } from '../CharacterSet/displayTableMisc.js';
@@ -15,7 +15,7 @@ const FontsInner = (input) => {
     const [fonts, setFonts] = useState(null);
     const [rowModesModel, setRowModesModel] = useState({});
     /***************************************************************/
-    const observerId = useObserver({"callback": (dataChanged) => {
+    const [observerId, setObserverId] = useObserver({"callback": (dataChanged) => {
       if(dataChanged === "temp.fonts.editableRows"){
         setFonts(appManager.getTemp("temp.fonts.editableRows"));
       }
@@ -31,6 +31,11 @@ const FontsInner = (input) => {
                 handleFontsChanged(d.fonts);
               });
           }
+
+          return () => {
+            observerManager.unregisterListener(observerId);
+            setObserverId(null);
+        }; 
       }, []);
   /***************************************************************/
   const updateFonts = (updatedRow) => {

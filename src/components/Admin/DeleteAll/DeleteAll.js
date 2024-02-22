@@ -8,7 +8,7 @@ import ButtonWithIcon from "../ButtonWithIcon/ButtonWithIcon.js";
 const DeleteAll = (input) => {
     const ref = useRef(null);
     /***************************************************************/
-    const observerId = useObserver({"callback": (dataChanged) => {}});
+    const [observerId, setObserverId] = useObserver({"callback": (dataChanged) => {}});
     /***************************************************************/
     return (
     <ConfirmationDialog 

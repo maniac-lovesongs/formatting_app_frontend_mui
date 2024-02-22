@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useObserver } from '../../../../utils/hooks/useObserver.js';
+import { useObserver, observerManager } from '../../../../utils/hooks/useObserver.js';
 import CharacterSetBases from '../CharacterSetGenerator/CharacterSetBases.js';
 import CharacterSetGenerator from '../CharacterSetGenerator/CharacterSetGenerator.js';
 import appManager from '../../../../models/AppManager/AppManager.js';
@@ -8,12 +8,18 @@ import appManager from '../../../../models/AppManager/AppManager.js';
 const CreateNewSetTop = (input) => {
     const ref = useRef(null);
     /***************************************************************/
-    const observerId = useObserver({
+    const [observerId, setObserverId] = useObserver({
         "caller": "CreateNewSetTop",
         "callback": (dataChanged) => {}}
     );
   /***************************************************************/
-    useEffect(() => {}, []);
+    useEffect(() => {
+        return () => {
+            observerManager.unregisterListener(observerId);
+            setObserverId(null);
+        }; 
+    }, 
+    []);
     /***************************************************************/
     return(                
         <React.Fragment>

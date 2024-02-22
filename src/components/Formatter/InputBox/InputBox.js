@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import {useObserver} from '../../../utils/hooks/useObserver.js';
+import {useObserver, observerManager} from '../../../utils/hooks/useObserver.js';
 import {appManager} from "../../../models/AppManager/managers.js";
 import "./InputBox.scss";
 /***************************************************************/
@@ -8,7 +8,7 @@ const InputBox = (input) => {
     const [inputString, setInputString] = useState([]);
     const [selection, setSelection] = useState([null, null]);
     /***************************************************************/
-    const observerId = useObserver({
+    const [observerId, setObserverId] = useObserver({
         "caller": "InputBox",
         "callback": (dataChanged) => {
             if (dataChanged === "string") {
@@ -23,6 +23,11 @@ const InputBox = (input) => {
     /***************************************************************/
     useEffect(() => {
         setInputString(appManager.getString());
+
+        return () => {
+            observerManager.unregisterListener(observerId);
+            setObserverId(null);
+        }; 
     }, []);
     /***************************************************************/
     const handleMouseUp = (e) => {

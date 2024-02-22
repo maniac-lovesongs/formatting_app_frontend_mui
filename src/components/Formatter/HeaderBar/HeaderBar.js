@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { ButtonGroup, Button,Grid,Paper } from '@mui/material';
 import {Redo, Undo, ContentCopy, Share} from '@mui/icons-material';
-import {useObserver} from '../../../utils/hooks/useObserver.js';
+import {useObserver, observerManager} from '../../../utils/hooks/useObserver.js';
 import {appManager} from "../../../models/AppManager/managers.js";
 import "./HeaderBar.scss";
 
@@ -10,7 +10,7 @@ const HeaderBar = (input) => {
     const ref = useRef(null);
     const [undo, setUndo] = useState(true);
     const [redo, setRedo] = useState(true);
-    const observerId = useObserver({
+    const [observerId,setObserverId] = useObserver({
         "caller": "HeaderBar",
         "callback": (dataChanged) => {
             if (dataChanged === "history") {
@@ -22,6 +22,10 @@ const HeaderBar = (input) => {
     /***************************************************************/
     useEffect(() => {
         determineActiveButtons();
+        return () => {
+            observerManager.unregisterListener(observerId);
+            setObserverId(null);
+        }; 
     }, []);
     /***************************************************************/
     const handleCopyClick = async () => {

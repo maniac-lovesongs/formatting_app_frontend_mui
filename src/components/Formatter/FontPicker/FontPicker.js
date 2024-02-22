@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
-import {withObserver, useObserver} from '../../../utils/hooks/useObserver.js';
+import {withObserver, useObserver, observerManager} from '../../../utils/hooks/useObserver.js';
 import { apiCall } from '../../../utils/apiFunctions.js';
 import {Select, MenuItem, Chip, Button, Box, Grid, ButtonGroup} from "@mui/material/";
 import StyleButtons from '../StyleButtons/StyleButtons.js';
 import {appManager} from "../../../models/AppManager/managers.js";
 import "./FontPicker.scss";
 import { makeSelectItems } from '../utils.js';
+import { createString } from '../../../utils/utils.js';
 /***************************************************************/
 const FontPicker = (input) => {
     const ref = useRef(null);
@@ -13,9 +14,8 @@ const FontPicker = (input) => {
     const [selectedFont, setSelectedFont] = useState(null);
     const [selectedStyle, setSelectedStyle] = useState(null);
     const [fonts, setFonts] = useState(null);
-    const [example, setExample] = useState('');
     /***************************************************************/
-    const observerId = useObserver({
+    const [observerId, setObserverId] = useObserver({
         "caller": "FontPicker",
         "callback": (dataChanged) => {
             if(dataChanged === "state"){
@@ -33,7 +33,7 @@ const FontPicker = (input) => {
             else if(dataChanged === "string.cursor"){
                 if(appManager.string.getSelectionMade()){
                     const cursor = appManager.string.getCursor();
-                    setExample(appManager.string.getSubstring(cursor));
+                   // setExample(appManager.string.getSubstring(cursor));
                 }
             }
         }
@@ -61,48 +61,39 @@ const FontPicker = (input) => {
             setData(d);
             appManager.setTemp(temp, "temp.fonts");
         }
+
+        return () => {
+            observerManager.unregisterListener(observerId);
+            setObserverId(null);
+        }; 
     }, []);
     /***************************************************************/
     const writeString = (string, font, style) => {
         const characterSet = data.chs[font][style];
-        const tempString = [];
-        for(let i = 0; i < string.length; i++){
-            const c = string.charAt(i);
-            if(c in characterSet)
-                tempString.push(characterSet[c].symbol);
-            else
-                tempString.push(c);
-            
-        }
-
-        return tempString.join('');
+        return string.split('').reduce((prev, c) => {
+            const tail = c in characterSet? characterSet[c].symbol : c; 
+            return prev + tail; 
+        });
     }
     /****************************************************************/
-    const makeFonts = (fonts, example) => {
+    const makeFonts = (fonts) => {
         const fontNames = Object.keys(fonts);
         const tempCursor = appManager.string.cursor; 
         let tempExample = '';
         if(tempCursor[0] !== tempCursor[1]){
-            tempExample = appManager.string.getSubstring(tempCursor).map((s) => {
-                if(typeof s === 'object' && s !== null){
-                    return s.value;
-                }
-                return s;
-            }).join('');
-        }
-        else{
-            tempExample = font_name;
+            const tempSubstr = appManager.string.getSubstring(tempCursor);
+            tempExample = createString(tempSubstr);
         }
 
         return fontNames.map((font_name) => {
             const font = fonts[font_name];
-
+            const example = tempExample.length !== 0? tempExample : font_name;
             return (
                 <MenuItem value={font_name}>
                     <Chip 
                         sx={{"marginRight": "1em" }}
                         label={font_name}/>
-                    <span className="font-example">{writeString(tempExample, font_name, font.style)}</span>
+                    <span className="font-example">{writeString(example, font_name, font.style)}</span>
                 </MenuItem>
             );
         });
@@ -133,7 +124,7 @@ const FontPicker = (input) => {
                                 }}
                                 fullWidth
                                 onChange={handleSelect}>
-                                {fonts && makeFonts(fonts, example)}
+                                {fonts && makeFonts(fonts)}
                             </Select>
                         </Grid>
                         <Grid container item xs={12}>

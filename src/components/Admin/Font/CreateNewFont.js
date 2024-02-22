@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useObserver } from '../../../utils/hooks/useObserver.js';
+import { useObserver, observerManager } from '../../../utils/hooks/useObserver.js';
 import { Box, Grid, Paper, TextField, Tab, Tabs,Chip } from "@mui/material";
 import { useParams } from "react-router-dom";
 import Title from "../Title/Title.js";
@@ -18,9 +18,13 @@ const CreateNewFont = (input) => {
     const [availableStyles, setAvailableStyles] = useState(null);
     const allStyles = ["normal", "bold", "italic", "bold italic"];
     /***************************************************************/
-    const observerId = useObserver({ "callback": (dataChanged) => { } });
+    const [observerId, setObserverId] = useObserver({ "callback": (dataChanged) => { } });
     /***************************************************************/
     useEffect(() => {
+        return () => {
+            observerManager.unregisterListener(observerId);
+            setObserverId(null);
+        }; 
     }, []);
     /***************************************************************/
     const makeFontName = () => {

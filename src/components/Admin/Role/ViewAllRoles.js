@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import {useObserver} from '../../../utils/hooks/useObserver.js';
+import {useObserver, observerManager} from '../../../utils/hooks/useObserver.js';
 import {appManager} from "../../../models/AppManager/managers.js";
 import { apiCall, apiCallPost } from "../../../utils/apiFunctions.js";
 import { roleDisplay } from './displayTable.js';
@@ -16,7 +16,7 @@ const ViewAllRoles = (input) => {
     const [roles, setRoles] = useState(null);
     const [rowModesModel, setRowModesModel] = useState({});
     /***************************************************************/
-    const observerId = useObserver({"callback": (dataChanged) => {
+    const [observerId, setObserverId] = useObserver({"callback": (dataChanged) => {
       if(dataChanged === "temp.roles.editableRows"){
         setRoles(appManager.getTemp("temp.roles.editableRows"));
       }
@@ -32,6 +32,11 @@ const ViewAllRoles = (input) => {
                 if(d && d.success) handleRolesChanged(d.roles);
               });
           }
+
+          return () => {
+            observerManager.unregisterListener(observerId);
+            setObserverId(null);
+        }; 
       }, []);
   /*****************************************************************/
   const handleRolesChanged = (changedRoles) => {
